@@ -12,7 +12,7 @@
         <nav id='navbar' class="navbar">
             <ul>
                 <li class="float-right md:hidden" onclick="toggleNavbarMobile()">
-                    <i class="bi-x-lg text-xl text-orange-300 hover:-rotate-90 transition duration-500 ease-in-out"></i>
+                    <i class="bi-x text-xl text-orange-300 hover:-rotate-90 transition duration-500 ease-in-out"></i>
                 </li>
                 <li><a href="{{ url('/') }}" class="nav-item">Home</a></li>
                 <li><a href="{{ url('about') }}" class="nav-item">About</a></li>
@@ -23,7 +23,7 @@
             </ul>
         </nav>
 
-        <button class="md:hidden" onclick="toggleNavbarMobile()" id='menu'>
+        <button class="lg:hidden" onclick="toggleNavbarMobile()" id='menu'>
             <!-- menu -->
             <i class="bi-list text-lg"></i>
         </button>

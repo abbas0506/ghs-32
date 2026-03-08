@@ -1,5 +1,5 @@
-insert into ghsscb.languages
-SELECT * from temp_ghss.languages;
+insert into ghs_32.users
+SELECT * from temp.users;
 
 insert into ghsscb.domains
 SELECT * from temp_ghss.domains;

@@ -25,7 +25,7 @@ class BulkInvoiceController extends Controller
         if (session('bulkInvoices'))
             $bulkInvoices = session('bulkInvoices');
         else
-            $bulkInvoices = BulkInvoice::with(['student.section'])
+            $bulkInvoices = BulkInvoice::with(['fees.student.section'])
                 ->latest()
                 ->paginate(5);
 
@@ -123,23 +123,36 @@ class BulkInvoiceController extends Controller
         $bulkInvoice = BulkInvoice::findOrFail($id);
         $this->authorize('view', $bulkInvoice);
         $user = Auth::user();
+        $sections = $user->accessibleSections();
 
-
-        if ($user->isIncharge()) {
-            $section = $user->accessibleSections();
-            $fees = Fee::where('bulk_invoice_id', $id)
-                ->whereHas('student', function ($query) use ($section) {
-                    $query->whereIn('section_id', $section->pluck('id'));
-                })
-                ->with('student') // optional: eager load student
-                ->get();
-        } else {
-            $fees = Fee::with('student')
-                ->where('bulk_invoice_id', $id)
-                ->latest()
-                ->paginate(5);
+        if ($sections->count() == 0) {
+            abort(403, 'Unauthorized');
         }
-        return view('bulk-invoices.show', compact('bulkInvoice', 'fees'));
+
+        $fees = Fee::where('bulk_invoice_id', $id)
+            ->whereHas('student', function ($query) use ($sections) {
+                $query->whereIn('section_id', $sections->pluck('id'));
+            })
+            ->with('student') // optional: eager load student
+            ->get()
+            ->sortBy('student.rollno'); // order by rollno
+
+        // Calculate payable fee (all fees)
+        $totalPayable = Fee::where('bulk_invoice_id', $id)
+            ->whereHas('student', function ($query) use ($sections) {
+                $query->whereIn('section_id', $sections->pluck('id'));
+            })
+            ->sum('amount');
+
+        // Calculate paid fee (fees with status = 1)
+        $totalPaid = Fee::where('bulk_invoice_id', $id)
+            ->where('status', 1)
+            ->whereHas('student', function ($query) use ($sections) {
+                $query->whereIn('section_id', $sections->pluck('id'));
+            })
+            ->sum('amount');
+
+        return view('bulk-invoices.show', compact('bulkInvoice', 'fees', 'totalPayable', 'totalPaid'));
     }
 
     /**
@@ -215,7 +228,7 @@ class BulkInvoiceController extends Controller
         $request->validate([
             'invoice_no' => 'required|string',
         ]);
-        $bulkInvoices = BulkInvoice::with(['student.section'])
+        $bulkInvoices = BulkInvoice::with(['fees.student.section'])
             ->where('invoice_no', $request->invoice_no)
             ->latest()
             ->paginate(5);
@@ -227,8 +240,8 @@ class BulkInvoiceController extends Controller
             'name' => 'required|string',
         ]);
         $name = $request->name;
-        $bulkInvoices = BulkInvoice::with(['student.section'])
-            ->whereHas('student', function ($q) use ($name) {
+        $bulkInvoices = BulkInvoice::with(['fees.student.section'])
+            ->whereHas('fees.student', function ($q) use ($name) {
                 $q->where('name', 'like', "%{$name}%");
             })
             ->latest()
@@ -244,8 +257,8 @@ class BulkInvoiceController extends Controller
         $name = $request->name;
         $sectionId = $request->section_id;
 
-        $bulkInvoices = BulkInvoice::with(['student.section'])
-            ->whereHas('student', function ($q) use ($sectionId) {
+        $bulkInvoices = BulkInvoice::with(['fees.student.section'])
+            ->whereHas('fees.student', function ($q) use ($sectionId) {
                 $q->where('section_id', $sectionId);
             })
             ->latest()

@@ -112,7 +112,7 @@ class SectionAttendanceController extends Controller
 
     public function show($id, $attendanceId)
     {
-        $attendance = Attendance::find($id);
+        $attendance = Attendance::find($attendanceId);
         $this->authorize('view', $attendance);
 
         $section = Section::find($id);

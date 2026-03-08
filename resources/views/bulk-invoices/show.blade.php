@@ -16,8 +16,8 @@
 
         <div class="text-slate-500 text-sm">
             {{ $bulkInvoice->billingMonth() }} <br>
-            {{ $bulkInvoice->sumOfPaidAmount() }} /
-            {{ $bulkInvoice->sumOfPayableAmount() }}
+            {{ $totalPaid }}/{{ $totalPayable }}
+            Paid
 
         </div>
 

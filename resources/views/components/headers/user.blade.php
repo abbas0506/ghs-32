@@ -4,7 +4,7 @@
             <a href="{{ url('/') }}" class="flex justify-center">
                 <img alt="logo" src="{{ asset('images/logo/ghs-32.png') }}" class="w-8 h-8 md:w-10 md:h-10 md:hidden">
             </a>
-            <div class="hidden md:block text-base font-semibold">GHS 32/2L</div>
+            {{-- <div class="hidden md:block text-base font-semibold">GHS 32/2L</div> --}}
         </div>
 
         <div id="current-user-area" class="flex items-center space-x-3 relative">

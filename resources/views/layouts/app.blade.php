@@ -13,16 +13,40 @@
         @yield('page-content')
     </div>
 
-    <script type="module">
-        $('#menu').click(function() {
-            $("aside").toggleClass('shown');
-        });
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const menuBtn = document.getElementById('menu');
+            const sidebarBackdrop = document.getElementById('sidebar-backdrop');
+            const responsiveContainer = document.querySelector('.responsive-container');
 
-        $('.responsive-container').click(function(event) {
-            var box = $('#sidebar');
-            if (!box.is(event.target) && box.has(event.target).length === 0) {
-                box.removeClass('shown');
+            // Handle menu button click
+            if (menuBtn) {
+                menuBtn.addEventListener('click', function() {
+                    if (window.openSidebar) {
+                        window.openSidebar();
+                    }
+                });
             }
-        })
+
+            // Close sidebar when clicking on responsive container
+            if (responsiveContainer) {
+                responsiveContainer.addEventListener('click', function(event) {
+                    if (window.innerWidth < 1024 && event.target === responsiveContainer) {
+                        if (window.closeSidebar) {
+                            window.closeSidebar();
+                        }
+                    }
+                });
+            }
+
+            // Close sidebar when clicking on backdrop
+            if (sidebarBackdrop) {
+                sidebarBackdrop.addEventListener('click', function() {
+                    if (window.closeSidebar) {
+                        window.closeSidebar();
+                    }
+                });
+            }
+        });
     </script>
 @endsection

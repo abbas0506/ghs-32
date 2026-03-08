@@ -55,7 +55,7 @@ Route::get('/', function () {
 });
 
 
-// Route::view('/', '');
+// Route::view('/', 'index');
 Route::view('about', 'about');
 Route::view('contact', 'contact');
 Route::get('faculty', [FacultyController::class, 'index']);
@@ -76,7 +76,7 @@ Route::post('login/as', [AuthController::class, 'loginAs'])->name('login.as');
 Route::get('signout', [AuthController::class, 'signout'])->name('signout');
 
 Route::group(['middleware' => ['auth']], function () {
-    Route::get('dashboard', [DashboardController::class, 'index']);
+    Route::get('/dashboard', [DashboardController::class, 'index']);
 
     // users
     Route::resource('users', UserController::class);

@@ -10,43 +10,45 @@
     </div>
     <!-- pallets -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-8">
-        <a href="{{ route('sections.index') }}" class="pallet-box">
+        <a href="{{ route('sections.index') }}" class="statbox green">
             <div class="flex-1">
-                <div class="title">Classes</div>
+                <div class="uppercase text-xs font-semibold">Classes</div>
                 <div class="flex items-center">
                     <div class="h2">{{ $sections->count() }}</div>
                     <i class="bi-person text-sm ml-4"></i>
                     <p class="text-sm ml-1">{{ $students->count() }}</p>
                 </div>
             </div>
-            <div class="ico bg-green-100">
-                <i class="bi bi-layers text-green-600"></i>
+            <div class="ico">
+                <i class="bi bi-layers text-xl"></i>
             </div>
         </a>
-        <a href="{{ route('attendance.summary') }}" class="pallet-box">
+
+        <a href="{{ route('attendance.summary') }}" class="statbox indigo">
             <div class="flex-1">
-                <div class="title">Attendance
+                <div class="uppercase text-xs font-semibold">Attendance
                     @if ($attendances->count())
                         <sup><i class="bi-circle-fill text-green-500 text-xxs"></i></sup>
                     @endif
                 </div>
                 <div class="h2">{{ $attendances->count() }} / {{ $students->count() }}</div>
             </div>
-            <div class="ico bg-orange-100">
-                <i class="bi bi-person-check text-orange-400"></i>
+            <div class="ico">
+                <i class="bi bi-person-check text-xl"></i>
             </div>
         </a>
-        <a href="" class="pallet-box">
+
+        <a href="" class="statbox teal">
             <div class="flex-1">
-                <div class="title">Assessment
+                <div class="uppercase text-xs font-semibold">Assessment
                     @if ($tests->where('is_open', 1)->count())
                         <sup><i class="bi-circle-fill text-green-500 text-xxs"></i></sup>
                     @endif
                 </div>
                 <div class="h2">{{ $tests->count() }}</div>
             </div>
-            <div class="ico bg-indigo-100">
-                <i class="bi bi-clipboard-check text-indigo-400"></i>
+            <div class="ico">
+                <i class="bi bi-clipboard-check text-xl"></i>
             </div>
         </a>
     </div>

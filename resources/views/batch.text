@@ -1,67 +1,100 @@
+insert into ghs_32.subjects
+SELECT * from temp.subjects;
+
 insert into ghs_32.users
 SELECT * from temp.users;
 
-insert into ghsscb.domains
-SELECT * from temp_ghss.domains;
+INSERT INTO ghs_32.profiles (id, user_id,
+        name,
+        short_name,
+        father_name,
+        cnic,
+        dob,
+        blood_group,
+        address,
+        phone,
+        joined_at,
+        designation,
+        qualification,
+        bps,
+        personal_no,
+        seniority,
+        photo
+        )
+SELECT 
+	t.id,
+    t.user_id,
+    t.name,
+    t.short_name,
+    t.father_name,
+    t.cnic,
+    t.dob,
+    t.blood_group,
+    t.address,
+    t.phone,
+    t.joined_at,
+    t.designation,
+    t.qualification,
+    t.bps,
+    t.personal_no,
+    1,
+    t.photo
+FROM temp.teachers t
+JOIN temp.users u 
+    ON u.id = t.user_id;
 
-insert into ghsscb.racks
-SELECT * from temp_ghss.racks;
+insert into ghs_32.model_has_roles
+SELECT * from temp.model_has_roles;
 
-insert into ghsscb.books
-SELECT * from temp_ghss.books;
+update ghs_32.model_has_roles set role_id=3 where role_id=4;
 
-insert into ghsscb.events
-SELECT * from temp_ghss.events;
+insert into ghs_32.students(id,name, father_name, section_id, rollno,photo,bform,address,dob) 
+SELECT id,name, father_name, section_id, rollno,photo,bform,address,dob from temp.students;
 
 
-INSERT INTO ghsscb.applications (
-    photo,
-    name,
-    father_name,
-    bform,
-    gender,
-    phone,
-    address,
-    dob,
-    id_mark,
-    caste,
-    profession,
-    income,
-    grade,
-    group_id,
-    pass_year,
-    medium,
-    previous_school,
-    bise,
-    rollno,
-    obtained_marks,
-    max_marks,
-    status,
-    created_at
-)
+insert into ghs_32.attendances
+SELECT * from temp.attendances;
+
+INSERT INTO ghs_32.allocations (id, user_id, subject_id, section_id,lecture_no)
 SELECT
-    photo,
-    name,
-    father_name,
-    bform,
-    gender,
-    phone,
-    address,
-    dob,
-    id_mark,
-    caste,
-    father_profession,
-    father_income,
-    admission_grade,
-    group_id,
-    pass_year,
-    medium,
-    previous_school,
-    bise,
-    rollno,
-    obtained_marks,
-    max_marks,
-    status,
-    created_at
-FROM
-    temp_ghss.applications;
+    a.id,
+    t.user_id,
+    a.subject_id,
+    a.section_id,
+    a.lecture_no
+FROM temp.allocations a
+JOIN temp.teachers t 
+    ON a.teacher_id = t.id;
+
+insert into ghs_32.tests
+SELECT * from temp.tests;
+
+INSERT INTO ghs_32.test_allocations (id, 
+                                     user_id, 
+                                     test_id, 
+                                     subject_id,
+                                     section_id, 
+                                     test_date, 
+                                     max_marks, 
+                                     result_date, 
+                                     lecture_no, 
+                                     created_at, 
+                                     updated_at)
+SELECT 
+    ta.id,
+    t.user_id,
+    ta.test_id, 
+    ta.subject_id,
+    ta.section_id, 
+    ta.test_date,  
+    ta.max_marks, 
+    ta.result_date, 
+    ta.lecture_no, 
+    ta.created_at, 
+    ta.updated_at
+FROM temp.test_allocations ta
+JOIN temp.teachers t
+    ON ta.teacher_id = t.id;
+
+insert into ghs_32.results
+SELECT * from temp.results;

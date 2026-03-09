@@ -62,7 +62,13 @@
                         </td>
                         <td>
                             @if ($percent == 100)
-                                <i class="bi-check text-green-600"></i>
+                                {{-- green rounded pill with 100% label --}}
+                                <div class="flex justify-center">
+
+                                    <div class="bg-green-600 h-4 rounded-full text-xs text-white text-center w-16">
+                                        {{ $percent }}%
+                                    </div>
+                                </div>
                             @else
                                 <div class="w-full bg-gray-200 rounded-full h-4">
                                     <div class="bg-green-600 h-4 rounded-full text-xs text-white text-center"

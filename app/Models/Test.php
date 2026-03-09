@@ -33,6 +33,10 @@ class Test extends Model
         return $this->hasMany(TestAllocation::class);
     }
 
+    public function scopeOpen($query)
+    {
+        return $query->where('is_open', true);
+    }
     public function scopeCombined($query)
     {
         return $query->whereNull('user_id');
@@ -50,5 +54,14 @@ class Test extends Model
             });
         }
         return $query;
+    }
+    public function scopeMine($query)
+    {
+        if (Auth::user()->hasAnyRole('admin|head')) {
+            return $query;
+        }
+        return $query->whereHas('testAllocations', function ($q) {
+            $q->where('user_id', Auth::user()->id);
+        });
     }
 }

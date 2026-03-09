@@ -16,7 +16,7 @@
             <h2>Result</h2>
             @if ($test->testAllocations()->mine()->count())
                 <p>{{ $test->testAllocations()->mine()->resultSubmitted()->count() }}/{{ $test->testAllocations()->mine()->count() }}
-                    ({{ round($test->testAllocations()->mine()->resultSubmitted()->count() * 100, 0) }}%)
+                    ({{ round(($test->testAllocations()->mine()->resultSubmitted()->count() / $test->testAllocations()->mine()->count()) * 100, 0) }}%)
                 </p>
                 <p class="text-xs text-green-600"><i
                         class="bi-arrow-up"></i>{{ $test->testAllocations()->resultSubmitted()->today()->count() }}
@@ -101,71 +101,79 @@
                             class="bi-question"></i></span>
 
                 </div>
-            </div>
-            <table class="table-fixed borderless w-full mt-8">
-                <thead>
-                    <tr>
-                        <th class="w-8">Sr</th>
-                        <th class="text-left w-48">Subject</th>
-                        <th class="w-12">Marks</th>
-                        <th class="w-12"></th>
-                    </tr>
-                </thead>
-                <tbody>
-
-                    @foreach ($test->testAllocations()->mine()->get()->sortBy(['section_id', 'lecture_no']) as $testAllocation)
-                        <tr class="tr">
-                            <td>{{ $loop->index + 1 }} </td>
-                            <td class="text-left">
-                                <a href="{{ route('test.test-allocations.show', [$test, $testAllocation]) }}"
-                                    class="link">
-                                    {{ $testAllocation->subject->short_name }} -
-                                    {{ $testAllocation->section->name }}
-                                    @if ($testAllocation->result_date)
-                                        <i class="bi-check"></i>
-                                    @endif
-                                </a>
-                                <br>
-                                <span class="text-slate-500 text-xs">{{ $testAllocation->user?->name }}</span>
-                            </td>
-                            <td>{{ $testAllocation->max_marks }}</td>
-                            <td class="@if ($testAllocation->result_date) submitted @else pending @endif">
-                                @if ($testAllocation->result_date)
-                                    <form action="{{ route('test-allocation.unlock', $testAllocation) }}" method='post'>
-                                        @csrf
-                                        @method('patch')
-                                        <button type="submit"><i class="bi-check text-green-600 font-bold"></i></button>
-                                    </form>
-                                @else
-                                    <form action="{{ route('test-allocation.lock', $testAllocation) }}" method='post'>
-                                        @csrf
-                                        @method('patch')
-                                        <button type="submit"><i class="bi-question text-red-600 "></i></button>
-                                    </form>
-                                @endif
-                            </td>
-                        </tr>
-                    @endforeach
-
-                </tbody>
-            </table>
-        @else
-            {{-- test closed --}}
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
-                @foreach ($sections as $section)
-                    <div class="p-5 rounded bg-slate-100">
-                        <h3>{{ $section->name }}</h3>
-                        <div class="grid gap-[2px] mt-2 text-xs md:text-sm">
-                            <a href="{{ route('section-result', [$test, $section]) }}" class="link"
-                                target="_blank">Section Result</a>
-                            <a href="{{ route('section-positions', [$test, $section]) }}" class="link"
-                                target="_blank">Positions List</a>
-                            <a href="{{ route('report-cards', [$test, $section]) }}" class="link" target="_blank">Report
-                                Cards</a>
+                <div>
+                    {{-- calculate percentage of test allocations submited and  draw pie graph --}}
+                    <?php
+                    $submitted = $test->testAllocations()->mine()->resultSubmitted()->count();
+                    $total = $test->testAllocations()->mine()->count();
+                    $percent = $total > 0 ? round(($submitted / $total) * 100, 0) : 0;
+                    $hue = $percent * 1.2; // convert 0-100 → 0-120
+                    ?>
+                    {{-- draw pie graph --}}
+                    <div class="w-12 h-12 rounded-full bg-gray-200 relative">
+                        <div class="absolute top-0 left-0 w-full h-full rounded-full clip-auto"
+                            style="background: conic-gradient(#50b174 {{ $percent }}%, #e5e7eb {{ $percent }}%)">
                         </div>
+                        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-xs">
+                            {{ $percent }}%
+                        </div>
+
                     </div>
-                @endforeach
-            </div>
+                </div>
+                <table class="table-fixed borderless w-full mt-8">
+                    <thead>
+                        <tr>
+                            <th class="w-8">Sr</th>
+                            <th class="text-left w-24">Subject</th>
+                            <th class="w-12">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        @foreach ($test->testAllocations()->mine()->get()->sortBy(['section_id', 'lecture_no']) as $testAllocation)
+                            <tr class="tr">
+                                <td>{{ $loop->index + 1 }} </td>
+                                <td class="text-left">
+                                    <a href="{{ route('test.test-allocations.show', [$test, $testAllocation]) }}"
+                                        class="link">
+                                        {{ $testAllocation->subject->short_name }} -
+                                        {{ $testAllocation->section->name }}
+                                    </a>
+                                    <br>
+                                    <span class="text-slate-500 text-xs">{{ $testAllocation->user?->profile->name }}</span>
+                                </td>
+                                <td>
+                                    @if ($testAllocation->result_date)
+                                        {{-- green rounded pill with submitted label --}}
+                                        <span
+                                            class="bg-green-100 text-green-600 text-xs px-2 py-1 rounded-full">Submitted</span>
+                                    @else
+                                        <span class="bg-red-100 text-red-600 text-xs px-2 py-1 rounded-full">Pending</span>
+                                    @endif
+                                </td>
+                            </tr>
+                        @endforeach
+
+                    </tbody>
+                </table>
+            @else
+                {{-- test closed --}}
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
+                    @foreach ($sections as $section)
+                        <div class="p-5 rounded bg-slate-100">
+                            <h3>{{ $section->name }}</h3>
+                            <div class="grid gap-[2px] mt-2 text-xs md:text-sm">
+                                <a href="{{ route('section-result', [$test, $section]) }}" class="link"
+                                    target="_blank">Section Result</a>
+                                <a href="{{ route('section-positions', [$test, $section]) }}" class="link"
+                                    target="_blank">Positions List</a>
+                                <a href="{{ route('report-cards', [$test, $section]) }}" class="link"
+                                    target="_blank">Report
+                                    Cards</a>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
         @endif
     </div>
 @endsection

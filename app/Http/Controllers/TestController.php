@@ -18,12 +18,6 @@ class TestController extends Controller
     {
         //
         $this->authorize('viewAny', Test::class);
-        // $tests = Test::accessible()->get();
-        // $tests = Test::all();
-        // // find all test whose status is open and user has access to the test allocations   
-        // $tests = $tests->filter(function ($test) {
-        //     return $test->is_open && $test->testAllocations()->mine()->exists();
-        // });
         $tests = Test::mine()->get();
         return view('tests.index', compact('tests'));
     }

@@ -40,24 +40,20 @@
 
                 @foreach ($tests->sortByDesc('created_at') as $test)
                     @php
-                        $percent = round(
-                            ($test->testAllocations()->mine()->resultSubmitted()->count() /
-                                $test->testAllocations()->mine()->count()) *
-                                100,
-                            0,
-                        );
+                        $sumbittedCount = $test->testAllocations()->mine()->resultSubmitted()->count();
+                        $totalCount = $test->testAllocations()->mine()->count();
+                        $percent = $totalCount > 0 ? round(($sumbittedCount / $totalCount) * 100, 0) : 0;
                     @endphp
                     <tr class="tr">
                         <td>{{ $loop->index + 1 }}</td>
                         <td class="text-left">
                             @if ($test->is_open)
                                 <a href="{{ route('tests.show', $test) }}" class="link">{{ $test->title }}</a>
-                                <br><span class="text-slate-500 text-xs text-slate-400">
+                                <br><span class="text-slate-500 text-xs">
                                     {{ $test->created_at->format('d/m/Y H:i') }}</span>
                             @else
                                 <a href="{{ route('tests.show', $test) }}">{{ $test->title }}</a>
-                                <br><span
-                                    class="text-slate-500 text-xs text-slate-400">{{ $test->created_at->format('d/m/Y H:i') }}</span>
+                                <br><span class="text-slate-500 text-xs">{{ $test->created_at->format('d/m/Y H:i') }}</span>
                             @endif
                         </td>
                         <td>

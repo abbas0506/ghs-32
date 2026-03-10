@@ -3,53 +3,63 @@
     <!--welcome  -->
     <div class="flex items-center">
         <div class="bread-crumb">
-            <div>#</div>
-            <div>/</div>
-            <div><i class="bi-house"></i></div>
+            <p class="font-semibold">Welcome back {{ Auth::user()->profile->short_name }}!</p>
         </div>
     </div>
     <!-- pallets -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-8">
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-4 mt-5 md:mt-8 text-xs md:text-sm">
         <a href="{{ route('sections.index') }}" class="statbox green">
-            <div class="flex-1">
-                <div class="uppercase text-xs font-semibold">Classes</div>
-                <div class="flex items-center">
-                    <div class="h2">{{ $sections->count() }}</div>
-                    <i class="bi-person text-sm ml-4"></i>
-                    <p class="text-sm ml-1">{{ $students->count() }}</p>
+            <div class="flex justify-between items-center flex-1">
+                <div class="">Students</div>
+                <div class="ico">
+                    <i class="bi bi-people text-sm md:text-lg"></i>
                 </div>
             </div>
-            <div class="ico">
-                <i class="bi bi-layers text-xl"></i>
+            <div class="flex items-center mt-[1px] text-lg font-semibold">{{ $students->count() }}
+                <span class="font-normal text-xs ml-2"><i class="bx bx-trending-up"></i>
+                    +{{ $newAdmissions->count() }}</span>
             </div>
         </a>
 
         <a href="{{ route('attendance.summary') }}" class="statbox indigo">
-            <div class="flex-1">
-                <div class="uppercase text-xs font-semibold">Attendance
-                    @if ($attendances->count())
-                        <sup><i class="bi-circle-fill text-green-500 text-xxs"></i></sup>
-                    @endif
+            <div class="flex justify-between items-center">
+                <div class="">Attendance</div>
+                <div class="ico">
+                    <i class="bi bi-person-check text-sm md:text-lg"></i>
                 </div>
-                <div class="h2">{{ $attendances->count() }} / {{ $students->count() }}</div>
             </div>
-            <div class="ico">
-                <i class="bi bi-person-check text-xl"></i>
+            <div class="font-semibold text-lg mt-[1px]">{{ round(($attendances->count() / $students->count()) * 100, 1) }}%
+                @if ($attendanceChange > 0)
+                    <span class="text-green-500 font-normal text-xs ml-2"><i class="bx bx-trending-up"></i>
+                        {{ $attendanceChange }}%</span>
+                @else
+                    <span class="text-red-500 font-normal text-xs ml-2"><i class="bx bx-trending-down"></i>
+                        {{ $attendanceChange }}%</span>
+                @endif
+
+                {{-- round green badge  --}}
+                <span class="bg-indigo-200 text-indigo-800 font-normal text-[10px] rounded-full px-2 py-[1px]">Last
+                    week</span>
             </div>
         </a>
 
         <a href="" class="statbox teal">
-            <div class="flex-1">
-                <div class="uppercase text-xs font-semibold">Assessment
-                    @if ($tests->where('is_open', 1)->count())
-                        <sup><i class="bi-circle-fill text-green-500 text-xxs"></i></sup>
-                    @endif
+            <div class="flex justify-between items-center">
+                <div>Assessment</div>
+                <div class="ico">
+                    <i class="bi bi-clipboard-check text-sm md:text-lg"></i>
                 </div>
-                <div class="h2">{{ $tests->count() }}</div>
             </div>
-            <div class="ico">
-                <i class="bi bi-clipboard-check text-xl"></i>
+            <div class="font-semibold text-lg mt-[1px]">{{ $tests->count() }}</div>
+        </a>
+        <a href="{{ route('sections.index') }}" class="statbox orange">
+            <div class="flex justify-between items-center flex-1">
+                <div class="">My Tasks</div>
+                <div class="ico">
+                    <i class="bi bi-calendar-event text-sm md:text-lg"></i>
+                </div>
             </div>
+            <div class="mt-[1px] text-lg font-semibold">{{ $students->count() }}</div>
         </a>
     </div>
 

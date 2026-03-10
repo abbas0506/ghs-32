@@ -26,7 +26,7 @@
 
             <div class="relative">
                 <button id="userAvatarBtn" aria-haspopup="true" aria-expanded="false" type="button"
-                    class="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-500 text-white rounded-full flex items-center justify-center shadow-md focus:outline-none z-50">
+                    class="w-10 h-10 bg-indigo-500 text-white rounded-full flex items-center justify-center shadow-md focus:outline-none z-50">
                     <span class="font-semibold">{{ $initials }}</span>
                 </button>
 

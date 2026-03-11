@@ -7,24 +7,28 @@
         <div>Assessment</div>
     </div>
 
-    <div class="grid grid-cols-2 md:w-4/5 gap-4 mx-auto mt-6">
+    <div class="grid grid-cols-2 md:w-4/5 gap-2 md:gap-4 mx-auto mt-6">
         <div class="statbox teal">
             <div class="flex justify-between items-center">
-                <p class="text-sm md:text-lg font-semibold">Open Tests</p>
+                <p class="text-xs md:text-sm">Open Tests</p>
                 <div class="ico">
                     <i class="bi bi-unlock text-sm md:text-lg"></i>
                 </div>
             </div>
-            <div class="font-semibold text-lg mt-[1px]">{{ $tests->where('is_open', true)->count() }}</div>
+            <div class="font-semibold text-sm md:text-lg mt-1">{{ $tests->where('is_open', true)->count() }} <span
+                    class="px-3 py-[2px] bg-teal-100 text-teal-600 rounded-full text-xs ml-3"> <i
+                        class="bx bx-trending-up"></i>+{{ $testsThisWeek->count() > 0 ? $testsThisWeek->count() : 0 }}</span>
+            </div>
         </div>
         <div class="statbox primary">
             <div class="flex justify-between items-center">
-                <p class="text-sm md:text-lg font-semibold">Data Progress</p>
+                <p class="text-xs md:text-sm">Data Progress</p>
                 <div class="ico">
                     <i class="bi bi-graph-up text-sm md:text-lg"></i>
                 </div>
             </div>
-            <div class="font-semibold text-lg mt-[1px]">{{ $tests->where('is_open', true)->count() }}</div>
+            <div class="font-semibold text-sm md:text-lg mt-1">{{ $dataProgress }}% <span
+                    class="bg-indigo-100 text-indigo-600 px-2 py-[2px] rounded-full text-xs ml-3"> Overall </span></div>
         </div>
     </div>
 

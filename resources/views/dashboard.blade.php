@@ -52,14 +52,17 @@
             </div>
             <div class="font-semibold text-lg mt-[1px]">{{ $tests->count() }}</div>
         </a>
-        <a href="{{ route('sections.index') }}" class="statbox orange">
+        <a href="{{ route('tasks.index') }}" class="statbox orange">
             <div class="flex justify-between items-center flex-1">
                 <div class="">My Tasks</div>
                 <div class="ico">
                     <i class="bi bi-calendar-event text-sm md:text-lg"></i>
                 </div>
             </div>
-            <div class="mt-[1px] text-lg font-semibold">{{ $students->count() }}</div>
+            <div class="mt-[1px] text-lg font-semibold">{{ $pendingAssignments->count() }} <span
+                    class="bg-orange-100 text-orange-600 font-normal text-[10px] rounded-full px-2 py-[1px]"> <i
+                        class="bi-clock"></i> +{{ $tasksDue->count() }} this
+                    week</span></div>
         </a>
     </div>
 

@@ -20,9 +20,19 @@ class TestController extends Controller
         $this->authorize('viewAny', Test::class);
         $tests = Test::mine()->get();
         // find test that have been created this week
+        $testsThisWeek = $tests->where('created_at', '>=', now()->subWeek());
 
+        // find % of number of testAllocations that have results submitted for the above tests
+        $resultsCount = 0;
+        $totalAllocations = 0;
+        foreach ($tests as $test) {
+            $resultsCount += $test->testAllocations()->mine()->resultSubmitted()->count();
+            $totalAllocations += $test->testAllocations()->mine()->count();
+        }
 
-        return view('tests.index', compact('tests'));
+        $dataProgress = $totalAllocations > 0 ? round(($resultsCount / $totalAllocations) * 100) : 0;
+
+        return view('tests.index', compact('tests', 'testsThisWeek', 'dataProgress'));
     }
 
     /**

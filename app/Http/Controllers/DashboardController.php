@@ -32,7 +32,20 @@ class DashboardController extends Controller
         $yesterdayAttendance = Attendance::where('date', Carbon::yesterday())->where('status', 1)->count();
         $attendanceChange = $yesterdayAttendance > 0 ? round((($attendances->count() - $yesterdayAttendance) / $yesterdayAttendance) * 100, 1) : 0;
 
-        return view('dashboard', compact('students', 'tests', 'attendances', 'newAdmissions', 'maxAttendance', 'attendanceChange'));
+        // find my tasks that are due in next 7 days
+        $tasksDue = collect();
+        // go through assignments and find current user's assignments that have not been yet completed
+        $pendingAssignments = Auth::user()->assignments()->where('status', 0)->with('task')->get();
+        // find the tasks for the above pending assignments whose last date is within next 7 days and add to tasksDue collection
+        foreach ($pendingAssignments as $assignment) {
+            if ($assignment->task->due_date >= now() && $assignment->task->due_date <= now()->addDays(7) && !$tasksDue->contains($assignment->task)) {
+                $tasksDue->push($assignment->task);
+            }
+        }
+
+
+
+        return view('dashboard', compact('students', 'tests', 'attendances', 'newAdmissions', 'maxAttendance', 'attendanceChange', 'tasksDue', 'pendingAssignments'));
     }
 
     /**

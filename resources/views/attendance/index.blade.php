@@ -22,18 +22,31 @@
                 </a>
             @endif
         </div>
-        <div class="grid grid-cols-3 gap-2 md:gap-4 mt-2">
+        <div class="grid grid-cols-2 gap-2 md:gap-4 mt-2">
             <div c>
                 <p class="text-xs font-semibold mb-1">Present</p>
-                <p class="text-lg font-bold">{{ $attendances->where('status', 1)->count() }}</p>
+                <p class="text-lg font-bold">{{ $attendances->where('status', 1)->count() }} / {{ $attendances->count() }}
+                </p>
             </div>
             <div>
-                <p class="text-xs font-semibold mb-1">Absent</p>
-                <p class="text-lg font-bold">{{ $attendances->where('status', 0)->count() }}</p>
-            </div>
-            <div>
-                <p class="text-xs font-semibold mb-1">Total</p>
-                <p class="text-lg font-bold">{{ $attendances->count() }}</p>
+                <p class="text-xs font-semibold mb-1">Percentage</p>
+                <p class="text-lg font-bold">
+                    {{ $attendances->count() > 0 ? round(($attendances->where('status', 1)->count() / $attendances->count()) * 100, 1) : 0 }}%
+                    {{-- show similey according to attendance percentage --}}
+                    <?php
+                    $similey = 'neutral';
+                    $percentage = $attendances->count() > 0 ? round(($attendances->where('status', 1)->count() / $attendances->count()) * 100, 1) : 0;
+                    if ($percentage >= 90) {
+                        $similey = 'smile';
+                    } elseif ($percentage < 90 && $percentage >= 75) {
+                        $similey = 'neutral';
+                    } else {
+                        $similey = 'angry';
+                    }
+                    ?>
+                    <i class="bi bi-emoji-<?php echo $similey; ?> text-2xl"></i>
+                </p>
+
             </div>
         </div>
     </div>
@@ -44,7 +57,8 @@
         <x-message></x-message>
     @endif
 
-    <div class="flex justify-between items-center flex-wrap gap-3 mt-8">
+    <div class="flex
+                        justify-between items-center flex-wrap gap-3 mt-8">
         <!-- Tabs -->
         <div class="flex flex-wrap items-center gap-x-2 text-sm mt-8">
             <span class="text-slate-600 hover:cursor-pointer" onclick="filterBy('all')"><i class="bi-filter"></i></span>

@@ -24,4 +24,8 @@ class Attendance extends Model
     {
         return $query->where('status', 0)->whereDate('date', '<', today());
     }
+    public function scopePresences($query)
+    {
+        return $query->where('status', 1)->whereDate('date', '<=', today());
+    }
 }

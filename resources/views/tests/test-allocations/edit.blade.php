@@ -32,10 +32,7 @@
 
             <div>
                 <select name="user_id" id="" class="custom-input-borderless">
-                    @foreach ($users->sortByDesc('bps') as $user)
-                        <option value="{{ $user->id }}" @selected($user->id == $testAllocation->user_id)>{{ $user->profile->name }}
-                        </option>
-                    @endforeach
+
                 </select>
 
             </div>

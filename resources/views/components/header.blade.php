@@ -1,4 +1,4 @@
-<header class="sticky-header no-auth" id='header'>
+<header class="sticky-header ml-0 no-auth" id='header'>
     <div class="flex flex-wrap w-full h-16 items-center justify-between md:px-5">
 
         <a href="{{ url('/') }}" class="flex text-xl font-bold items-center">

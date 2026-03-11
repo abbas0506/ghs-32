@@ -13,7 +13,7 @@
 
     <div class="grid md:grid-cols-1 md:w-4/5 mx-auto mt-6 bg-white md:p-8 p-4 rounded border gap-3">
         <div class="flex items-center justify-between">
-            <h2>Results</h2>
+            <h2>Result Submission</h2>
             <div class="flex items-center space-x-3">
                 {{-- calculate percentage of test allocations submited and  draw pie graph --}}
                 <?php
@@ -44,46 +44,47 @@
 
                 @if ($test->is_open)
                     {{-- new allocation --}}
-                    <a href="{{ route('test.test-allocations.create', $test) }}"
-                        class="flex justify-center items-center w-8 h-8 btn-teal rounded-full text-xs"><i
-                            class="bi-plus-lg text-blue-600 text-white"></i></a>
-                    {{-- test edit button --}}
-                    <a href="{{ route('tests.edit', $test) }}"
-                        class="flex justify-center items-center w-8 h-8 btn-teal rounded-full text-xs">
-                        <i class="bx bx-pencil text-slate-50"></i>
-                    </a>
-                    {{-- delete button --}}
-                    @can('delete', $test)
-                        <form action="{{ route('tests.destroy', $test) }}" method="POST" onsubmit="confirmDel(event)">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit"
-                                class="flex justify-center items-center w-8 h-8 btn-red rounded-full text-xs">
-                                <i class="bi-trash3 text-white"></i>
-                            </button>
-                        </form>
-                    @endcan
-                    @can('lock', $test)
-                        <form action="{{ route('test.lock', $test) }}" method='post'>
-                            @csrf
-                            @method('patch')
-                            <button type="submit"
-                                class="flex justify-center items-center w-8 h-8 btn-cyan rounded-full text-xs">
-                                <i class="bi-unlock text-white font-bold"></i></button>
-                        </form>
-                    @endcan
-                @else
-                    @can('unlock', $test)
-                        <form action="{{ route('test.unlock', $test) }}" method='post'>
-                            @csrf
-                            @method('patch')
-                            <button type="submit"
-                                class="flex justify-center items-center w-8 h-8 btn-red rounded-full text-xs"><i
-                                    class="bi-lock text-white font-bold"></i></button>
-                        </form>
-                    @endcan
-                @endif
-
+                    @role('admin|head')
+                        <a href="{{ route('test.test-allocations.create', $test) }}"
+                            class="flex justify-center items-center w-8 h-8 btn-teal rounded-full text-xs"><i
+                                class="bi-plus-lg text-blue-600"></i></a>
+                        {{-- test edit button --}}
+                        <a href="{{ route('tests.edit', $test) }}"
+                            class="flex justify-center items-center w-8 h-8 btn-teal rounded-full text-xs">
+                            <i class="bx bx-pencil text-slate-50"></i>
+                        </a>
+                        {{-- delete button --}}
+                        @can('delete', $test)
+                            <form action="{{ route('tests.destroy', $test) }}" method="POST" onsubmit="confirmDel(event)">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit"
+                                    class="flex justify-center items-center w-8 h-8 btn-red rounded-full text-xs">
+                                    <i class="bi-trash3 text-white"></i>
+                                </button>
+                            </form>
+                        @endcan
+                        @can('lock', $test)
+                            <form action="{{ route('test.lock', $test) }}" method='post'>
+                                @csrf
+                                @method('patch')
+                                <button type="submit"
+                                    class="flex justify-center items-center w-8 h-8 btn-cyan rounded-full text-xs">
+                                    <i class="bi-unlock text-white font-bold"></i></button>
+                            </form>
+                        @endcan
+                    @else
+                        @can('unlock', $test)
+                            <form action="{{ route('test.unlock', $test) }}" method='post'>
+                                @csrf
+                                @method('patch')
+                                <button type="submit"
+                                    class="flex justify-center items-center w-8 h-8 btn-red rounded-full text-xs"><i
+                                        class="bi-lock text-white font-bold"></i></button>
+                            </form>
+                        @endcan
+                    @endif
+                @endrole
 
             </div>
         </div>
@@ -150,9 +151,9 @@
                                 @if ($testAllocation->result_date)
                                     {{-- green rounded pill with submitted label --}}
                                     <span
-                                        class="bg-green-100 text-green-600 text-[10px] px-2 py-1 rounded-full">Submitted</span>
+                                        class="bg-green-100 text-green-600 text-xs px-2 py-[1px] rounded-full">Submitted</span>
                                 @else
-                                    <span class="bg-red-100 text-red-600 text-[10px] px-2 py-1 rounded-full">Pending</span>
+                                    <span class="bg-red-100 text-red-600 text-xs px-2 py-[1px] rounded-full">Pending</span>
                                 @endif
                             </td>
                         </tr>

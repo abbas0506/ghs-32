@@ -18,11 +18,10 @@
         @endif
 
         <!-- Absence Statistics Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:w-4/5 mx-auto mt-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mt-8">
             <!-- Card 1: Current Month Absence -->
-            <div
-                class="bg-gradient-to-br from-white to-orange-50 rounded-xl shadow-lg hover:shadow-xl p-6 border border-orange-200 transition-all duration-300 transform hover:scale-105">
-                <div class="flex items-start justify-between mb-6">
+            <div class="statbox orange">
+                <div class="flex items-start justify-between mb-3">
                     <div>
                         <p class="text-orange-600 text-xs font-semibold uppercase tracking-widest mb-1">Current Month</p>
                         <h3 class="text-slate-800 font-bold text-xl">{{ now()->format('M Y') }}</h3>
@@ -68,7 +67,7 @@
             <!-- Card 2: Overall Session Absence -->
             <div
                 class="bg-gradient-to-br from-white to-indigo-50 rounded-xl shadow-lg hover:shadow-xl p-6 border border-indigo-200 transition-all duration-300 transform hover:scale-105">
-                <div class="flex items-start justify-between mb-6">
+                <div class="flex items-start justify-between mb-3">
                     <div>
                         <p class="text-indigo-600 text-xs font-semibold uppercase tracking-widest mb-1">Overall Progress</p>
                         <h3 class="text-slate-800 font-bold text-xl">{{ $sessionStart->format('M Y') }} onwards</h3>
@@ -114,7 +113,7 @@
             </div>
         </div>
 
-        <div class="md:w-4/5 mx-auto overflow-x-auto bg-white w-full mt-8 p-6">
+        <div class="overflow-x-auto bg-white w-full mt-8">
             <div class="flex items-center gap-4 mb-6">
                 @php
                     $initials = strtoupper(implode('', array_map(fn($w) => $w[0] ?? '', explode(' ', $student->name))));
@@ -132,54 +131,43 @@
                     $bgColor = $colors[$colorIndex];
                 @endphp
                 <div
-                    class="w-16 h-16 rounded-full {{ $bgColor }} flex items-center justify-center text-white font-bold text-xl shadow-md">
+                    class="flex w-8 h-8 p-1 rounded-full {{ $bgColor }} flex items-center justify-center text-white font-bold text-sm shadow-md">
                     {{ $initials }}
                 </div>
                 <div>
-                    <h2 class="text-xl font-semibold text-slate-800">{{ $student->name }}</h2>
+                    <h2 class="font-semibold text-slate-800">{{ $student->name }}</h2>
                     <p class="text-slate-600 text-sm">{{ $student->father_name }}</p>
                 </div>
             </div>
 
             @if ($attendances->count())
                 <div class="mt-8">
-                    <h3 class="text-lg font-semibold text-slate-800 mb-4 flex items-center gap-2">
+                    <h3 class="font-semibold text-slate-800 mb-4 flex items-center gap-2">
                         <i class="bi bi-x-circle text-red-500"></i>
                         Absence Record <span class="text-sm font-normal text-slate-500">({{ $attendances->count() }}
                             entries)</span>
                     </h3>
                     <div class="overflow-x-auto rounded-lg border border-slate-200">
-                        <table class="w-full">
-                            <thead class="bg-slate-50 border-b border-slate-200">
+                        <table class="table-fixed w-full">
+                            <thead class="bg-slate-50 text-slate-700">
                                 <tr>
-                                    <th
-                                        class="px-6 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wide w-12">
-                                        #</th>
-                                    <th
-                                        class="px-6 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wide">
-                                        Date</th>
-                                    <th
-                                        class="px-6 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wide">
-                                        Day</th>
-                                    <th
-                                        class="px-6 py-4 text-center text-xs font-semibold text-slate-700 uppercase tracking-wide">
-                                        Status</th>
+                                    <th class="w-8">#</th>
+                                    <th class="w-36">Date</th>
+                                    <th class="w-16">Day</th>
+                                    <th class="w-24">Status</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-slate-200">
                                 @foreach ($attendances as $attendance)
                                     <tr class="hover:bg-slate-50 transition-colors duration-150">
-                                        <td class="px-6 py-4 text-sm text-slate-700 font-medium">{{ $loop->index + 1 }}
+                                        <td class=" text-slate-700 font-medium">{{ $loop->index + 1 }}
                                         </td>
-                                        <td class="px-6 py-4 text-sm text-slate-700">
-                                            <div class="flex items-center gap-2">
-                                                <i class="bi bi-calendar-event text-slate-400"></i>
-                                                {{ $attendance->date->format('d M Y') }}
-                                            </div>
+                                        <td>
+                                            {{ $attendance->date->format('d M Y') }}
                                         </td>
-                                        <td class="px-6 py-4 text-sm text-slate-700">
+                                        <td>
                                             {{ $attendance->date->locale('ur')->isoFormat('dddd') }}</td>
-                                        <td class="px-6 py-4 text-center">
+                                        <td>
                                             <span
                                                 class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-800">
                                                 <i class="bi bi-x-circle mr-1"></i>

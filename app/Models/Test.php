@@ -37,6 +37,10 @@ class Test extends Model
     {
         return $query->where('is_open', true);
     }
+    public function scopeClosed($query)
+    {
+        return $query->where('is_open', false);
+    }
     public function scopeCombined($query)
     {
         return $query->whereNull('user_id');
@@ -60,7 +64,7 @@ class Test extends Model
         if (Auth::user()->hasAnyRole('admin|head')) {
             return $query;
         }
-        return $query->whereHas('testAllocations', function ($q) {
+        return $query->open()->whereHas('testAllocations', function ($q) {
             $q->where('user_id', Auth::user()->id);
         });
     }

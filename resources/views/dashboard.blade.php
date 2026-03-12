@@ -43,7 +43,7 @@
             </div>
         </a>
 
-        <a href="" class="statbox teal">
+        <a href="{{ route('tests.index') }}" class="statbox teal">
             <div class="flex justify-between items-center">
                 <div>Assessment</div>
                 <div class="ico">

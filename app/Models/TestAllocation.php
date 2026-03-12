@@ -83,9 +83,14 @@ class TestAllocation extends Model
     public function scopeMine($query)
     {
 
-        if (Auth::user()->hasAnyRole(['head', 'admin'])) {
+        // check if session has role 'head' or 'admin', return all
+        if (session('role') == 'head' || session('role') == 'admin') {
             return $query;
         }
+
+        // if (Auth::user()->hasAnyRole(['head', 'admin'])) {
+        //     return $query;
+        // }
 
         return $query->where('user_id', auth()->id());
     }

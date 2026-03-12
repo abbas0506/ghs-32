@@ -61,7 +61,7 @@ class Test extends Model
     }
     public function scopeMine($query)
     {
-        if (Auth::user()->hasAnyRole('admin|head')) {
+        if (session('role') == 'head' || session('role') == 'admin') {
             return $query;
         }
         return $query->open()->whereHas('testAllocations', function ($q) {

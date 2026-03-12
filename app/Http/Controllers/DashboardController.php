@@ -19,7 +19,7 @@ class DashboardController extends Controller
     {
         //
         $students = Student::all();
-        $tests = Test::all();
+        $tests = Test::mine();
         // get attendances for today with status 1
         $attendances = Attendance::where('date', today())->where('status', 1)->get();
         $maxAttendance = $students->count() > 0 ? $students->count() : 1; // to avoid division by zero
@@ -28,11 +28,9 @@ class DashboardController extends Controller
 
         // maximum attendace during last week
         $maxAttendance = Attendance::where('date', '>=', now()->subDays(7))->where('status', 1)->count();
-        // attendance change compared to yesterday
-        $yesterdayAttendance = Attendance::where('date', Carbon::yesterday())->where('status', 1)->count();
-        $attendanceChange = $yesterdayAttendance > 0 ? round((($attendances->count() - $yesterdayAttendance) / $yesterdayAttendance) * 100, 1) : 0;
+        //maximum attendanec percentage during last week
+        $highestAttenancePercentage = $maxAttendance > 0 ? round(($maxAttendance / $maxAttendance) * 100, 1) : 0;
 
-        // find my tasks that are due in next 7 days
         $tasksDue = collect();
         // go through assignments and find current user's assignments that have not been yet completed
         $pendingAssignments = Auth::user()->assignments()->where('status', 0)->with('task')->get();
@@ -42,10 +40,11 @@ class DashboardController extends Controller
                 $tasksDue->push($assignment->task);
             }
         }
+        // get new tests for last 7 days
+        $newTests = Test::where('created_at', '>=', now()->subDays(7))->get();
 
 
-
-        return view('dashboard', compact('students', 'tests', 'attendances', 'newAdmissions', 'maxAttendance', 'attendanceChange', 'tasksDue', 'pendingAssignments'));
+        return view('dashboard', compact('students', 'tests', 'attendances', 'newAdmissions', 'maxAttendance', 'highestAttenancePercentage', 'tasksDue', 'pendingAssignments'));
     }
 
     /**

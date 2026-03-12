@@ -30,7 +30,6 @@
                     <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-xs">
                         {{ $percent }}%
                     </div>
-
                 </div>
                 <p class="text-xs text-green-600"><i
                         class="bi-arrow-up"></i>{{ $test->testAllocations()->resultSubmitted()->today()->count() }}

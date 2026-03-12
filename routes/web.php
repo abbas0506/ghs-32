@@ -11,6 +11,7 @@ use App\Http\Controllers\FeeController;
 use App\Http\Controllers\GallaryController;
 use App\Http\Controllers\ImportStudentController;
 use App\Http\Controllers\LedgerController;
+use App\Http\Controllers\LessonPlanController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SalaryController;
 use App\Http\Controllers\ScheduleController;
@@ -146,6 +147,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::resource('test-allocation.results', TestAllocationResultController::class);
     Route::resource('test-allocation.import', ImportStudentController::class);
 
+    Route::resource('lesson-plans', LessonPlanController::class);
     // lock /unlock
     Route::patch('test/{id}/lock', [TestController::class, 'lock'])->name('test.lock');
     Route::patch('test/{id}/unlock', [TestController::class, 'unlock'])->name('test.unlock');

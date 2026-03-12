@@ -76,7 +76,7 @@
         {{-- roles --}}
         <div class="md:w-4/5 mx-auto mt-6 bg-white md:p-8 p-4 rounded border relative">
 
-            <form action="{{ route('user.roles.update', [Auth::user()->id, 1]) }}" method='post' class="">
+            <form action="{{ route('user.roles.update', [$user->id, 1]) }}" method='post' class="">
                 @csrf
                 @method('PATCH')
                 <h2 class="text-decoration text-green-600">Assigned Roles</h2>

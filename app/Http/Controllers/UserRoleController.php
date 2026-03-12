@@ -63,6 +63,7 @@ class UserRoleController extends Controller
             'role_names_array' => 'required',
         ]);
         $user = User::findOrFail($id);
+
         DB::beginTransaction();
         $roles = Role::all();
         try {

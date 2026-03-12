@@ -3,7 +3,7 @@
     <!--welcome  -->
     <div class="flex items-center">
         <div class="bread-crumb">
-            <p class="font-semibold">Welcome back {{ Auth::user()->profile->short_name }}!</p>
+            <p class="font-semibold">Welcome, {{ Auth::user()->profile->short_name }}!</p>
         </div>
     </div>
     <!-- pallets -->
@@ -15,9 +15,10 @@
                     <i class="bi bi-people text-sm md:text-lg"></i>
                 </div>
             </div>
-            <div class="flex items-center mt-[1px] text-lg font-semibold">{{ $students->count() }}
-                <span class="font-normal text-xs ml-2"><i class="bx bx-trending-up"></i>
-                    +{{ $newAdmissions->count() }}</span>
+            <div class="font-semibold text-lg mt-[1px]">{{ $students->count() }}
+                {{-- round green badge  --}}
+                <span class="bg-green-200 text-green-800 font-normal text-[10px] rounded-full px-2 py-[1px]">
+                    +{{ $newAdmissions->count() }} New</span>
             </div>
         </a>
 
@@ -28,18 +29,10 @@
                     <i class="bi bi-person-check text-sm md:text-lg"></i>
                 </div>
             </div>
-            <div class="font-semibold text-lg mt-[1px]">{{ round(($attendances->count() / $students->count()) * 100, 1) }}%
-                @if ($attendanceChange > 0)
-                    <span class="text-green-500 font-normal text-xs ml-2"><i class="bx bx-trending-up"></i>
-                        {{ $attendanceChange }}%</span>
-                @else
-                    <span class="text-red-500 font-normal text-xs ml-2"><i class="bx bx-trending-down"></i>
-                        {{ $attendanceChange }}%</span>
-                @endif
-
+            <div class="font-semibold text-lg mt-[1px]">{{ round(($attendances->count() / $students->count()) * 100, 0) }}%
                 {{-- round green badge  --}}
-                <span class="bg-indigo-200 text-indigo-800 font-normal text-[10px] rounded-full px-2 py-[1px]">Last
-                    week</span>
+                <span class="bg-indigo-200 text-indigo-800 font-normal text-[10px] rounded-full px-2 py-[1px]">
+                    {{ $highestAttenancePercentage }} <i class="bi-star"></i></span>
             </div>
         </a>
 
@@ -50,7 +43,11 @@
                     <i class="bi bi-clipboard-check text-sm md:text-lg"></i>
                 </div>
             </div>
-            <div class="font-semibold text-lg mt-[1px]">{{ $tests->count() }}</div>
+            <div class="font-semibold text-lg mt-[1px]">{{ $tests->count() }}
+                {{-- round green badge  --}}
+                <span class="bg-teal-200 text-teal-800 font-normal text-[10px] rounded-full px-2 py-[1px]">
+                    {{ $tests->open()->count() }} Active</span>
+            </div>
         </a>
         <a href="{{ route('tasks.index') }}" class="statbox orange">
             <div class="flex justify-between items-center flex-1">
@@ -60,9 +57,8 @@
                 </div>
             </div>
             <div class="mt-[1px] text-lg font-semibold">{{ $pendingAssignments->count() }} <span
-                    class="bg-orange-100 text-orange-600 font-normal text-[10px] rounded-full px-2 py-[1px]"> <i
-                        class="bi-clock"></i> +{{ $tasksDue->count() }} this
-                    week</span></div>
+                    class="bg-orange-100 text-orange-600 font-normal text-[10px] rounded-full px-2 py-[1px]">{{ $tasksDue->count() }}
+                    Latest</span></div>
         </a>
     </div>
 

@@ -12,16 +12,6 @@
             </div>
         </div>
     </div>
-
-
-    <div class="mt-8">
-        <img src="{{ asset('storage/' . $user->profile->photo) }}" alt="User" width="100" height="100"
-            class="mx-auto rounded-lg">
-        <h2 class="text-center mt-3">{{ $user->profile->name }} </h2>
-        <div class="text-center text-slate-400 text-xs">{{ $user->designation }}</div>
-
-    </div>
-
     <div class="md:w-4/5 mx-auto mt-6 bg-white md:p-8 p-4 gap-3 rounded border relative">
         <!-- page message -->
         @if ($errors->any())
@@ -29,6 +19,38 @@
         @else
             <x-message></x-message>
         @endif
+
+
+        <div class="flex items-center gap-4 mb-6">
+            @php
+                $initials = strtoupper(
+                    implode('', array_map(fn($w) => $w[0] ?? '', explode(' ', $user->profile->name))),
+                );
+                $colors = [
+                    'bg-indigo-500',
+                    'bg-blue-500',
+                    'bg-green-500',
+                    'bg-purple-500',
+                    'bg-pink-500',
+                    'bg-red-500',
+                    'bg-yellow-500',
+                    'bg-teal-500',
+                ];
+                $colorIndex = (strlen($user->profile->name) + $user->id) % count($colors);
+                $bgColor = $colors[$colorIndex];
+            @endphp
+            <div
+                class="flex w-8 h-8 p-1 rounded-full {{ $bgColor }} flex items-center justify-center text-white font-bold text-sm shadow-md">
+                {{ $initials }}
+            </div>
+            <div>
+                <h2 class="font-semibold text-slate-800">{{ $user->profile->name }}</h2>
+                <p class="text-slate-600 text-sm">{{ $user->profile->father_name }}</p>
+            </div>
+        </div>
+
+
+
 
         {{-- action buttons --}}
         <div class="flex items-center justify-center space-x-2 absolute top-2 right-2">
@@ -47,10 +69,6 @@
         <div class="grid md:grid-cols-2 gap-3 mt-8">
             <!-- display info -->
             <div>
-                <label for="">Father Name</label>
-                <h3>{{ $user->profile->father_name }}</h3>
-            </div>
-            <div>
                 <label for="">CNIC</label>
                 <h3>{{ $user->profile->cnic }}</h3>
             </div>
@@ -61,10 +79,6 @@
             <div>
                 <label for="">Email</label>
                 <h3>{{ $user->email }}</h3>
-            </div>
-            <div>
-                <label for="">Address</label>
-                <h3>{{ $user->profile->address }}</h3>
             </div>
             <div>
                 <label for="">Qualification</label>
@@ -85,7 +99,7 @@
         </div>
 
         @foreach ($user->roles as $role)
-            <div class="">{{ ucfirst($role->name) }}</div>
+            <h3 class="">{{ ucfirst($role->name) }}</h3>
         @endforeach
 
     </div>

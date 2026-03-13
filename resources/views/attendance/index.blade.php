@@ -24,7 +24,7 @@
         </div>
         <div class="grid grid-cols-2 gap-2 md:gap-4 mt-2">
             <div c>
-                <p class="text-xs font-semibold mb-1">Present</p>
+                <p class="text-xs font-semibold mb-1">Attendance</p>
                 <p class="text-lg font-bold">{{ $attendances->where('status', 1)->count() }} / {{ $attendances->count() }}
                 </p>
             </div>

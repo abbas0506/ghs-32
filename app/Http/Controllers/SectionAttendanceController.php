@@ -160,8 +160,8 @@ class SectionAttendanceController extends Controller
             ->count();
 
         // Calculate rates
-        $absenceRateOverall = $totalDaysInPeriod > 0 ? round(($totalAbsencesInPeriod / $totalDaysInPeriod) * 100, 2) : 0;
-        $currentMonthRate = $currentMonthTotal > 0 ? round(($currentMonthAbsences / $currentMonthTotal) * 100, 2) : 0;
+        $absenceRateOverall = $totalDaysInPeriod > 0 ? round(($totalAbsencesInPeriod / $totalDaysInPeriod) * 100, 1) : 0;
+        $currentMonthRate = $currentMonthTotal > 0 ? round(($currentMonthAbsences / $currentMonthTotal) * 100, 1) : 0;
 
         // Determine current month trend (rising = up, decreasing = down)
         $currentMonthTrend = $currentMonthRate >= $absenceRateOverall ? 'up' : 'down';

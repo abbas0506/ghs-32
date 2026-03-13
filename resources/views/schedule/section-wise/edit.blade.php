@@ -49,7 +49,7 @@
                 <label>user</label>
                 <select name="user_id" id="" class="custom-input-borderless">
                     @foreach ($users as $user)
-                        <option value="{{ $user->id }}" @selected($allocation->user_id == $user->id)>{{ $user->profile->name }}
+                        <option value="{{ $user->id }}" @selected($allocation->user_id == $user->id)>{{ $user->profile?->name }}
                         </option>
                     @endforeach
                 </select>

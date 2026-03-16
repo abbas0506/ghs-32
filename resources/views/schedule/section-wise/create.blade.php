@@ -42,7 +42,7 @@
                 </div>
                 <select name="user_id" id="" class="custom-input-borderless">
                     @foreach ($users->sortBy('name') as $user)
-                        <option value="{{ $user->id }}">{{ $user->profile->name }}</option>
+                        <option value="{{ $user->id }}">{{ $user->profile->name ?? 'N/A' }}</option>
                     @endforeach
                 </select>
             </div>

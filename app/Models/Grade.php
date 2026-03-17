@@ -13,4 +13,8 @@ class Grade extends Model
         'grade_no',
         'name',
     ];
+    public function subjects()
+    {
+        return $this->belongsToMany(Subject::class, 'grade_subjects');
+    }
 }

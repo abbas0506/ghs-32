@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('subject_id')->constrained()->cascadeOnDelete();
             $table->foreignId('grade_id')->constrained()->cascadeOnDelete();
             $table->integer('day_no'); //1,2,3,4,5,6
-            $table->string('topic');
+            $table->string('topic')->nullable();
             $table->text('objective')->nullable();
             $table->text('activity')->nullable();
             $table->text('homework')->nullable();

@@ -25,12 +25,7 @@
 
     <link href="https://fonts.bunny.net/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('/css/swiper.css') }}">
-    <style>
-        body {
-            /* font-family: Nunito, sans-serif; */
-            /* font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; */
-        }
-    </style>
+
     @yield('style')
 </head>
 

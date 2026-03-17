@@ -258,13 +258,11 @@
     .collapsible .head.active ~ .body {
         @apply flex flex-col items-start w-full p-2 border border-slate-300 border-dashed text-sm;
     }
-    .pallet-teal {
-        @apply flex justify-center items-center bg-teal-100 hover:bg-teal-600 hover:text-slate-100 w-16;
-    }
 
     .pallet {
-        @apply flex flex-col justify-center items-center bg-orange-50 hover:bg-orange-100  border-slate-200 p-8;
+        @apply bg-white rounded p-4 border-[0.8px] text-teal-700 border-slate-200 hover:border-green-700 transition ease-in-out duration-300;
     }
+
     .statbox {
         @apply border rounded-lg p-3 md:p-4 lg:p-5 hover:shadow-lg transition-all duration-500 ease-in-out;
     }

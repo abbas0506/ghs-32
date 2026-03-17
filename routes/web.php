@@ -78,10 +78,12 @@ Route::get('signout', [AuthController::class, 'signout'])->name('signout');
 
 Route::group(['middleware' => ['auth']], function () {
     Route::get('/dashboard', [DashboardController::class, 'index']);
+    Route::view('config', 'config')->name('config');
 
     // users
     Route::resource('users', UserController::class);
     Route::resource('user.roles',  UserRoleController::class);
+
 
     // subjects
     Route::resource('subjects', SubjectController::class);
@@ -147,6 +149,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::resource('test-allocation.results', TestAllocationResultController::class);
     Route::resource('test-allocation.import', ImportStudentController::class);
 
+    // lesson plans
     Route::resource('lesson-plans', LessonPlanController::class);
     // lock /unlock
     Route::patch('test/{id}/lock', [TestController::class, 'lock'])->name('test.lock');

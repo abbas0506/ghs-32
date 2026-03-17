@@ -11,11 +11,26 @@ class LessonPlan extends Model
     protected $fillable = [
         'subject_id',
         'grade_id',
-        'day_no', //1,2,3,4,5,6
+        'day_no',
         'topic',
         'objective',
         'activity',
         'homework',
         'remarks',
     ];
+
+    public function grade()
+    {
+        return $this->belongsTo(Grade::class);
+    }
+
+    public function subject()
+    {
+        return $this->belongsTo(Subject::class);
+    }
+
+    public function resources()
+    {
+        return $this->hasMany(LessonPlanResource::class);
+    }
 }

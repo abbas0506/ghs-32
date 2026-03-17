@@ -25,6 +25,7 @@ class LessonPlanController extends Controller
         if ($grade && $subject) {
             $lessonPlans = LessonPlan::where('grade_id', $grade)
                 ->where('subject_id', $subject)
+                ->orderBy('day_no')
                 ->get();
         } else {
             $lessonPlans = collect();
@@ -84,8 +85,19 @@ class LessonPlanController extends Controller
      */
     public function show(LessonPlan $lessonPlan)
     {
-        //
-        return view('lesson-plans.show', compact('lessonPlan'));
+        $lessonPlan->load(['grade', 'subject', 'resources']);
+
+        $prevPlan = LessonPlan::where('grade_id', $lessonPlan->grade_id)
+            ->where('subject_id', $lessonPlan->subject_id)
+            ->where('day_no', $lessonPlan->day_no - 1)
+            ->first();
+
+        $nextPlan = LessonPlan::where('grade_id', $lessonPlan->grade_id)
+            ->where('subject_id', $lessonPlan->subject_id)
+            ->where('day_no', $lessonPlan->day_no + 1)
+            ->first();
+
+        return view('lesson-plans.show', compact('lessonPlan', 'prevPlan', 'nextPlan'));
     }
 
     /**
@@ -93,10 +105,19 @@ class LessonPlanController extends Controller
      */
     public function edit(LessonPlan $lessonPlan)
     {
-        //
-        $subjects = Subject::all();
-        $grades = Grade::all();
-        return view('lesson-plans.edit', compact('lessonPlan', 'subjects', 'grades'));
+        $lessonPlan->load(['grade', 'subject']);
+
+        $prevPlan = LessonPlan::where('grade_id', $lessonPlan->grade_id)
+            ->where('subject_id', $lessonPlan->subject_id)
+            ->where('day_no', $lessonPlan->day_no - 1)
+            ->first();
+
+        $nextPlan = LessonPlan::where('grade_id', $lessonPlan->grade_id)
+            ->where('subject_id', $lessonPlan->subject_id)
+            ->where('day_no', $lessonPlan->day_no + 1)
+            ->first();
+
+        return view('lesson-plans.edit', compact('lessonPlan', 'prevPlan', 'nextPlan'));
     }
 
     /**
@@ -104,20 +125,33 @@ class LessonPlanController extends Controller
      */
     public function update(Request $request, LessonPlan $lessonPlan)
     {
-        //
         $request->validate([
-            'subject_id' => 'required|exists:subjects,id',
-            'grade_id' => 'required|exists:grades,id',
-            'day_no' => 'required|integer|min:1|max:6',
-            'topic' => 'required|string|max:255',
+            'topic'     => 'required|string|max:255',
             'objective' => 'nullable|string',
-            'activity' => 'nullable|string',
-            'homework' => 'nullable|string',
-            'remarks' => 'nullable|string',
+            'activity'  => 'nullable|string',
+            'homework'  => 'nullable|string',
+            'remarks'   => 'nullable|string',
         ]);
 
-        $lessonPlan->update($request->all());
-        return redirect()->route('lesson-plans.index')->with('success', 'Lesson plan updated successfully.');
+        $lessonPlan->update($request->only(['topic', 'objective', 'activity', 'homework', 'remarks']));
+
+        // "Save & Next" goes straight to the next day's edit page
+        if ($request->has('_save_and_next')) {
+            $nextPlan = LessonPlan::where('grade_id', $lessonPlan->grade_id)
+                ->where('subject_id', $lessonPlan->subject_id)
+                ->where('day_no', $lessonPlan->day_no + 1)
+                ->first();
+
+            if ($nextPlan) {
+                return redirect()->route('lesson-plans.edit', $nextPlan->id)
+                    ->with('success', 'Day ' . $lessonPlan->day_no . ' saved. Now editing Day ' . $nextPlan->day_no . '.');
+            }
+        }
+
+        return redirect()->route('lesson-plans.index', [
+            'grade'   => $lessonPlan->grade_id,
+            'subject' => $lessonPlan->subject_id,
+        ])->with('success', 'Day ' . $lessonPlan->day_no . ' lesson plan updated successfully.');
     }
 
     /**
@@ -125,8 +159,12 @@ class LessonPlanController extends Controller
      */
     public function destroy(LessonPlan $lessonPlan)
     {
-        //
+        $gradeId   = $lessonPlan->grade_id;
+        $subjectId = $lessonPlan->subject_id;
         $lessonPlan->delete();
-        return redirect()->route('lesson-plans.index')->with('success', 'Lesson plan deleted successfully.');
+        return redirect()->route('lesson-plans.index', [
+            'grade'   => $gradeId,
+            'subject' => $subjectId,
+        ])->with('success', 'Lesson plan deleted successfully.');
     }
 }

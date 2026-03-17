@@ -10,8 +10,13 @@ class LessonPlanResource extends Model
     use HasFactory;
     protected $fillable = [
         'lesson_plan_id',
-        'resource_type', // e.g., 'video', 'document', 'link'
+        'resource_type',
         'resource_url',
         'description',
     ];
+
+    public function lessonPlan()
+    {
+        return $this->belongsTo(LessonPlan::class);
+    }
 }

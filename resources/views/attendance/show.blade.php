@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('page-content')
     <div class="custom-container">
-        <h1>Absence History</h1>
+        <h1>Attendance Record</h1>
         <div class="bread-crumb">
             <a href="{{ url('/') }}">Dashoboard</a>
             <div>/</div>
@@ -18,7 +18,7 @@
         @endif
 
 
-        <div class="overflow-x-auto bg-white w-full mt-6">
+        <div class="overflow-x-auto bg-white w-full md:w-4/5 mx-auto mt-6">
             <div class="flex items-center gap-4">
                 @php
                     $initials = strtoupper(implode('', array_map(fn($w) => $w[0] ?? '', explode(' ', $student->name))));
@@ -28,72 +28,90 @@
                     {{ $initials }}
                 </div>
                 <div>
-                    <h2 class="text-sm md:text-lg font-semibold text-slate-800">{{ $student->name }}</h2>
-                    <p class="text-slate-600 text-sm">{{ $student->father_name }}</p>
+                    <h2 class="text-xs md:text-base font-semibold text-slate-800 leading-tight">{{ $student->name }}</h2>
+                    <p class="text-slate-600 text-xs md:text-sm">{{ $student->father_name }}</p>
                 </div>
             </div>
 
             <div class="statbox indigo mt-6">
-                <div class="flex items-center justify-between">
-                    <div class="flex items-end  gap-2 mb-2">
-                        <i class="bi-person-check"></i>
-                        <p class="text-indigo-600 text-xs font-semibold uppercase tracking-widest mb-1">Attendance</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div class="flex flex-col items-start gap-2 mt-2">
+                        <div class="flex items-end gap-1">
+                            <i class="ri-user-follow-line"></i>
+                            <p class="text-indigo-600 text-xs font-semibold uppercase tracking-widest mb-1">Attendance Rate
+                            </p>
+                        </div>
+                        <div>
+                            <div class="flex flex-wrap items-center gap-3 text-xs">
+                                <div class="pill green text-xs">{{ $student->section->name }}</div>
+                                <i class="bi-arrow-right"></i>
+                                <div class="pill indigo text-xs">Roll # {{ $student->rollno }}</div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="text-xl">
-                        @if ($absenceRateOverall < 15)
-                            <i class="bi-emoji-happy"></i>
-                        @else
-                            <i class="bi-emoji-frown"></i>
-                        @endif
+
+                    @php
+                        $trending = $monthAttendancePercentage >= $sessionAttendancePercentage ? 'up' : 'down';
+                    @endphp
+                    <div class="flex items-center justify-around gap-2">
+                        <div class="text-center">
+                            <label class="text-slate-800">Current Month</label>
+                            <h2 class="font-semibold">{{ $monthAttendancePercentage }}% <i
+                                    class="bx bx-trending-{{ $trending }}"></i> </h2>
+                        </div>
+                        <div class="text-center">
+                            <label class="text-slate-800">Since {{ $sessionStart->format('M Y') }}</label>
+                            <h2 class="font-semibold">{{ $sessionAttendancePercentage }}% @if ($sessionAttendancePercentage >= 80)
+                                    <i class="bi-emoji-happy"></i>
+                                @else
+                                    <i class="bi-emoji-frown"></i>
+                                @endif
+                            </h2>
+                        </div>
                     </div>
+
                 </div>
 
-                <div class="flex items-center justify-around gap-2">
-                    <div class="text-center">
-                        <label class="text-slate-800">Current Month</label>
-                        <h2 class="font-semibold">{{ $currentMonthRate }}%</h2>
-                    </div>
-                    <div class="text-center">
-                        <label class="text-slate-800">Since {{ $sessionStart->format('M Y') }}</label>
-                        <h2 class="font-semibold">{{ $absenceRateOverall }}%</h2>
-                    </div>
-                </div>
+
             </div>
 
 
-            @if ($attendances->count())
-                <div class="mt-8">
+            @if ($sessionAbsences->count())
+                <div class="mt-8 ">
                     <h3 class="font-semibold text-slate-800 mb-4 flex items-center gap-2">
                         <i class="bi bi-x-circle text-red-500"></i>
-                        Absence Record <span class="text-sm font-normal text-slate-500">({{ $attendances->count() }}
+                        Absence Record <span class="text-sm font-normal text-slate-500">({{ $sessionAbsences->count() }}
                             entries)</span>
                     </h3>
-                    <div class="overflow-x-auto rounded-lg border border-slate-200">
-                        <table class="table-fixed w-full xs">
+                    <div class="overflow-x-auto rounded-lg border border-slate-200  ">
+                        <table class="table-fixed borderless w-full">
                             <thead class="bg-slate-50 text-slate-700">
                                 <tr>
                                     <th class="w-8">#</th>
-                                    <th class="w-36">Date</th>
-                                    <th class="w-16">Day</th>
-                                    <th class="w-24">Status</th>
+                                    <th class="w-36 text-left">Date</th>
+                                    <th class="w-12">Status</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-slate-200">
-                                @foreach ($attendances as $attendance)
+                                @foreach ($sessionAbsences->sortBy('date') as $attendance)
                                     <tr class="hover:bg-slate-50 transition-colors duration-150">
-                                        <td class=" text-slate-700">{{ $loop->index + 1 }}
+                                        <td class=" text-slate-700">
+                                            <div class="ico rose mx-auto">
+                                                {{ $loop->index + 1 }}
+                                            </div>
+
+                                        </td>
+                                        <td class="text-left">
+                                            {{ $attendance->date->format('d M Y') }} —
+                                            {{ $attendance->date->format('D') }}
                                         </td>
                                         <td>
-                                            {{ $attendance->date->format('d M Y') }}
-                                        </td>
-                                        <td>
-                                            {{ $attendance->date->locale('ur')->isoFormat('dddd') }}</td>
-                                        <td>
-                                            <span
-                                                class="inline-flex items-center px-2 py-[1px] rounded-full text-xs  bg-red-100 text-red-600">
-                                                <i class="bi bi-x mr-1"></i>
-                                                Absent
-                                            </span>
+                                            <div class="flex justify-center">
+                                                <span class="pill red text-xs">
+                                                    Absent
+                                                </span>
+                                            </div>
+
                                         </td>
                                     </tr>
                                 @endforeach

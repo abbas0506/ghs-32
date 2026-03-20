@@ -90,7 +90,7 @@
                                 : 'gray';
 
                     @endphp
-                    <a href="@if ($section->attenanceCount > 0) {{ route('section.attendance.index', $section) }} @elseif(\Carbon\Carbon::parse($date)->isToday()){{ route('section.attendance.create', $section) }} @else {{ route('section.attendance.index', $section) }} @endif "
+                    <a href="@if ($section->attendanceCount > 0) {{ route('section.attendance.index', $section) }} @elseif(\Carbon\Carbon::parse($date)->isToday()){{ route('section.attendance.create', $section) }} @else {{ route('section.attendance.index', $section) }} @endif "
                         class="statbox {{ $themeColor }} transition-all duration-300 transform hover:scale-105">
                         {{-- <div class="flex items-center"> --}}
                         <div class="ico {{ $themeColor }}"><i class="ri-user-6-line"></i></div>

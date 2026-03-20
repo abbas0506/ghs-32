@@ -34,7 +34,8 @@
             <div class="grid grid-cols-2 gap-2 md:gap-4 mt-2">
                 <div>
                     <p class="text-xs font-semibold mb-1">Attendance</p>
-                    <p class="text-lg font-bold">{{ $attendances->where('status', 1)->count() }} /
+                    <p class="text-lg font-bold"> <i
+                            class="ri-user-6-fill mr-1"></i>{{ $attendances->where('status', 1)->count() }} /
                         {{ $attendances->count() }}
                     </p>
                 </div>
@@ -54,7 +55,7 @@
                             $similey = 'angry';
                         }
                         ?>
-                        <i class="bi bi-emoji-<?php echo $similey; ?> text-2xl"></i>
+                        <i class="bi bi-emoji-<?php echo $similey; ?> text-xl ml-1"></i>
                     </p>
 
                 </div>
@@ -67,77 +68,83 @@
             <x-message></x-message>
         @endif
 
-        <div class="flex
-                        justify-between items-center flex-wrap gap-3 mt-8">
-            <!-- Tabs -->
-            <div class="flex flex-wrap items-center gap-x-2 text-sm mt-8">
-                <span class="text-slate-600 hover:cursor-pointer" onclick="filterBy('all')"><i class="bi-filter"></i></span>
-                <span class="bg-green-50 text-green-600 hover:cursor-pointer px-2 py-[2px] text-xs rounded-full "
-                    onclick="filterBy('present')"><i class="bi-check"></i> Present
-                </span>
-                <span class="bg-red-50 text-red-600 hover:cursor-pointer px-2 py-[2px] text-xs rounded-full"
-                    onclick="filterBy('absent')"> <i class="bi-x"></i> Absent
-                </span>
+        <div class="border-[0.5px] rounded-lg bg-white mt-6">
+            <div
+                class="flex
+                        justify-between items-center flex-wrap gap-3 p-5 md:p-8 bg-gradient-to-br from-slate-50 to-gray-50">
+                <!-- Tabs -->
+                <div class="flex flex-wrap items-center gap-x-2 text-sm">
+                    <span class="text-slate-600 hover:cursor-pointer" onclick="filterBy('all')"><i
+                            class="bi-filter"></i></span>
+                    <span class="bg-green-50 text-green-600 hover:cursor-pointer px-2 py-[2px] text-xs rounded-full "
+                        onclick="filterBy('present')"><i class="bi-check"></i> Present
+                    </span>
+                    <span class="bg-red-50 text-red-600 hover:cursor-pointer px-2 py-[2px] text-xs rounded-full"
+                        onclick="filterBy('absent')"> <i class="bi-x"></i> Absent
+                    </span>
+                </div>
+                <!-- search -->
+                <div class="flex relative w-full md:w-1/3">
+                    <input type="text" id='searchby' placeholder="Search ..." class="custom-search w-full"
+                        oninput="search(event)">
+                    <i class="bx bx-search absolute top-2 right-2"></i>
+                </div>
             </div>
-            <!-- search -->
-            <div class="flex relative w-full md:w-1/3">
-                <input type="text" id='searchby' placeholder="Search ..." class="custom-search w-full"
-                    oninput="search(event)">
-                <i class="bx bx-search absolute top-2 right-2"></i>
-            </div>
-        </div>
-        <!-- Table -->
-        <div class="xs overflow-hidden mt-3">
-            <div class="overflow-x-auto">
-                <table class="table-auto borderless w-full">
-                    <thead>
-                        <tr>
-                            <th class="w-8">#</th>
-                            <th class="text-left w-36">Student</th>
-                            <th class="w-20">Status</th>
-                        </tr>
-                    </thead>
-
-                    <tbody class="divide-y divide-slate-200">
-                        @foreach ($attendances as $attendance)
-                            <tr class="tr {{ $attendance->status == 1 ? 'present' : 'absent' }}">
-                                <td class="text-sm font-semibold text-slate-700">
-                                    <div class="ico cyan mx-auto">
-                                        {{ $attendance->student->rollno }}
-                                    </div>
-                                </td>
-                                <td class="text-left">
-                                    <a href="{{ route('section.attendance.show', [$section, $attendance]) }}"
-                                        class="link text-xs">{{ $attendance->student->name }}</a>
-                                    <div class="text-xs text-slate-600 mt-1">
-                                        <p class="">{{ $attendance->student->father_name }}</p>
-                                        <p class="flex items-center text-slate-500">
-                                            <i class="bi bi-telephone text-xs"></i>
-                                            {{ $attendance->student->phone }}
-                                        </p>
-                                    </div>
-                                </td>
-                                <td class="text-center">
-                                    @if ($attendance->status == 1)
-                                        <div class="pill green text-xs">Present</div>
-                                    @else
-                                        <div class="pill red text-xs">Absent</div>
-                                    @endif
-                                </td>
+            <!-- Table -->
+            <div class="xs overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="table-auto borderless w-full">
+                        <thead>
+                            <tr>
+                                <th class="w-8">#</th>
+                                <th class="text-left w-36">Student</th>
+                                <th class="w-20">Status</th>
                             </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-        </div>
+                        </thead>
 
-        <!-- Close Button -->
-        <div class="text-center mt-8">
-            <a href="{{ route('attendance.summary') }}"
-                class="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-slate-600 text-white font-semibold shadow-md hover:bg-slate-700 hover:shadow-lg transition">
-                <i class="bi bi-arrow-left"></i>
-                Back to Summary
-            </a>
+                        <tbody class="divide-y divide-slate-200">
+                            @foreach ($attendances as $attendance)
+                                <tr class="tr {{ $attendance->status == 1 ? 'present' : 'absent' }}">
+                                    <td class="text-sm font-semibold text-slate-700">
+                                        <div class="ico cyan mx-auto">
+                                            {{ $attendance->student->rollno }}
+                                        </div>
+                                    </td>
+                                    <td class="text-left">
+                                        <a href="{{ route('section.attendance.show', [$section, $attendance]) }}"
+                                            class="link text-xs">{{ $attendance->student->name }}</a>
+                                        <div class="text-xs text-slate-600 mt-1">
+                                            <p class="">{{ $attendance->student->father_name }}</p>
+                                            <p class="flex items-center text-slate-500">
+                                                <i class="bi bi-telephone text-xs"></i>
+                                                {{ $attendance->student->phone }}
+                                            </p>
+                                        </div>
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="flex justify-center">
+                                            @if ($attendance->status == 1)
+                                                <div class="pill green text-xs">Present</div>
+                                            @else
+                                                <div class="pill red text-xs">Absent</div>
+                                            @endif
+                                        </div>
+
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Close Button -->
+            <div class="text-center mt-8">
+                <a href="{{ route('attendance.summary') }}" class="btn-gray rounded py-2 px-3 mr-3 text-xs md:text-sm">
+                    <i class="bi bi-arrow-left"></i>
+                    Back to Summary
+                </a>
+            </div>
         </div>
     </div>
     <script>

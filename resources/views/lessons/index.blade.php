@@ -105,7 +105,8 @@
         {{-- Plans Table --}}
         @if ($grade && $subject)
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+                <div
+                    class="flex flex-col md:flex-row items-start md:items-center gap-2 justify-between px-6 py-4 border-b border-gray-100">
                     <div>
                         <h2 class="font-semibold text-gray-800">Lesson Plan</h2>
                         <p class="text-xs text-gray-400 mt-0.5">
@@ -122,68 +123,36 @@
                 </div>
 
                 @if ($lessons->count())
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-sm">
-                            <thead class="bg-gray-50 border-b border-gray-100">
+                    <div class="overflow-auto">
+                        <table class="table-fixed borderless w-full text-sm xs md:sm">
+                            <thead class="">
                                 <tr>
-                                    <th
-                                        class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide w-20">
-                                        No</th>
-                                    <th
-                                        class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">
-                                        Lesson</th>
-                                    <th
-                                        class="px-4 py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wide w-28">
-                                        Actions</th>
+                                    <th class="w-16">#</th>
+                                    <th class="w-48 text-left">Lesson</th>
+                                    <th class="w-32 text-left">Assignment</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-gray-50" id="plansTableBody">
+                            <tbody>
                                 @foreach ($lessons as $lesson)
-                                    <tr class="plan-row hover:bg-teal-50/40 transition group">
-                                        <td class="px-6 py-3">
-                                            <span
-                                                class="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-gradient-to-br from-teal-400 to-green-400 text-white text-xs font-bold shadow-sm">
+                                    <tr class="tr">
+                                        <td>
+                                            <a href="{{ route('lessons.show', $lesson->id) }}" class="ico green mx-auto">
                                                 {{ $lesson->lesson_no }}
-                                            </span>
-                                        </td>
-                                        <td class="px-4 py-3">
-                                            <a href="{{ route('lessons.show', $lesson->id) }}"
-                                                class="font-medium hover:underline  line-clamp-1 link"
-                                                title="{{ $lesson->title }}">
-                                                {{ $lesson->title ?? '—' }}
                                             </a>
                                         </td>
-                                        <td class="px-4 py-3 text-gray-400 text-xs hidden md:table-cell max-w-xs">
-                                            @foreach ($lesson->cues as $cue)
-                                                <span
-                                                    class="inline-block px-2 py-0.5 bg-gray-100 text-gray-500 rounded-full mb-1">
-                                                    {{ $cue->content }}
-                                                </span>
-                                            @endforeach
+                                        <td class="text-left">
+                                            <h3 class="text-gray-600 font-semibold">{{ $lesson->title }}</h3>
+                                            <ul>
+                                                @foreach ($lesson->cues as $cue)
+                                                    <li class="list-disc ml-4">
+                                                        {{ $cue->content }}
+                                                    </li>
+                                                @endforeach
+                                            </ul>
+
                                         </td>
-                                        <td class="px-4 py-3">
-                                            <div class="flex items-center justify-center gap-1.5">
-                                                <a href="{{ route('lessons.show', $lesson->id) }}"
-                                                    class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-gray-100 text-gray-500 hover:bg-teal-100 hover:text-teal-600 transition"
-                                                    title="View">
-                                                    <i class="ri-eye-line text-sm"></i>
-                                                </a>
-                                                <a href="{{ route('lessons.edit', $lesson->id) }}"
-                                                    class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-gray-100 text-gray-500 hover:bg-blue-100 hover:text-blue-600 transition"
-                                                    title="Edit">
-                                                    <i class="ri-pencil-line text-sm"></i>
-                                                </a>
-                                                <form action="{{ route('lessons.destroy', $lesson->id) }}" method="POST"
-                                                    id="del_form{{ $lesson->id }}" class="inline">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="button" onclick="delme({{ $lesson->id }})"
-                                                        class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-gray-100 text-gray-400 hover:bg-red-100 hover:text-red-500 transition"
-                                                        title="Delete">
-                                                        <i class="ri-delete-bin-line text-sm"></i>
-                                                    </button>
-                                                </form>
-                                            </div>
+                                        <td class="text-left">
+                                            {{ $lesson->homework }}
                                         </td>
                                     </tr>
                                 @endforeach

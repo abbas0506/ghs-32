@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\LessonPlanResource;
+use App\Models\LessonCue;
 use Illuminate\Http\Request;
 
-class LessonPlanResourceController extends Controller
+class LessonCueController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -34,7 +34,7 @@ class LessonPlanResourceController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(LessonPlanResource $lessonPlanResource)
+    public function show(LessonCue $lessonCue)
     {
         //
     }
@@ -42,7 +42,7 @@ class LessonPlanResourceController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(LessonPlanResource $lessonPlanResource)
+    public function edit(LessonCue $lessonCue)
     {
         //
     }
@@ -50,7 +50,7 @@ class LessonPlanResourceController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, LessonPlanResource $lessonPlanResource)
+    public function update(Request $request, LessonCue $lessonCue)
     {
         //
     }
@@ -58,7 +58,7 @@ class LessonPlanResourceController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(LessonPlanResource $lessonPlanResource)
+    public function destroy(LessonCue $lessonCue)
     {
         //
     }

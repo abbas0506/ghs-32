@@ -1,11 +1,7 @@
 @extends('layouts.app')
 @section('page-content')
     <!--welcome  -->
-    <div class="flex items-center">
-        <div class="bread-crumb">
-            <p class="font-semibold">Welcome, {{ Auth::user()->profile->short_name }}!</p>
-        </div>
-    </div>
+    <h2 class="text-xl md:text-2xl font-bold">Welcome, {{ Auth::user()->profile->short_name }}!</h2>
     <!-- pallets -->
     <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-4 mt-5 md:mt-8 text-xs md:text-sm">
         <a href="{{ route('sections.index') }}" class="statbox green">

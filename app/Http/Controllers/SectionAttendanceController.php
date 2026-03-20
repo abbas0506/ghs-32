@@ -26,27 +26,25 @@ class SectionAttendanceController extends Controller
         $date = session('date') ?? now()->toDateString();
 
         $sections = Section::whereIn('id', $sectionIds)->withCount([
-            'students as total' => function ($q) use ($date) {
+            'students as attendanceCount' => function ($q) use ($date) {
                 $q->whereHas('attendances', function ($q2) use ($date) {
                     $q2->whereDate('date', $date);
-                })
-                    ->where('status', 1); // active students (optional)
+                });
             },
 
-            'students as present' => function ($q) use ($date) {
+            'students as presenceCount' => function ($q) use ($date) {
                 $q->whereHas('attendances', function ($q2) use ($date) {
                     $q2->whereDate('date', $date)
                         ->where('status', 1); // present
-                })
-                    ->where('status', 1); // active students
+                });
             },
         ])
             ->has('students')
             ->get();
 
-        $overall_present = Attendance::whereDate('date', $date)->where('status', 1)->count();
-        $overall_total = Attendance::whereDate('date', $date)->count();
-        return view('attendance.summary', compact('sections', 'date', 'overall_present', 'overall_total'));
+        $overallPresenceCount = Attendance::whereDate('date', $date)->where('status', 1)->count();
+        $overallAttendanceCount = Attendance::whereDate('date', $date)->count();
+        return view('attendance.summary', compact('sections', 'date', 'overallPresenceCount', 'overallAttendanceCount'));
     }
     /**
      * Display a listing of the resource.

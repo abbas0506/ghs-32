@@ -148,16 +148,16 @@
                                         </td>
                                         <td class="px-4 py-3">
                                             <a href="{{ route('lessons.show', $lesson->id) }}"
-                                                class="font-medium text-gray-800 hover:text-teal-600 transition line-clamp-1"
+                                                class="font-medium hover:underline  line-clamp-1 link"
                                                 title="{{ $lesson->title }}">
                                                 {{ $lesson->title ?? '—' }}
                                             </a>
                                         </td>
                                         <td class="px-4 py-3 text-gray-400 text-xs hidden md:table-cell max-w-xs">
-                                            @foreach ($lesson->objectives as $obj)
+                                            @foreach ($lesson->cues as $cue)
                                                 <span
                                                     class="inline-block px-2 py-0.5 bg-gray-100 text-gray-500 rounded-full mb-1">
-                                                    {{ $obj }}
+                                                    {{ $cue->content }}
                                                 </span>
                                             @endforeach
                                         </td>

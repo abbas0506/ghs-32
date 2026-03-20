@@ -77,4 +77,27 @@ class Section extends Model
             $q->where('user_id', Auth::user()->id);
         });
     }
+    // get average attendance of the section during last week
+    public function averageAttendance()
+    {
+        //get unque dates from $section->attendances
+        $currentDate = \Carbon\Carbon::parse(today());
+        $sessionStart = $currentDate->month >= 4
+            ? \Carbon\Carbon::create($currentDate->year, 4, 1)
+            : \Carbon\Carbon::create($currentDate->year - 1, 4, 1);
+
+        // During session
+        $overallPresence = $this->attendances()
+            ->where('attendances.status', 1)
+            ->whereDate('date', '>=', $sessionStart)
+            ->whereDate('date', '<=', $currentDate)
+            ->get();
+
+        $overallAttendance = $this->attendances()
+            ->whereDate('date', '>=', $sessionStart)
+            ->whereDate('date', '<=', $currentDate)
+            ->get();
+
+        return round($overallPresence->count() / $overallAttendance->count() * 100, 1);
+    }
 }

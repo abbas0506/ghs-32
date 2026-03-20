@@ -192,8 +192,136 @@
     .btn-orange {
         @apply bg-orange-600 hover:bg-orange-800 duration-200 px-3 py-1 text-slate-50;
     }
-    .icon-gray {
-        @apply text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white;
+
+    .ico {
+        @apply flex items-center justify-center w-7 h-7 p-2 rounded-lg font-normal;
+    }
+    .ico.green {
+        @apply bg-green-100 text-green-700;
+    }
+    .ico.red {
+        @apply bg-red-100 text-red-700;
+    }
+    .ico.blue {
+        @apply bg-blue-100 text-blue-700;
+    }
+    .ico.indigo {
+        @apply bg-indigo-100 text-indigo-700;
+    }
+    .ico.teal {
+        @apply bg-teal-100 text-teal-400;
+    }
+    .ico.red {
+        @apply bg-red-100 text-red-700;
+    }
+    .ico.green {
+        @apply bg-green-100 text-green-700;
+    }
+    .ico.gray {
+        @apply bg-gray-100 text-gray-400;
+    }
+    .ico.blue {
+        @apply bg-blue-100 text-blue-400;
+    }
+    .ico.indigo {
+        @apply bg-indigo-100 text-indigo-400;
+    }
+    .ico.teal {
+        @apply bg-teal-100 text-teal-400;
+    }
+    .ico.violet {
+        @apply bg-violet-100 text-violet-400;
+    }
+    .ico.orange {
+        @apply bg-orange-100 text-orange-400;
+    }
+    .ico.sky {
+        @apply bg-sky-100 text-sky-400;
+    }
+    .ico.cyan {
+        @apply bg-cyan-100 text-cyan-400;
+    }
+    .ico.gray {
+        @apply bg-gray-100 text-gray-400;
+    }
+    .ico.yellow {
+        @apply bg-yellow-100 text-yellow-400;
+    }
+    .ico.pink {
+        @apply bg-pink-100 text-pink-400;
+    }
+    .ico.purple {
+        @apply bg-purple-100 text-purple-400;
+    }
+    .ico.lime {
+        @apply bg-lime-100 text-lime-400;
+    }
+    .ico.amber {
+        @apply bg-amber-100 text-amber-400;
+    }
+    .ico.emerald {
+        @apply bg-emerald-100 text-emerald-400;
+    }
+    .ico.rose {
+        @apply bg-rose-100 text-rose-400;
+    }
+
+    .pill {
+        @apply flex items-center px-3 py-1 rounded-full text-sm font-normal;
+    }
+    .pill.green {
+        @apply bg-green-100 text-green-700;
+    }
+    .pill.red {
+        @apply bg-red-100 text-red-700;
+    }
+    .pill.blue {
+        @apply bg-blue-100 text-blue-700;
+    }
+    .pill.indigo {
+        @apply bg-indigo-100 text-indigo-700;
+    }
+    .pill.teal {
+        @apply bg-teal-100 text-teal-400;
+    }
+
+    .pill.gray {
+        @apply bg-gray-100 text-gray-400;
+    }
+
+    .pill.violet {
+        @apply bg-violet-100 text-violet-400;
+    }
+    .pill.orange {
+        @apply bg-orange-100 text-orange-400;
+    }
+    .pill.sky {
+        @apply bg-sky-100 text-sky-400;
+    }
+    .pill.cyan {
+        @apply bg-cyan-100 text-cyan-400;
+    }
+
+    .pill.pink {
+        @apply bg-pink-100 text-pink-400;
+    }
+    .pill.purple {
+        @apply bg-purple-100 text-purple-400;
+    }
+    .pill.lime {
+        @apply bg-lime-100 text-lime-400;
+    }
+    .pill.amber {
+        @apply bg-amber-100 text-amber-400;
+    }
+    .pill.emerald {
+        @apply bg-emerald-100 text-emerald-400;
+    }
+    .pill.rose {
+        @apply bg-rose-100 text-rose-400;
+    }
+
+    .alert {
     }
     .alert-success {
         @apply flex items-center bg-green-100 text-green-700 text-sm p-4;
@@ -287,6 +415,16 @@
     .statbox.primary {
         @apply bg-gradient-to-br from-white to-blue-50  border-blue-200 text-blue-700;
     }
+    .statbox.red {
+        @apply bg-gradient-to-br from-white to-red-50  border-red-200 text-red-700;
+    }
+    .statbox.blue {
+        @apply bg-gradient-to-br from-white to-blue-50  border-blue-200 text-blue-700;
+    }
+    .statbox.cyan {
+        @apply bg-gradient-to-br from-white to-cyan-50  border-cyan-200 text-cyan-700;
+    }
+
     .filterOption {
         @apply flex items-center hover:cursor-pointer transition-all duration-500 ease-in-out;
     }
@@ -325,24 +463,6 @@
         @apply ring-2 ring-teal-800 ring-offset-2;
     }
 
-    .pallet-box {
-        @apply flex items-center w-full rounded-lg bg-white p-4 border transition-all duration-500 ease-in-out;
-    }
-    .pallet-box.green {
-        @apply p-0 bg-gradient-to-br from-green-50 to-green-100 hover:drop-shadow-lg border-green-200;
-    }
-    .pallet-box.green .box {
-        @apply p-4;
-    }
-    .pallet-box .title {
-        @apply text-sm text-slate-500 font-thin;
-    }
-    .pallet-box .ico {
-        @apply flex justify-center items-center w-12 h-12 rounded-full;
-    }
-    .pallet-box .bi {
-        @apply text-[24px];
-    }
     .divider {
         @apply border-t border-slate-200 border-dashed;
     }

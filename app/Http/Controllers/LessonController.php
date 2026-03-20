@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Grade;
 use App\Models\Lesson;
+use App\Models\LessonCue;
 use App\Models\Subject;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -62,15 +63,12 @@ class LessonController extends Controller
                     'subject_id' => $request->input('subject_id'),
                     'grade_id' => $request->input('grade_id'),
                     'lesson_no' => $day,
-                    'title' => "$day",
+                    'title' => "Lesson detail not set",
                     'activity' => "",
                     'homework' => "",
                     'remarks' => "",
                 ]);
             }
-            $lesson->objectives()->create([
-                'objective' => ''
-            ]);
             DB::commit();
             return redirect()->route('lessons.index', [
                 'grade' => $request->input('grade_id'),
@@ -87,7 +85,7 @@ class LessonController extends Controller
      */
     public function show(Lesson $lesson)
     {
-        $lesson->load(['grade', 'subject', 'objectives', 'resources']);
+        $lesson->load(['grade', 'subject', 'cues', 'resources']);
 
         $prevPlan = Lesson::where('grade_id', $lesson->grade_id)
             ->where('subject_id', $lesson->subject_id)
@@ -119,7 +117,7 @@ class LessonController extends Controller
             ->where('lesson_no', $lesson->lesson_no + 1)
             ->first();
 
-        return view('lessons.edit', compact('Lesson', 'prevPlan', 'nextPlan'));
+        return view('lessons.edit', compact('lesson', 'prevPlan', 'nextPlan'));
     }
 
     /**
@@ -128,14 +126,34 @@ class LessonController extends Controller
     public function update(Request $request, Lesson $lesson)
     {
         $request->validate([
-            'topic'     => 'required|string|max:255',
+            'title'     => 'required|string|max:255',
             'objective' => 'nullable|string',
             'activity'  => 'nullable|string',
             'homework'  => 'nullable|string',
             'remarks'   => 'nullable|string',
+            'cues'      => 'required|array|min:1',
         ]);
 
-        $lesson->update($request->only(['topic', 'objective', 'activity', 'homework', 'remarks']));
+        // $cues = array();
+        // $cues = $request->cues;
+
+        $lesson->update($request->only(['title', 'objective', 'activity', 'homework', 'remarks']));
+
+        $cues = collect($request->input('cues'))
+            ->filter(function ($cue) {
+                return !is_null($cue) && trim($cue) !== '';
+            })
+            ->values(); // reindex
+
+        // remove all existing cues of lesson
+        $lesson->cues()->delete();
+
+        //add new clues for the lesson
+        foreach ($cues as $cue) {
+            $lesson->cues()->create([
+                'content' => $cue
+            ]);
+        }
 
         // "Save & Next" goes straight to the next day's edit page
         if ($request->has('_save_and_next')) {

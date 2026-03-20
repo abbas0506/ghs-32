@@ -13,6 +13,7 @@ class Lesson extends Model
         'grade_id',
         'lesson_no',
         'title',
+        'objective',
         'activity',
         'homework',
         'remarks',
@@ -32,8 +33,8 @@ class Lesson extends Model
     {
         return $this->hasMany(LessonResource::class);
     }
-    public function objectives()
+    public function cues()
     {
-        return $this->hasMany(LessonObjective::class);
+        return $this->hasMany(LessonCue::class);
     }
 }

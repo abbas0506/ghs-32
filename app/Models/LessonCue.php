@@ -5,12 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class LessonObjective extends Model
+class LessonCue extends Model
 {
     use HasFactory;
     protected $fillable = [
         'lesson_id',
-        'objective',
+        'content',
     ];
 
     public function  lesson()

@@ -34,83 +34,65 @@
     </div>
 
 
-    <div class="grid md:w-4/5 mx-auto mt-6 bg-white md:p-8 p-4 rounded border gap-3">
-        <!-- page message -->
-        @if ($errors->any())
-            <x-message :errors='$errors'></x-message>
-        @else
-            <x-message></x-message>
-        @endif
+    {{-- <div class="grid md:w-4/5 mx-auto mt-6 bg-white md:p-8 p-4 border rounded-lg"> --}}
 
-        {{-- new buttn --}}
-        @can('create', App\Models\Test::class)
-            <a href="{{ route('tests.create') }}"
-                class="fixed bottom-4 right-4 flex justify-center items-center bg-teal-400 hover:bg-teal-600 hover:cursor-pointer rounded-full w-12 h-12"><i
-                    class="bi-plus-lg"></i></a>
-        @endcan
+    <div class="w-full md:w-4/5 mx-auto mt-6 bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="flex items-center gap-3 px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-slate-50 to-gray-50">
+            <div class="flex items-center justify-center w-9 h-9 rounded-xl bg-teal-100 text-teal-600">
+                <i class="ri-filter-3-line text-lg"></i>
+            </div>
+            <div>
+                <h2 class="font-semibold text-gray-800 text-sm leading-tight">ASSESSMENT</h2>
+                <p class="text-xs text-gray-400">Click on any test to see detail</p>
+            </div>
 
-        <!-- search -->
-        <div class="flex relative w-full md:w-1/3">
-            <input type="text" id='searchby' placeholder="Search ..." class="custom-search w-full"
-                oninput="search(event)">
-            <i class="bx bx-search absolute top-2 right-2"></i>
         </div>
-        {{-- table --}}
-        <div class="overflow-x-auto w-full mt-8">
-            <table class="table-fixed borderless w-full border-collapse">
-                <thead>
-                    <tr class="">
-                        <th class="w-12">Sr</th>
-                        <th class="text-left w-48">Test</th>
-                        <th class="w-24">Status</th>
-                    </tr>
-                </thead>
-                <tbody>
 
-                    @foreach ($tests->sortByDesc('created_at') as $test)
+        <div class="px-6 py-5">
+
+            <!-- page message -->
+            @if ($errors->any())
+                <x-message :errors='$errors'></x-message>
+            @else
+                <x-message></x-message>
+            @endif
+
+            {{-- new buttn --}}
+            @can('create', App\Models\Test::class)
+                <a href="{{ route('tests.create') }}"
+                    class="fixed bottom-4 right-4 flex justify-center items-center bg-teal-400 hover:bg-teal-600 hover:cursor-pointer rounded-full w-12 h-12"><i
+                        class="bi-plus-lg"></i></a>
+            @endcan
+
+            {{-- grid of showing tests: 2 test per row with title and status and link to details page --}}
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                @foreach ($tests->sortByDesc('created_at') as $test)
+                    <a href="{{ route('tests.show', $test) }}"
+                        class="bg-white p-4 md:p-6 rounded border border-transparent shadow hover:border-teal-400 transition cursor-pointer ease-in-out duration-300">
+                        <div class="flex items-center space-x-2">
+                            <div class="ico indigo">
+                                <i class="bi-file-earmark-text"></i>
+                            </div>
+                            <h3>{{ $test->title }}</h3>
+                        </div>
+
+                        {{-- calculate percentage of submitted tests --}}
                         @php
                             $sumbittedCount = $test->testAllocations()->mine()->resultSubmitted()->count();
                             $totalCount = $test->testAllocations()->mine()->count();
                             $percent = $totalCount > 0 ? round(($sumbittedCount / $totalCount) * 100, 0) : 0;
                         @endphp
-                        <tr class="tr">
-                            <td>{{ $loop->index + 1 }}</td>
-                            <td class="text-left">
-                                @if ($test->is_open)
-                                    <a href="{{ route('tests.show', $test) }}" class="link">{{ $test->title }}</a>
-                                    <br><span class="text-slate-500 text-xs">
-                                        {{ $test->created_at->format('d/m/Y H:i') }}</span>
-                                @else
-                                    <a href="{{ route('tests.show', $test) }}">{{ $test->title }}</a>
-                                    <br><span
-                                        class="text-slate-500 text-xs">{{ $test->created_at->format('d/m/Y H:i') }}</span>
-                                @endif
-                            </td>
-                            <td>
-                                @if ($percent == 100)
-                                    {{-- green rounded pill with 100% label --}}
-                                    <div class="flex justify-center">
+                        <p class="text-sm text-gray-500 mt-1">Status: {{ $percent }}%
+                            <span
+                                class="px-2 py-[2px] bg-{{ $test->is_open ? 'green' : 'gray' }}-100 text-{{ $test->is_open ? 'green' : 'gray' }}-600 rounded-full text-xs">
+                                {{ $test->is_open ? 'Open' : 'Closed' }}
+                            </span>
+                        </p>
 
-                                        <div class="bg-green-600 h-4 rounded-full text-xs text-white text-center w-16">
-                                            {{ $percent }}%
-                                        </div>
-                                    </div>
-                                @else
-                                    <div class="w-full bg-gray-200 rounded-full h-4">
-                                        <div class="bg-green-600 h-4 rounded-full text-xs text-white text-center"
-                                            style="width: {{ $percent }}%">
-                                            {{ $percent }}%
-                                        </div>
-                                    </div>
-                                @endif
-                            </td>
-                        </tr>
-                    @endforeach
-
-                </tbody>
-            </table>
+                    </a>
+                @endforeach
+            </div>
         </div>
-    </div>
     </div>
     <script type="text/javascript">
         function delme(formid) {

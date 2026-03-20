@@ -63,7 +63,7 @@ class Section extends Model
     {
         return $this->hasManyThrough(FeeInvoice::class, Student::class);
     }
-    public function attendance_marked()
+    public function attendanceMarked()
     {
         return $this->attendances()->whereDate('date', today())->count();
     }

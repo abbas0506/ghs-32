@@ -42,9 +42,14 @@ class SectionAttendanceController extends Controller
             ->has('students')
             ->get();
 
+        // get number of sections whose attendance has been marked
+        $sectionsMarked = $sections->filter(function ($section) {
+            return $section->attendanceCount > 0;
+        })->count();
+
         $overallPresenceCount = Attendance::whereDate('date', $date)->where('status', 1)->count();
         $overallAttendanceCount = Attendance::whereDate('date', $date)->count();
-        return view('attendance.summary', compact('sections', 'date', 'overallPresenceCount', 'overallAttendanceCount'));
+        return view('attendance.summary', compact('sections', 'date', 'overallPresenceCount', 'overallAttendanceCount', 'sectionsMarked'));
     }
     /**
      * Display a listing of the resource.

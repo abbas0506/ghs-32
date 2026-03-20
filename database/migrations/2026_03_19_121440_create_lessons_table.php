@@ -11,13 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('lesson_plans', function (Blueprint $table) {
+        Schema::create('lessons', function (Blueprint $table) {
             $table->id();
             $table->foreignId('subject_id')->constrained()->cascadeOnDelete();
             $table->foreignId('grade_id')->constrained()->cascadeOnDelete();
-            $table->integer('day_no'); //1,2,3,4,5,6
-            $table->string('topic')->nullable();
-            $table->text('objective')->nullable();
+            $table->integer('lesson_no'); //1,2,3,4,5,6
+            $table->string('title');
             $table->text('activity')->nullable();
             $table->text('homework')->nullable();
             $table->text('remarks')->nullable();
@@ -30,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('lesson_plans');
+        Schema::dropIfExists('lessons');
     }
 };

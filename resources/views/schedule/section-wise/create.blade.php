@@ -41,7 +41,7 @@
                     <i class="bx bx-user"></i>
                 </div>
                 <select name="user_id" id="" class="custom-input-borderless">
-                    @foreach ($users->sortBy('name') as $user)
+                    @foreach ($users->sortBy('seniority') as $user)
                         <option value="{{ $user->id }}">{{ $user->profile->name ?? 'N/A' }}</option>
                     @endforeach
                 </select>

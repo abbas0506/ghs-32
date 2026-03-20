@@ -14,7 +14,8 @@ class UserScheduleController extends Controller
     //
     public function  index()
     {
-        $users = User::has('allocations')->get()->sortByDesc('bps'); //get active sections
+        //
+        $users = User::with('profile')->has('allocations')->get()->sortByDesc('profile.bps'); //get active sections
         $lectures = Lecture::all();
         return view('schedule.user-wise.index', compact('users', 'lectures'));
     }

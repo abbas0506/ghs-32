@@ -7,29 +7,29 @@
             <div class="bread-crumb mt-1">
                 <a href="{{ url('/') }}">Dashboard</a>
                 <div>/</div>
-                <a href="{{ route('lesson-plans.index') }}">Lesson Plans</a>
+                <a href="{{ route('lessons.index') }}">Lesson Plans</a>
                 <div>/</div>
-                <a href="{{ route('lesson-plans.index', ['grade' => $lessonPlan->grade_id, 'subject' => $lessonPlan->subject_id]) }}"
+                <a href="{{ route('lessons.index', ['grade' => $lessonPlan->grade_id, 'subject' => $lessonPlan->subject_id]) }}"
                     class="text-teal-600 hover:underline">
                     {{ $lessonPlan->grade?->name }} – {{ $lessonPlan->subject?->name }}
                 </a>
                 <div>/</div>
-                <span class="text-gray-500">Day {{ $lessonPlan->day_no }}</span>
+                <span class="text-gray-500">Day {{ $lessonPlan->lesson_no }}</span>
             </div>
         </div>
 
         {{-- Day navigation --}}
         <div class="flex items-center gap-2">
             @if ($prevPlan)
-                <a href="{{ route('lesson-plans.edit', $prevPlan->id) }}"
+                <a href="{{ route('lessons.edit', $prevPlan->id) }}"
                     class="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition shadow-sm">
-                    <i class="ri-arrow-left-s-line"></i> Day {{ $prevPlan->day_no }}
+                    <i class="ri-arrow-left-s-line"></i> Day {{ $prevPlan->lesson_no }}
                 </a>
             @endif
             @if ($nextPlan)
-                <a href="{{ route('lesson-plans.edit', $nextPlan->id) }}"
+                <a href="{{ route('lessons.edit', $nextPlan->id) }}"
                     class="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition shadow-sm">
-                    Day {{ $nextPlan->day_no }} <i class="ri-arrow-right-s-line"></i>
+                    Day {{ $nextPlan->lesson_no }} <i class="ri-arrow-right-s-line"></i>
                 </a>
             @endif
         </div>
@@ -48,7 +48,7 @@
         <div class="bg-white rounded-2xl border border-gray-100 shadow-sm px-6 py-4 flex items-center gap-4 flex-wrap">
             <div
                 class="flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-teal-400 to-green-400 text-white text-xl font-bold shadow">
-                {{ $lessonPlan->day_no }}
+                {{ $lessonPlan->lesson_no }}
             </div>
             <div>
                 <p class="text-xs text-gray-400 uppercase tracking-wide font-semibold">Day Number</p>
@@ -62,7 +62,7 @@
                 </p>
             </div>
             <div class="ml-auto flex items-center gap-2">
-                <a href="{{ route('lesson-plans.show', $lessonPlan->id) }}"
+                <a href="{{ route('lessons.show', $lessonPlan->id) }}"
                     class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition">
                     <i class="ri-eye-line"></i> Preview
                 </a>
@@ -71,8 +71,7 @@
 
         {{-- Form Card --}}
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100">
-            <form action="{{ route('lesson-plans.update', $lessonPlan->id) }}" method="POST"
-                class="divide-y divide-gray-50">
+            <form action="{{ route('lessons.update', $lessonPlan->id) }}" method="POST" class="divide-y divide-gray-50">
                 @csrf
                 @method('PUT')
 
@@ -128,7 +127,7 @@
 
                 {{-- Actions --}}
                 <div class="px-6 py-4 bg-gray-50/60 rounded-b-2xl flex items-center justify-between">
-                    <a href="{{ route('lesson-plans.index', ['grade' => $lessonPlan->grade_id, 'subject' => $lessonPlan->subject_id]) }}"
+                    <a href="{{ route('lessons.index', ['grade' => $lessonPlan->grade_id, 'subject' => $lessonPlan->subject_id]) }}"
                         class="text-sm text-gray-400 hover:text-gray-600 transition inline-flex items-center gap-1">
                         <i class="ri-arrow-left-line"></i> Back to list
                     </a>

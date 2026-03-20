@@ -4,19 +4,13 @@
     {{-- Page Header --}}
     <div class="flex items-center justify-between flex-wrap gap-3 mb-2">
         <div>
-            <h1 class="text-2xl font-bold text-gray-800">Lesson Plans</h1>
+            <h1 class="text-2xl font-bold text-gray-800">Lesson Plan</h1>
             <div class="bread-crumb mt-1">
                 <a href="{{ url('/') }}">Dashboard</a>
                 <div>/</div>
-                <span class="text-gray-500">Lesson Plans</span>
+                <span class="text-gray-500">Lesson Plan</span>
             </div>
         </div>
-        @auth
-            <a href="{{ route('lesson-plans.create') }}"
-                class="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-teal-500 to-green-500 text-white text-sm font-semibold rounded-xl shadow hover:from-teal-600 hover:to-green-600 transition">
-                <i class="ri-add-line text-base"></i> New Lesson Plan
-            </a>
-        @endauth
     </div>
 
     <div class="md:w-11/12 mx-auto mt-6 space-y-6">
@@ -30,16 +24,17 @@
 
         {{-- Filter Card --}}
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-            <div class="flex items-center gap-3 px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-slate-50 to-gray-50">
+            <div
+                class="flex items-center gap-3 px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-slate-50 to-gray-50">
                 <div class="flex items-center justify-center w-9 h-9 rounded-xl bg-teal-100 text-teal-600">
                     <i class="ri-filter-3-line text-lg"></i>
                 </div>
                 <div>
-                    <h2 class="font-semibold text-gray-800 text-sm leading-tight">Filter Lesson Plans</h2>
-                    <p class="text-xs text-gray-400">Select grade and subject to view plans</p>
+                    <h2 class="font-semibold text-gray-800 text-sm leading-tight">Filter Lessons</h2>
+                    <p class="text-xs text-gray-400">Select grade and subject to view lessons</p>
                 </div>
                 @if ($grade && $subject)
-                    <a href="{{ route('lesson-plans.index') }}"
+                    <a href="{{ route('lessons.index') }}"
                         class="ml-auto inline-flex items-center gap-1 text-xs text-gray-500 hover:text-red-500 transition">
                         <i class="ri-close-line"></i> Clear filter
                     </a>
@@ -50,20 +45,22 @@
                 @if ($grade && $subject)
                     {{-- Active filter pills --}}
                     <div class="flex items-center gap-3 flex-wrap">
-                        <span class="inline-flex items-center gap-2 px-3 py-1.5 bg-teal-50 border border-teal-200 text-teal-700 rounded-full text-sm font-medium">
+                        <span
+                            class="inline-flex items-center gap-2 px-3 py-1.5 bg-teal-50 border border-teal-200 text-teal-700 rounded-full text-sm font-medium">
                             <i class="ri-school-line text-teal-500"></i>
                             {{ $grades->find($grade)?->name ?? 'N/A' }}
                         </span>
                         <i class="ri-arrow-right-line text-gray-300"></i>
-                        <span class="inline-flex items-center gap-2 px-3 py-1.5 bg-indigo-50 border border-indigo-200 text-indigo-700 rounded-full text-sm font-medium">
+                        <span
+                            class="inline-flex items-center gap-2 px-3 py-1.5 bg-indigo-50 border border-indigo-200 text-indigo-700 rounded-full text-sm font-medium">
                             <i class="ri-book-2-line text-indigo-500"></i>
                             {{ $subjects->find($subject)?->name ?? 'N/A' }}
                         </span>
-                        <a href="{{ route('lesson-plans.index') }}"
+                        <a href="{{ route('lessons.index') }}"
                             class="ml-2 text-xs text-gray-400 underline hover:text-gray-600 transition">Change</a>
                     </div>
                 @else
-                    <form action="{{ route('lesson-plans.index') }}" method="GET" id="filterForm">
+                    <form action="{{ route('lessons.index') }}" method="GET" id="filterForm">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                             <div>
                                 <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">
@@ -97,7 +94,7 @@
                         <div class="mt-5">
                             <button type="submit"
                                 class="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-teal-500 to-green-500 text-white text-sm font-semibold rounded-xl shadow hover:from-teal-600 hover:to-green-600 transition">
-                                <i class="ri-search-line"></i> Load Plans
+                                <i class="ri-search-line"></i> Load Plan
                             </button>
                         </div>
                     </form>
@@ -110,69 +107,77 @@
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
                 <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
                     <div>
-                        <h2 class="font-semibold text-gray-800">Lesson Plans</h2>
+                        <h2 class="font-semibold text-gray-800">Lesson Plan</h2>
                         <p class="text-xs text-gray-400 mt-0.5">
-                            {{ $lessonPlans->count() }} {{ Str::plural('plan', $lessonPlans->count()) }} found
+                            {{ $lessons->count() }} {{ Str::plural('plan', $lessons->count()) }} lessons found
                         </p>
                     </div>
-                    @if ($lessonPlans->count())
+                    @if ($lessons->count())
                         <div class="relative">
-                            <input type="text" id="searchInput" placeholder="Search plans…"
-                                oninput="filterPlans(event)"
+                            <input type="text" id="searchInput" placeholder="Search plans…" oninput="filterPlans(event)"
                                 class="pl-8 pr-3 py-2 text-sm border border-gray-200 rounded-xl bg-gray-50 focus:ring-2 focus:ring-teal-400 focus:border-teal-400 w-48 transition">
                             <i class="ri-search-line absolute left-2.5 top-2.5 text-gray-400 text-sm"></i>
                         </div>
                     @endif
                 </div>
 
-                @if ($lessonPlans->count())
+                @if ($lessons->count())
                     <div class="overflow-x-auto">
                         <table class="w-full text-sm">
                             <thead class="bg-gray-50 border-b border-gray-100">
                                 <tr>
-                                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide w-20">Day</th>
-                                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">Topic</th>
-                                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide hidden md:table-cell">Objective</th>
-                                    <th class="px-4 py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wide w-28">Actions</th>
+                                    <th
+                                        class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide w-20">
+                                        No</th>
+                                    <th
+                                        class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                                        Lesson</th>
+                                    <th
+                                        class="px-4 py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wide w-28">
+                                        Actions</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-50" id="plansTableBody">
-                                @foreach ($lessonPlans as $plan)
+                                @foreach ($lessons as $lesson)
                                     <tr class="plan-row hover:bg-teal-50/40 transition group">
                                         <td class="px-6 py-3">
-                                            <span class="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-gradient-to-br from-teal-400 to-green-400 text-white text-xs font-bold shadow-sm">
-                                                {{ $plan->day_no }}
+                                            <span
+                                                class="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-gradient-to-br from-teal-400 to-green-400 text-white text-xs font-bold shadow-sm">
+                                                {{ $lesson->lesson_no }}
                                             </span>
                                         </td>
                                         <td class="px-4 py-3">
-                                            <a href="{{ route('lesson-plans.show', $plan->id) }}"
-                                                class="font-medium text-gray-800 hover:text-teal-600 transition line-clamp-1" title="{{ $plan->topic }}">
-                                                {{ $plan->topic ?? '—' }}
+                                            <a href="{{ route('lessons.show', $lesson->id) }}"
+                                                class="font-medium text-gray-800 hover:text-teal-600 transition line-clamp-1"
+                                                title="{{ $lesson->title }}">
+                                                {{ $lesson->title ?? '—' }}
                                             </a>
                                         </td>
                                         <td class="px-4 py-3 text-gray-400 text-xs hidden md:table-cell max-w-xs">
-                                            <span class="line-clamp-1" title="{{ $plan->objective }}">
-                                                {{ $plan->objective ?? '—' }}
-                                            </span>
+                                            @foreach ($lesson->objectives as $obj)
+                                                <span
+                                                    class="inline-block px-2 py-0.5 bg-gray-100 text-gray-500 rounded-full mb-1">
+                                                    {{ $obj }}
+                                                </span>
+                                            @endforeach
                                         </td>
                                         <td class="px-4 py-3">
                                             <div class="flex items-center justify-center gap-1.5">
-                                                <a href="{{ route('lesson-plans.show', $plan->id) }}"
+                                                <a href="{{ route('lessons.show', $lesson->id) }}"
                                                     class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-gray-100 text-gray-500 hover:bg-teal-100 hover:text-teal-600 transition"
                                                     title="View">
                                                     <i class="ri-eye-line text-sm"></i>
                                                 </a>
-                                                <a href="{{ route('lesson-plans.edit', $plan->id) }}"
+                                                <a href="{{ route('lessons.edit', $lesson->id) }}"
                                                     class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-gray-100 text-gray-500 hover:bg-blue-100 hover:text-blue-600 transition"
                                                     title="Edit">
                                                     <i class="ri-pencil-line text-sm"></i>
                                                 </a>
-                                                <form action="{{ route('lesson-plans.destroy', $plan->id) }}" method="POST"
-                                                    id="del_form{{ $plan->id }}" class="inline">
+                                                <form action="{{ route('lessons.destroy', $lesson->id) }}" method="POST"
+                                                    id="del_form{{ $lesson->id }}" class="inline">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="button"
-                                                        onclick="delme({{ $plan->id }})"
+                                                    <button type="button" onclick="delme({{ $lesson->id }})"
                                                         class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-gray-100 text-gray-400 hover:bg-red-100 hover:text-red-500 transition"
                                                         title="Delete">
                                                         <i class="ri-delete-bin-line text-sm"></i>
@@ -188,40 +193,42 @@
 
                     {{-- Progress bar --}}
                     @php
-                        $filled = $lessonPlans->filter(fn($p) => $p->topic && $p->topic !== 'Topic ' . $p->day_no)->count();
-                        $total  = $lessonPlans->count();
-                        $pct    = $total ? round(($filled / $total) * 100) : 0;
+                        $filled = $lessons
+                            ->filter(fn($p) => $p->title && $p->title !== 'Topic ' . $p->lesson_no)
+                            ->count();
+                        $total = $lessons->count();
+                        $pct = $total ? round(($filled / $total) * 100) : 0;
                     @endphp
                     <div class="px-6 py-4 border-t border-gray-50 bg-gray-50/50">
                         <div class="flex items-center justify-between text-xs text-gray-500 mb-1.5">
                             <span>Content filled</span>
-                            <span class="font-semibold">{{ $filled }}/{{ $total }} plans ({{ $pct }}%)</span>
+                            <span class="font-semibold">{{ $filled }}/{{ $total }} plans
+                                ({{ $pct }}%)</span>
                         </div>
                         <div class="w-full bg-gray-200 rounded-full h-1.5">
                             <div class="bg-gradient-to-r from-teal-400 to-green-400 h-1.5 rounded-full transition-all duration-500"
                                 style="width: {{ $pct }}%"></div>
                         </div>
                     </div>
-
                 @else
                     {{-- Empty state --}}
                     <div class="flex flex-col items-center justify-center py-16 px-6 text-center">
                         <div class="w-20 h-20 rounded-2xl bg-gray-100 flex items-center justify-center mb-4">
                             <i class="ri-file-list-3-line text-4xl text-gray-300"></i>
                         </div>
-                        <h3 class="text-base font-semibold text-gray-600 mb-1">No lesson plans found</h3>
+                        <h3 class="text-base font-semibold text-gray-600 mb-1">No lesson plan found</h3>
                         <p class="text-sm text-gray-400 mb-6 max-w-xs">
-                            No lesson plans have been created for this grade and subject yet.
+                            No lesson plan has been created for this grade and subject yet.
                         </p>
                         @auth
-                            <form action="{{ route('lesson-plans.store') }}" method="POST">
+                            <form action="{{ route('lessons.store') }}" method="POST">
                                 @csrf
                                 <input type="hidden" name="grade_id" value="{{ $grade }}">
                                 <input type="hidden" name="subject_id" value="{{ $subject }}">
                                 <button type="submit"
                                     class="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-teal-500 to-green-500 text-white text-sm font-semibold rounded-xl shadow hover:from-teal-600 hover:to-green-600 transition">
                                     <i class="ri-add-circle-line text-base"></i>
-                                    Generate 72-Day Lesson Plan
+                                    Generate Lesson Plan
                                 </button>
                             </form>
                         @endauth
@@ -262,4 +269,3 @@
         }
     </script>
 @endsection
-

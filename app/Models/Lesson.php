@@ -5,15 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class LessonPlan extends Model
+class Lesson extends Model
 {
     use HasFactory;
     protected $fillable = [
         'subject_id',
         'grade_id',
-        'day_no',
-        'topic',
-        'objective',
+        'lesson_no',
+        'title',
         'activity',
         'homework',
         'remarks',
@@ -31,6 +30,10 @@ class LessonPlan extends Model
 
     public function resources()
     {
-        return $this->hasMany(LessonPlanResource::class);
+        return $this->hasMany(LessonResource::class);
+    }
+    public function objectives()
+    {
+        return $this->hasMany(LessonObjective::class);
     }
 }

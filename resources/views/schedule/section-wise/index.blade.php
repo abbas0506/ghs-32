@@ -70,7 +70,7 @@
                                         <div class="text-sm bg-teal-50">
                                             <a href="{{ route('section.lecture.schedule.edit', [$section, $lecture->lecture_no, $allocation]) }}"
                                                 class="link">{{ $allocation->subject->short_name }}</a>
-                                            <p>{{ $allocation->user->profile->short_name }}</p>
+                                            <p>{{ $allocation->user->profile?->short_name }}</p>
                                         </div>
                                         <div class="divider"></div>
                                     @endforeach

@@ -61,15 +61,16 @@
                             <td class="chk hidden"><input type="checkbox" class="w-4 h-4 rounded" name="user_ids_array[]"
                                     value="{{ $user->id }}" checked></td>
                             <td>{{ $loop->index + 1 }}</td>
-                            <td class="font-semibold">{{ $user->profile->short_name }} <br>
+                            <td class="font-semibold">{{ $user->profile?->short_name }} <br>
                                 ({{ $user->allocations->count() }})
                             </td>
                             @foreach (range(1, 8) as $lecture_no)
                                 <td class="p-1">
                                     @foreach ($user->allocations()->havingLectureNo($lecture_no)->get() as $allocation)
                                         <div class="text-sm bg-teal-50">
-                                            <p class="font-bold">{{ $allocation->subject->short_name }}</p>
-                                            <p>Class {{ $allocation->section->name }}</p>
+                                            <p class="font-bold">{{ $allocation->subject->short_name }}-
+                                                {{ $allocation->section->grade?->grade_no }}
+                                            </p>
                                         </div>
                                         <div class="divider"></div>
                                     @endforeach

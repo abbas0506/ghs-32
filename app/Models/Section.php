@@ -23,6 +23,10 @@ class Section extends Model
         return $incharge;
     }
 
+    public function grade()
+    {
+        return $this->belongsTo(Grade::class);
+    }
     public function students()
     {
         return $this->hasMany(Student::class);

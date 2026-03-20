@@ -6,7 +6,7 @@
         <div class="bread-crumb mt-1">
             <a href="{{ url('/') }}">Dashboard</a>
             <div>/</div>
-            <a href="{{ route('lesson-plans.index') }}">Lesson Plans</a>
+            <a href="{{ route('lessons.index') }}">Lesson Plans</a>
             <div>/</div>
             <span class="text-gray-500">Create</span>
         </div>
@@ -40,7 +40,7 @@
                 </h2>
             </div>
 
-            <form action="{{ route('lesson-plans.store') }}" method="POST" class="px-6 py-6 space-y-5">
+            <form action="{{ route('lessons.store') }}" method="POST" class="px-6 py-6 space-y-5">
                 @csrf
 
                 {{-- Grade --}}
@@ -82,7 +82,7 @@
                 </div>
 
                 <div class="flex items-center justify-between pt-2 border-t border-gray-100">
-                    <a href="{{ route('lesson-plans.index') }}"
+                    <a href="{{ route('lessons.index') }}"
                         class="text-sm text-gray-400 hover:text-gray-600 transition inline-flex items-center gap-1">
                         <i class="ri-arrow-left-line"></i> Cancel
                     </a>

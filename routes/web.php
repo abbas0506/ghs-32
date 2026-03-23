@@ -23,6 +23,7 @@ use App\Http\Controllers\SectionResultController;
 use App\Http\Controllers\SectionScheduleController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\SubjectController;
+use App\Http\Controllers\SyllabusController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\TestAllocationController;
 use App\Http\Controllers\TestAllocationResultController;
@@ -152,6 +153,11 @@ Route::group(['middleware' => ['auth']], function () {
 
     // lessons
     Route::resource('lessons', LessonController::class);
+
+    // syllabus
+    Route::resource('syllabi', SyllabusController::class);
+
+
     // lock /unlock
     Route::patch('test/{id}/lock', [TestController::class, 'lock'])->name('test.lock');
     Route::patch('test/{id}/unlock', [TestController::class, 'unlock'])->name('test.unlock');

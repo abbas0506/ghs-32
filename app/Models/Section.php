@@ -100,4 +100,14 @@ class Section extends Model
 
         return round($overallPresence->count() / $overallAttendance->count() * 100, 1);
     }
+
+    public function newAdmissions()
+    {
+        // get new admission during last 7 days
+        $newStudents = $this->students()
+            ->where('created_at', '>=', \Carbon\Carbon::now()->subWeek())
+            ->get();
+
+        return $newStudents;
+    }
 }

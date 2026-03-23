@@ -3,7 +3,7 @@
     <div class="custom-container">
         <h1>Reset Index</h1>
         <div class="bread-crumb">
-            <a href="{{ url('/') }}">Dashoboard</a>
+            <a href="{{ url('/') }}">Home</a>
             <div>/</div>
             <a href="{{ route('sections.index') }}">Sections</a>
             <div>/</div>

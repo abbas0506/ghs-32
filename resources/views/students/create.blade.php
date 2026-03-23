@@ -28,7 +28,7 @@
                 <form action="{{ route('section.students.store', $section) }}" method='post' class="mt-4"
                     onsubmit="return validate(event)">
                     @csrf
-                    <div class="grid md:grid-cols-2 gap-4">
+                    <div class="grid md:grid-cols-2 gap-3">
                         <h2 class="text-teal-500 col-span-full">Student Info</h2>
                         <div class="col-span-full">
                             <label>Name *</label>
@@ -50,14 +50,6 @@
                             <label>Roll No *</label>
                             <input type="number" name='rollno' class="custom-input" placeholder="Type here">
                         </div>
-                        <h2 class="col-span-full text-teal-500 mt-6">Fee Package</h2>
-                        @foreach ($feeTypes as $feeType)
-                            <div>
-                                <label for="">{{ $feeType->name }}</label>
-                                <input type="hidden" name="fee_type_ids[]" value="{{ $feeType->id }}">
-                                <input type="number" name="amounts[]" value="{{ $feeType->amount }}" class="custom-input">
-                            </div>
-                        @endforeach
                     </div>
                     <div class="text-center md:text-right mt-8">
                         <button type="submit" class="btn-teal rounded">Submit</button>

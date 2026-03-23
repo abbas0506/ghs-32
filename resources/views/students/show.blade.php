@@ -2,7 +2,7 @@
 @section('page-content')
     <h2>View Student</h2>
     <div class="bread-crumb">
-        <a href="{{ url('/') }}">Dashoboard</a>
+        <a href="{{ url('/') }}">Home</a>
         <div>/</div>
         <a href="{{ route('sections.index') }}">Sections</a>
         <div>/</div>
@@ -11,72 +11,54 @@
         <div>View Student</div>
     </div>
     <!-- display info -->
-    <div class="flex justify-center items-center">
-        @if ($student->photo)
-            <img src="{{ asset('storage/' . $student->photo) }}" alt="Student Photo" width="100" height="100">
-        @else
-            <img src="{{ asset('/images/default.png') }}" alt="Student Photo" width="100" height="100">
-        @endif
-    </div>
-    <h2 class="my-3 text-center">{{ $student->name }}</h2>
-    <div class="md:w-4/5 mx-auto grid gap-3 md:p-8 p-5 border rounded relative">
-        <div class="absolute top-2 right-2">
-            <div class="flex items-center justify-center space-x-2">
-                @can('delete', $student)
-                    <div class="flex w-8 h-8 rounded-full border justify-center items-center">
-                        <form action="{{ route('section.students.destroy', [$section, $student]) }}" method="post"
-                            onsubmit="return confirmDel(event)">
-                            @csrf
-                            @method('DELETE')
-                            <button><i class="bx bx-trash text-red-600"></i></button>
-                        </form>
-                    </div>
-                @endcan
-                @can('update', $student)
-                    <div class="flex w-8 h-8 rounded-full border justify-center items-center">
-                        <a href="{{ route('section.students.edit', [$section, $student]) }}">
-                            <i class="bx bx-pencil text-green-600"></i></a>
-                    </div>
-                @endcan
 
-                <div class="">
-                    <a href="{{ route('sections.show', $section) }}"><i class="bi-x"></i></a>
+    <div class="mt-4 text-slate-800">
+        <a href="{{ route('sections.show', $section) }}"><i class="ri-arrow-left-long-line"></i></a>
+    </div>
+
+    <div class="md:w-4/5 mx-auto mt-4 relative">
+        <div class="flex items-center gap-3">
+            <div class="ico cyan w-10 h-10"><i class="ri-user-6-fill"></i></div>
+            <div class="font-semibold leading-tight text-sm md:text-base">{{ $student->name }} <br>
+                <span class="text-slate-400 font-normal text-xs">{{ $student->father_name }}</span>
+            </div>
+        </div>
+
+        <div>
+            <div class="absolute top-2 right-2">
+                <div class="flex items-center justify-center space-x-2">
+                    @can('delete', $student)
+                        <div class="flex w-8 h-8 justify-center items-center">
+                            <form action="{{ route('section.students.destroy', [$section, $student]) }}" method="post"
+                                onsubmit="return confirmDel(event)">
+                                @csrf
+                                @method('DELETE')
+                                <button><i class="bx bx-trash text-red-600"></i></button>
+                            </form>
+                        </div>
+                    @endcan
+                    @can('update', $student)
+                        <div class="flex w-8 h-8 justify-center items-center">
+                            <a href="{{ route('section.students.edit', [$section, $student]) }}">
+                                <i class="bx bx-pencil text-green-600"></i></a>
+                        </div>
+                    @endcan
+
+
                 </div>
             </div>
         </div>
-        <h2 class="text-teal-500">Student Info</h2><a href="{{ route('section.students.edit', [$section, $student]) }}"><i
-                class="bx bx-pencil"></i></a>
+
+    </div>
+
+    <div class="md:w-4/5 mx-auto grid gap-3 md:p-8 p-5 border rounded mt-6">
+        <h2 class="text-cyan-800">Other Info</h2>
+        <p>Class {{ $section->name }} / <span class="text-slate-400 text-xs">Roll # {{ $student->rollno }}</span></p>
         <div>
-            <label for="">Name</label>
-            <p>{{ $student->name }}</p>
-            <p class="text-slate-500 text-xs">{{ $student->father_name }}</p>
+            <p class="text-sm"> Phone: {{ $student->phone }}</p>
+            <p class="text-slate-500 text-xs">Address: {{ $student->address }}</p>
         </div>
-        <div>
-            <label for="">Class</label>
-            <p>{{ $student->section->name }}</p>
-            <p class="text-slate-500 text-xs">{{ $student->rollno }}</p>
-        </div>
-        <div>
-            <label for=""><i class="bi-telephone"></i></label>
-            <p>{{ $student->phone }}</p>
-            <p class="text-slate-500 text-xs">{{ $student->address }}</p>
-        </div>
-        <div>
-            <label for="">Roll # </label>
-            <div class="flex flex-wrap items-center gap-x-4">
-                <h2>{{ $student->rollno }}</h2>
-            </div>
-        </div>
-        <hr class="my-2">
-        <h2 class="mt-3 text-teal-500">Fee Package</h2>
-        <div class="grid gap-3 grid-cols-2">
-            @foreach ($student->fees as $fee)
-                <div>
-                    <label for="">{{ $fee->feeType->name }}</label>
-                    <div>{{ $fee->amount }}</div>
-                </div>
-            @endforeach
-        </div>
+
     </div>
 @endsection
 @section('script')

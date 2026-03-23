@@ -3,7 +3,7 @@
     <div class="custom-container">
         <h1>Reset Index</h1>
         <div class="bread-crumb">
-            <a href="{{ url('/') }}">Dashoboard</a>
+            <a href="{{ url('/') }}">Home</a>
             <div>/</div>
             <a href="{{ route('sections.index') }}">Sections</a>
             <div>/</div>
@@ -19,15 +19,17 @@
             <x-message></x-message>
         @endif
 
-        <div class="w-full md:w-1/2 mx-auto shadow-xl rounded-lg p-8 mt-8">
-            <h1 class="text-center"> {{ $section->name }} </h1>
-            <p class="text-center text-red-600 leading-tight">Reset action occurs on the basis of student score in class.
-                This is destructive activity, do if only you understand the consequences</p>
-            <div class="grid place-items-center p-8 gap-3">
+        <div class="statbox cyan w-full md:w-1/2 mx-auto shadow-xl rounded-lg p-8 mt-8">
+            <div class="text-center text-lg md:text-xl font-semibold mb-4"> <i class="ri-group-line font-normal"></i>
+                {{ $section->name }}
+            </div>
+            <p class="">This action will reset all roll numbers of the class. Be careful, click on the reset button
+                only if you understand the consequences! </p>
+            <div class="grid place-items-center mt-4">
                 <form action="{{ route('sections.reset.rollno', $section) }}" method="post"
                     onsubmit="return confirmDel(event)">
                     @csrf
-                    <button class="btn-blue rounded px-3 py-4">Reset Roll #</button>
+                    <button class="btn-cyan rounded px-3 py-2">Reset Roll #</button>
                 </form>
             </div>
         </div>

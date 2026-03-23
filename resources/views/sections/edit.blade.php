@@ -3,7 +3,7 @@
     <div class="custom-container">
         <h2>Classes / Edit</h2>
         <div class="bread-crumb">
-            <a href="{{ url('/') }}">Dashoboard</a>
+            <a href="{{ url('/') }}">Home</a>
             <div>/</div>
             <a href="{{ route('sections.index') }}">Sections</a>
             <div>/</div>

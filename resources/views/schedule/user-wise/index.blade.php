@@ -8,7 +8,7 @@
     </style>
     <h1>user Wise Schedule</h1>
     <div class="bread-crumb">
-        <a href="{{ url('/') }}">Dashoboard</a>
+        <a href="{{ url('/') }}">Home</a>
         <div>/</div>
         <div>Schedule</div>
     </div>

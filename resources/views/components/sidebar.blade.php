@@ -102,6 +102,14 @@
                         <i class="bi-gear text-base"></i>
                         <span class="ml-3">Configuration</span>
                     </a>
+                    <a href="{{ route('syllabi.index') }}"
+                        class="group flex items-center px-4 py-1 rounded-lg font-medium text-sm transition-all duration-300 ease-out relative {{ Route::currentRouteName() === 'bulk-invoices.index' ? 'bg-gradient-to-r from-teal-500 to-green-500 text-white' : 'text-slate-600 hover:text-slate-900' }}">
+                        <div
+                            class="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-7 bg-gradient-to-b from-teal-500 to-green-500 rounded-full opacity-0 {{ Route::currentRouteName() === 'bulk-invoices.index' ? 'opacity-100' : '' }} transition-opacity duration-300">
+                        </div>
+                        <i class="bi-gear text-base"></i>
+                        <span class="ml-3">Syllabus</span>
+                    </a>
                     <a href="{{ route('lessons.index') }}"
                         class="group flex items-center px-4 py-1 rounded-lg font-medium text-sm transition-all duration-300 ease-out relative {{ Route::currentRouteName() === 'bulk-invoices.index' ? 'bg-gradient-to-r from-teal-500 to-green-500 text-white' : 'text-slate-600 hover:text-slate-900' }}">
                         <div

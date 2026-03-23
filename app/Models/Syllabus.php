@@ -5,14 +5,21 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class GradeSubject extends Model
+class Syllabus extends Model
 {
     use HasFactory;
-
     protected $fillable = [
-        'grade_id',
         'subject_id',
+        'grade_id',
+        'term1',
+        'term2',
+        'term3',
     ];
+
+    public function scopeForGrade($query, $gradeId)
+    {
+        return $query->where('grade_id', $gradeId);
+    }
 
     public function grade()
     {

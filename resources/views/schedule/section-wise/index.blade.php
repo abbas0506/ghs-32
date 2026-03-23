@@ -8,7 +8,7 @@
     </style>
     <h1>Allocations</h1>
     <div class="bread-crumb">
-        <a href="{{ url('/') }}">Dashoboard</a>
+        <a href="{{ url('/') }}">Home</a>
         <div>/</div>
         <a href="{{ route('sections.index') }}">Sections</a>
         <div>/</div>

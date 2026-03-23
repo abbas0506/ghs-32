@@ -27,7 +27,9 @@ class SectionController extends Controller
         } else
             $sections = collect(); // empty collection
 
-        return view('sections.index', compact('sections'));
+        // get all students from the sections
+        $studentsCount = Student::whereIn('section_id', $sections->pluck('id'))->count();
+        return view('sections.index', compact('sections', 'studentsCount'));
     }
 
     /**
@@ -169,7 +171,7 @@ class SectionController extends Controller
             $studentIdsArray = $request->student_ids_array;
             $request->validate([
                 'student_ids_array' => 'required|array',
-                'export_section_id' => 'required|integer|exists:sections,id',
+                'section_id' => 'required|integer|exists:sections,id',
             ]);
 
             // Get selected student IDs
@@ -177,7 +179,7 @@ class SectionController extends Controller
 
             // Bulk update
             Student::whereIn('id', $studentIdsArray)
-                ->update(['section_id' => $request->export_section_id]);
+                ->update(['section_id' => $request->section_id]);
 
             return redirect()->back()->with('success', 'Students updated successfully!');
         } catch (Exception $e) {

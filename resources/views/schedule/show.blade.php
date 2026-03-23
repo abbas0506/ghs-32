@@ -3,7 +3,7 @@
     <div class="custom-container">
         <h1>My Schedule</h1>
         <div class="bread-crumb">
-            <a href="{{ url('/') }}">Dashoboard</a>
+            <a href="{{ url('/') }}">Home</a>
             <div>/</div>
             <div>Schedule</div>
         </div>

@@ -3,7 +3,7 @@
     <div class="custom-container">
         <h1>Attendance Record</h1>
         <div class="bread-crumb">
-            <a href="{{ url('/') }}">Dashoboard</a>
+            <a href="{{ url('/') }}">Home</a>
             <div>/</div>
             <a href="{{ route('section.attendance.index', $section) }}">Attendance</a>
             <div>/</div>

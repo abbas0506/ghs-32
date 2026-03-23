@@ -16,7 +16,7 @@
         <a href="{{ route('sections.show', $section) }}"><i class="ri-arrow-left-long-line"></i></a>
     </div>
 
-    <div class="md:w-4/5 mx-auto mt-4 relative">
+    <div class="md:w-4/5 mx-auto mt-4 flex flex-wrap items-center justify-between relative">
         <div class="flex items-center gap-3">
             <div class="ico cyan w-10 h-10"><i class="ri-user-6-fill"></i></div>
             <div class="font-semibold leading-tight text-sm md:text-base">{{ $student->name }} <br>
@@ -25,27 +25,20 @@
         </div>
 
         <div>
-            <div class="absolute top-2 right-2">
-                <div class="flex items-center justify-center space-x-2">
-                    @can('delete', $student)
-                        <div class="flex w-8 h-8 justify-center items-center">
-                            <form action="{{ route('section.students.destroy', [$section, $student]) }}" method="post"
-                                onsubmit="return confirmDel(event)">
-                                @csrf
-                                @method('DELETE')
-                                <button><i class="bx bx-trash text-red-600"></i></button>
-                            </form>
-                        </div>
-                    @endcan
-                    @can('update', $student)
-                        <div class="flex w-8 h-8 justify-center items-center">
-                            <a href="{{ route('section.students.edit', [$section, $student]) }}">
-                                <i class="bx bx-pencil text-green-600"></i></a>
-                        </div>
-                    @endcan
+            <div class="flex items-center justify-center gap-1">
+                @can('update', $student)
+                    <a href="{{ route('section.students.edit', [$section, $student]) }}">
+                        <i class="bx bx-pencil text-green-600"></i></a>
+                @endcan
+                @can('delete', $student)
+                    <form action="{{ route('section.students.destroy', [$section, $student]) }}" method="post"
+                        onsubmit="return confirmDel(event)">
+                        @csrf
+                        @method('DELETE')
+                        <button><i class="bx bx-trash text-red-600"></i></button>
+                    </form>
+                @endcan
 
-
-                </div>
             </div>
         </div>
 

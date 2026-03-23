@@ -10,29 +10,30 @@
             <div>New</div>
         </div>
 
-        <!-- page message -->
-        @if ($errors->any())
-            <x-message :errors='$errors'></x-message>
-        @else
-            <x-message></x-message>
-        @endif
+        <div class="md:w-4/5 mx-auto rounded border p-5 md:p-8 mt-8 bg-white">
 
-        <div class="md:w-4/5 mx-auto rounded border p-5 md:p-8 mt-8 bg-slate-100">
+            <!-- page message -->
+            @if ($errors->any())
+                <x-message :errors='$errors'></x-message>
+            @else
+                <x-message></x-message>
+            @endif
+
             <form action="{{ route('sections.store') }}" method='post' class="mt-4" onsubmit="return validate(event)">
                 @csrf
                 <div class="grid md:grid-cols-2 gap-4">
-                    <div class="col-span-full">
-                        <label>Section</label>
-                        <input type="text" name='name' class="custom-input-borderless" placeholder="Type here"
-                            value="">
-                    </div>
                     <div class="">
-                        <label for="">Level</label>
-                        <select name="level" id="" class="custom-input-borderless">
-                            @foreach (range(1, 50) as $level)
-                                <option value="{{ $level }}">{{ $level }}</option>
+                        <label for="">Grade *</label>
+                        <select name="grade_id" id="" class="custom-input">
+                            @foreach ($grades as $grade)
+                                <option value="{{ $grade->id }}">{{ $grade->name }}</option>
                             @endforeach
                         </select>
+                    </div>
+                    <div class="col-span-full">
+                        <label>Section Name *</label>
+                        <input type="text" name='name' class="custom-input" placeholder="Enter section name"
+                            value="">
                     </div>
                 </div>
                 <div class="flex justify-end mt-8">

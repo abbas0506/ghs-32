@@ -34,8 +34,7 @@
 
                 {{-- set line spacing to 1 --}}
                 <span class="text-gray-500 text-xs md:text-sm mt-1">{{ $submitted }} out of
-                    {{ $total }} subjects
-                    submitted</span>
+                    {{ $total }} subjects submitted</span>
             </div>
 
             <div class="flex items-center space-x-3">
@@ -63,7 +62,7 @@
                     @if ($test->is_open)
                         <a href="{{ route('test.test-allocations.create', $test) }}"
                             class="flex justify-center items-center w-8 h-8 btn-teal rounded-full text-xs"><i
-                                class="bi-plus-lg text-blue-600"></i></a>
+                                class="bi-plus-lg text-slate-50"></i></a>
                         {{-- test edit button --}}
                         <a href="{{ route('tests.edit', $test) }}"
                             class="flex justify-center items-center w-8 h-8 btn-teal rounded-full text-xs">

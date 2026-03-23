@@ -39,7 +39,7 @@ class StudentController extends Controller
         DB::beginTransaction();
         try {
             $section = Section::findOrFail($sectionId);
-            $validated['fee'] = ($section->grade == 0) ? 0 : 20;
+            $validated['fee'] = ($section->grade_id == 0) ? 0 : 20;
             $student = $section->students()->create($validated);
 
 

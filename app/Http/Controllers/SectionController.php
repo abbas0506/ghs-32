@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Exception;
 use App\Imports\StudentImport;
+use App\Models\Grade;
 use App\Models\Section;
 use App\Models\Student;
 use Illuminate\Support\Facades\Auth;
@@ -37,8 +38,8 @@ class SectionController extends Controller
      */
     public function create()
     {
-
-        return view('sections.create');
+        $grades = Grade::all();
+        return view('sections.create', compact('grades'));
     }
 
     /**
@@ -49,7 +50,7 @@ class SectionController extends Controller
         //
         $request->validate([
             'name' => 'nullable|max:50',
-            'level' => 'required',
+            'grade_id' => 'required|numeric',
         ]);
 
         try {
@@ -77,7 +78,8 @@ class SectionController extends Controller
     public function edit(string $id)
     {
         $section = Section::find($id);
-        return view('sections.edit', compact('section'));
+        $grades = Grade::all();
+        return view('sections.edit', compact('section', 'grades'));
     }
 
     /**
@@ -88,7 +90,7 @@ class SectionController extends Controller
         //
         $request->validate([
             'name' => 'nullable|max:50',
-            'level' => 'required',
+            'grade_id' => 'required|numeric|exists:grades,id',
         ]);
 
         try {

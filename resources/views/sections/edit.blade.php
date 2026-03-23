@@ -25,12 +25,17 @@
                 @method('PATCH')
                 <div class="grid grid-cols-2 gap-2">
                     <div class="col-span-full">
-                        <label>Name</label>
+                        <label>Section Name *</label>
                         <input type="text" name="name" class="custom-input" value="{{ $section->name }}">
                     </div>
-                    <div>
-                        <label>Level/Order</label>
-                        <input type="number" name="level" class="custom-input" value="{{ $section->level }}">
+                    <div class="">
+                        <label for="">Grade *</label>
+                        <select name="grade_id" id="" class="custom-input">
+                            @foreach ($grades as $grade)
+                                <option value="{{ $grade->id }}"
+                                    {{ $section->grade_id == $grade->id ? 'selected' : '' }}> {{ $grade->name }}</option>
+                            @endforeach
+                        </select>
                     </div>
                 </div>
                 <div class="flex mt-4">

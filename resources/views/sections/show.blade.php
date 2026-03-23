@@ -10,10 +10,9 @@
             <div>{{ $section->name }}</div>
         </div>
 
-
         <div class="flex statbox cyan p-5 justify-between items-center border rounded md:w-4/5 mt-8 mx-auto">
             <div>
-                <h1> <i class="ri-group-line"></i> {{ $section->name }} </h1>
+                <h2> <i class="ri-group-line"></i> {{ $section->name }} </h2>
                 <div class="text-slate-600 text-xs md:text-sm">{{ $section->students->count() }} Students
                     found
                 </div>
@@ -84,7 +83,10 @@
                                     class="link text-sm ico teal mx-auto">{{ $student->rollno }}</a>
                             </td>
                             <td class="text-left  text-xs md:text-sm">
-                                {{ $student->name }}</a>
+                                {{ $student->name }} @if ($student->hasBeenCreatedThisWeek())
+                                    <i class="ri-user-received-line ml-3"></i>
+                                @endif
+                                </a>
                                 <br><span class="text-slate-400">{{ $student->father_name }}</span>
                             </td>
                             {{-- <td><img src="{{ asset('storage/' . $student->photo) }}" alt="photo"
@@ -111,6 +113,25 @@
                     $(this).removeClass('hidden');
                 }
             });
+        }
+
+        function confirmDel(event) {
+            event.preventDefault(); // prevent form submit
+            var form = event.target; // storing the form
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!',
+            }).then((result) => {
+                if (result.value) {
+                    form.submit();
+                }
+            })
         }
     </script>
 @endsection

@@ -4,6 +4,27 @@
     <x-headers.user></x-headers.user>
 @endsection
 
+@section('style')
+    <style>
+        .swal2-popup {
+            font-size: 12px !important;
+        }
+
+        .swal2-title {
+            font-size: 24px !important;
+        }
+
+        .swal2-confirm {
+            font-size: 12px !important;
+            /* text-sm */
+        }
+
+        .swal2-cancel {
+            font-size: 12px !important;
+        }
+    </style>
+@endsection
+
 @section('sidebar')
     <x-sidebar></x-sidebar>
 @endsection

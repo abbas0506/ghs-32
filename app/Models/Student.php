@@ -143,6 +143,21 @@ class Student extends Model
     {
         return $query->whereDate('created_at', today());
     }
+    public function scopeCreatedThisMonth($query)
+    {
+        return $query->whereMonth('created_at', now()->month);
+    }
+
+    public function hasBeenCreatedThisWeek()
+    {
+        return $this->created_at
+            ? $this->created_at->isCurrentWeek()
+            : false;
+    }
+    public function scopeCreatedThisWeek($query)
+    {
+        return $query->whereWeek('created_at', now()->week);
+    }
 
     public function previousAbsences()
     {

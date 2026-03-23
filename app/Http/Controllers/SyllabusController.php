@@ -72,6 +72,7 @@ class SyllabusController extends Controller
     public function show(Syllabus $syllabus)
     {
         //
+        return view('syllabus.show', compact('syllabus'));
     }
 
     /**
@@ -89,6 +90,15 @@ class SyllabusController extends Controller
     public function update(Request $request, Syllabus $syllabus)
     {
         //
+        $validated = $request->validate([
+            'grade_id' => 'required|exists:grades,id',
+            'subject_id' => 'required|exists:subjects,id',
+            'term1' => 'required',
+            'term2' => 'required',
+            'term3' => 'required',
+        ]);
+        $syllabus->update($validated);
+        return view('syllabus.edit', compact('syllabus'))->with('success', 'Syllabus updated successfully.');
     }
 
     /**

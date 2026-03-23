@@ -124,9 +124,9 @@
                                             <a href="{{ route('syllabi.edit', $syllabus) }}"
                                                 class="link">{{ $syllabus->subject->short_name }}</a>
                                         </td>
-                                        <td class="text-left">{{ $syllabus->subject->term1 }}</td>
-                                        <td class="text-left">{{ $syllabus->subject->term2 }}</td>
-                                        <td class="text-left">{{ $syllabus->subject->term3 }}</td>
+                                        <td class="text-left">{{ $syllabus->term1 }}</td>
+                                        <td class="text-left">{{ $syllabus->term2 }}</td>
+                                        <td class="text-left">{{ $syllabus->term3 }}</td>
                                     </tr>
                                 @endforeach
                             </tbody>

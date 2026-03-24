@@ -64,7 +64,7 @@ class TaskController extends Controller
                 $task->users()->attach($userIdsArray); // user IDs
             } else {
 
-                $task->assignments()->create([
+                $task->taskLines()->create([
                     'user_id' => Auth::user()->user?->id,
                 ]);
             }

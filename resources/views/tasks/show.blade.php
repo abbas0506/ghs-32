@@ -43,7 +43,7 @@
     <div class="md:w-4/5 overflow-x-auto mx-auto bg-white md:p-8 p-4 rounded border mt-3">
         <div class="flex justify-between items-center flex-wrap">
             <h2 class=""><i class="bi-calendar-event text-slate-500 mr-2"></i> {{ $task->description }} </h2>
-            <a href="{{ route('task.assignments.create', $task) }}"><i class="bi-folder-plus"></i></a>
+            <a href="{{ route('task.task-lines.create', $task) }}"><i class="bi-folder-plus"></i></a>
         </div>
         <table class="table-auto borderless w-full mt-5">
             <thead>
@@ -53,19 +53,19 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach ($task->assignments as $assignment)
+                @foreach ($task->taskLines as $taskLine)
                     <tr class="tr">
-                        <td class="text-left text-sm">{{ $assignment->user->profile->name }}</td>
+                        <td class="text-left text-sm">{{ $taskLine->user->profile?->name }}</td>
                         <td class="text-sm text-right">
 
-                            <form action="{{ route('task.assignments.update', [$task, $assignment]) }}" method='post'>
+                            <form action="{{ route('task.task-lines.update', [$task, $taskLine]) }}" method='post'>
                                 @csrf
                                 @method('patch')
                                 <button type="submit">
-                                    @if ($assignment->status)
-                                        <i class="bi-check-lg text-green-600"></i>
+                                    @if ($taskLine->status)
+                                        <span class="pill green py-1 px-3"><i class="ri-checkbox-circle-line"></i></span>
                                     @else
-                                        <i class="bi-check text-slate-300"></i>
+                                        <span class="pill red"><i class="ri-question-line"></i></span>
                                     @endif
                                 </button>
                             </form>

@@ -33,18 +33,18 @@ class DashboardController extends Controller
 
         $tasksDue = collect();
         // go through assignments and find current user's assignments that have not been yet completed
-        $pendingAssignments = Auth::user()->assignments()->where('status', 0)->with('task')->get();
+        $pendingTasks = Auth::user()->taskLines()->where('status', 0)->with('task')->get();
         // find the tasks for the above pending assignments whose last date is within next 7 days and add to tasksDue collection
-        foreach ($pendingAssignments as $assignment) {
-            if ($assignment->task->due_date >= now() && $assignment->task->due_date <= now()->addDays(7) && !$tasksDue->contains($assignment->task)) {
-                $tasksDue->push($assignment->task);
+        foreach ($pendingTasks as $taskLine) {
+            if ($taskLine->task->due_date >= now() && $taskLine->task->due_date <= now()->addDays(7) && !$tasksDue->contains($taskLine->task)) {
+                $tasksDue->push($taskLine->task);
             }
         }
         // get new tests for last 7 days
         $newTests = Test::where('created_at', '>=', now()->subDays(7))->get();
 
 
-        return view('dashboard', compact('students', 'tests', 'attendances', 'newAdmissions', 'maxAttendance', 'highestAttenancePercentage', 'tasksDue', 'pendingAssignments'));
+        return view('dashboard', compact('students', 'tests', 'attendances', 'newAdmissions', 'maxAttendance', 'highestAttenancePercentage', 'tasksDue', 'pendingTasks'));
     }
 
     /**

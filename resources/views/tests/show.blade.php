@@ -152,12 +152,13 @@
                     @foreach ($test->testSubjects()->mine()->get()->sortBy(['section_id', 'lecture_no']) as $testSubject)
                         <tr class="tr {{ $testSubject->result_date ? 'submitted' : 'pending' }}">
                             <td>
-                                <div class="ico gray mx-auto">{{ $loop->index + 1 }} </div>
+                                <div class="ico cyan mx-auto">{{ $loop->index + 1 }} </div>
                             </td>
                             <td class="text-left">
                                 <a href="{{ route('test.test-subjects.show', [$test, $testSubject]) }}" class="link">
-                                    {{ $testSubject->subject->short_name }} -
-                                    {{ $testSubject->section->name }}
+                                    {{ $testSubject->subject->short_name }}-{{ $testSubject->section->name }}
+                                    {{ $testSubject->hasBeenSubmittedToday() ? '*' : '' }}
+
                                 </a>
                                 <br>
                                 <span class="text-slate-500 text-xs">{{ $testSubject->user?->profile->short_name }}</span>

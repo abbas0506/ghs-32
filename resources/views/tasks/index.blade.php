@@ -42,8 +42,7 @@
                     @foreach ($tasks as $task)
                         @php
                             $percent = round(
-                                ($task->assignments()->where('status', 1)->count() / $task->assignments()->count()) *
-                                    100,
+                                ($task->taskLines()->where('status', 1)->count() / $task->taskLines()->count()) * 100,
                                 0,
                             );
                         @endphp

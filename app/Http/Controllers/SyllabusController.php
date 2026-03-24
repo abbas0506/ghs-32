@@ -58,10 +58,9 @@ class SyllabusController extends Controller
                 ]);
             }
             DB::commit();
-            echo $grade->subjects;
-            // return redirect()->route('syllabi.index', [
-            //     'grade_id' => $request->input('grade_id'),
-            // ])->with('success', 'Syllabus created successfully.');
+            return redirect()->route('syllabi.index', [
+                'grade_id' => $request->input('grade_id'),
+            ])->with('success', 'Syllabus created successfully.');
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->route('syllabi.index')->with('warning', 'Failed to create syllabus: ' . $e->getMessage());

@@ -34,12 +34,12 @@
             </thead>
             <tbody>
 
-                @foreach ($users as $user)
+                @foreach ($users->sortBy('profile.seniority') as $user)
                     <tr class="tr">
                         <td>{{ $loop->index + 1 }}</td>
-                        <td class="text-left">{{ $user->profile->name }}</td>
+                        <td class="text-left">{{ $user->profile?->name }}</td>
                         <td class="text-right">
-                            <form action="{{ route('task.assignments.store', [$task]) }}" method='post'>
+                            <form action="{{ route('task.task-lines.store', [$task]) }}" method='post'>
                                 @csrf
                                 <input type="hidden" name="user_id" value="{{ $user->id }}">
                                 <button type="submit">

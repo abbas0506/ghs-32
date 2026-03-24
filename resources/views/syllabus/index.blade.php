@@ -74,7 +74,7 @@
                         <div class="mt-5">
                             <button type="submit"
                                 class="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-teal-500 to-green-500 text-white text-sm font-semibold rounded-xl shadow hover:from-teal-600 hover:to-green-600 transition">
-                                <i class="ri-search-line"></i> Load Plan
+                                <i class="ri-search-line"></i> Load Syllabus
                             </button>
                         </div>
                     </form>
@@ -95,7 +95,7 @@
                     </div>
                     @if ($syllabi->count())
                         <div class="relative">
-                            <input type="text" id="searchInput" placeholder="Search plans…" oninput="filterPlans(event)"
+                            <input type="text" id="searchInput" placeholder="Search plans…" oninput="search(event)"
                                 class="pl-8 pr-3 py-2 text-sm border border-gray-200 rounded-xl bg-gray-50 focus:ring-2 focus:ring-teal-400 focus:border-teal-400 w-48 transition">
                             <i class="ri-search-line absolute left-2.5 top-2.5 text-gray-400 text-sm"></i>
                         </div>
@@ -164,6 +164,21 @@
 
 @section('script')
     <script>
+        function search(event) {
+            var searchtext = event.target.value.toLowerCase();
+            var str = 0;
+            $('.tr').each(function() {
+                if (!(
+                        $(this).children().eq(0).prop('outerText').toLowerCase().includes(searchtext) ||
+                        $(this).children().eq(1).prop('outerText').toLowerCase().includes(searchtext)
+                    )) {
+                    $(this).addClass('hidden');
+                } else {
+                    $(this).removeClass('hidden');
+                }
+            });
+        }
+
         function delme(planId) {
             event.preventDefault();
             Swal.fire({

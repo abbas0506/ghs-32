@@ -25,6 +25,7 @@ use App\Http\Controllers\StudentController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\SyllabusController;
 use App\Http\Controllers\TaskController;
+use App\Http\Controllers\TaskLineController;
 use App\Http\Controllers\TestSubjectController;
 use App\Http\Controllers\TestSubjectResultController;
 use App\Http\Controllers\UserController;
@@ -166,7 +167,7 @@ Route::group(['middleware' => ['auth']], function () {
 
     // Tasks
     Route::resource('tasks', TaskController::class);
-    Route::resource('task.assignments', AssignmentController::class);
+    Route::resource('task.task-lines', TaskLineController::class);
 
     // Reports
     Route::get('reports/test-subjects/{s}/result/pdf', [ReportController::class, 'subjectResult'])->name('subject-result');

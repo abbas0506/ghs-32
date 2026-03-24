@@ -104,7 +104,7 @@ class User extends Authenticatable
             ->withPivot('status')
             ->withTimestamps();
     }
-    public function assignments()
+    public function taskLines()
     {
         return $this->hasMany(TaskLine::class);
     }

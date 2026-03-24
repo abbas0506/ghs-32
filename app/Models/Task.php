@@ -18,14 +18,14 @@ class Task extends Model
         'due_date' => 'date',
     ];
 
-    public function assignments()
+    public function taskLines()
     {
-        return $this->hasMany(Assignment::class);
+        return $this->hasMany(TaskLine::class);
     }
 
     public function users()
     {
-        return $this->belongsToMany(User::class, 'assignments')
+        return $this->belongsToMany(User::class, 'task_lines')
             ->withPivot('status')
             ->withTimestamps();
     }
@@ -35,33 +35,5 @@ class Task extends Model
             return true;
         else
             return false;
-    }
-    public function whoHaveCompleted()
-    {
-        $teachers = $this->assignments()
-            ->where('status', 1)
-            ->with('teacher')
-            ->get()
-            ->pluck('teacher');
-        return $teachers;
-    }
-    public function whoHaveNotCompleted()
-    {
-        $teachers = $this->assignments()
-            ->where('status', 0)
-            ->with('teacher')
-            ->get()
-            ->pluck('teacher');
-        return $teachers;
-    }
-    public function whoHaveCompletedToday()
-    {
-        $teachers = $this->assignments()
-            ->where('status', 1)
-            ->with('teacher')
-            ->whereDate('updated_at', today())
-            ->get()
-            ->pluck('teacher');
-        return $teachers;
     }
 }

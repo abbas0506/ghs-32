@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -19,7 +20,10 @@ class TestSubject extends Model
         'result_date',
     ];
 
-    protected $dates = ['test_date', 'result_date'];
+    protected $casts = [
+        'test_date' => 'date',
+        'result_date' => 'date',
+    ];
 
     public function test()
     {
@@ -86,11 +90,12 @@ class TestSubject extends Model
         if (session('role') == 'head' || session('role') == 'admin') {
             return $query;
         }
-
-        // if (Auth::user()->hasAnyRole(['head', 'admin'])) {
-        //     return $query;
-        // }
-
         return $query->where('user_id', auth()->id());
+    }
+
+    // return true if test subject has been submitted today
+    public function hasBeenSubmittedToday()
+    {
+        return $this->result_date?->isSameDay(today());
     }
 }

@@ -97,7 +97,7 @@
 
                         <div class="leading-none mt-1">
                             <h3 class="">{{ $section->name }}</h3>
-                            <span class="text-slate-400 text-xs md:text-sm font-normal">Average attendance:
+                            <span class="text-slate-500 text-xs md:text-sm font-normal">Avg:
                                 {{ $section->averageAttendance() ?? 0 }} %</span>
                         </div>
 
@@ -109,7 +109,7 @@
                                     {{ $section->presenceCount ?? 0 }} /
                                     {{ $section->attendanceCount ?? 0 }}
                                 </div>
-                                <div class="">
+                                <div class="w-4/5 text-right">
                                     <div>
                                         <span
                                             class="text-xs font-semibold text-{{ $themeColor }}-600">{{ $attendancePercentage }}%</span>
@@ -129,7 +129,7 @@
                         @else
                             <div class="grid grid-cols-2 content-center items-end gap-2 mt-1">
                                 <div class="text-{{ $themeColor }}-600 text-sm">-/-</div>
-                                <div class="">
+                                <div class="w-4/5 text-right">
                                     <div class="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
                                         <div class="bg-gradient-to-r {{ $attendancePercentage >= 90 ? 'from-green-200 to-green-500' : ($attendancePercentage >= 75 ? 'from-cyan-200 to-cyan-500' : 'from-red-200 to-red-500') }} h-2 rounded-full transition-all"
                                             style="width: {{ min($attendancePercentage, 100) }}%"></div>

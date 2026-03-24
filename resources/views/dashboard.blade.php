@@ -52,7 +52,7 @@
                     <i class="bi bi-calendar-event text-sm md:text-lg"></i>
                 </div>
             </div>
-            <div class="mt-[1px] text-lg font-semibold">{{ $pendingAssignments->count() }} <span
+            <div class="mt-[1px] text-lg font-semibold">{{ $pendingTasks->count() }} <span
                     class="bg-orange-100 text-orange-600 font-normal text-[10px] rounded-full px-2 py-[1px]">{{ $tasksDue->count() }}
                     Latest</span></div>
         </a>
@@ -71,6 +71,7 @@
                         </tr>
                     </thead>
                     <tbody>
+
                     </tbody>
                 </table>
             </div>

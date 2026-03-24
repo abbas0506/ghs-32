@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Allocation;
+use App\Models\Schedule;
 use Illuminate\Http\Request;
 use App\Models\Section;
 use App\Models\Subject;
@@ -40,7 +40,7 @@ class ScheduleController extends Controller
         ]);
 
         try {
-            Allocation::create([
+            Schedule::create([
                 'section_id' => $sectionId,
                 'lecture_no' => $lecture_no,
                 'subject_id' => $request->subject_id,
@@ -74,7 +74,7 @@ class ScheduleController extends Controller
             $q->where('name', 'teacher');
         })->get();
 
-        $allocation = Allocation::findOrFail($allocation_id);
+        $allocation = Schedule::findOrFail($allocation_id);
         return view('schedule.section-wise.edit', compact('allocation', 'subjects', 'users'));
     }
 
@@ -89,7 +89,7 @@ class ScheduleController extends Controller
             'user_id' => 'required|numeric',
         ]);
 
-        $model = Allocation::findOrFail($allocationId);
+        $model = Schedule::findOrFail($allocationId);
         try {
             $model->update($request->all());
             return redirect('class-schedule')->with('success', 'Successfully updated');
@@ -104,7 +104,7 @@ class ScheduleController extends Controller
     public function destroy($sectionId, $lecture_no, $id)
     {
         //
-        $model = Allocation::findOrFail($id);
+        $model = Schedule::findOrFail($id);
         try {
             $model->delete();
             return redirect()->route('class-schedule')->with('success', 'Successfully deleted');

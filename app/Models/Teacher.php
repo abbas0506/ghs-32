@@ -40,15 +40,15 @@ class Teacher extends Model
     }
     public function allocations()
     {
-        return $this->hasMany(Allocation::class);
+        return $this->hasMany(Schedule::class);
     }
     public function tests()
     {
         return $this->hasMany(Test::class);
     }
-    public function testAllocations()
+    public function testSubjects()
     {
-        return $this->hasMany(TestAllocation::class);
+        return $this->hasMany(TestSubject::class);
     }
     public function isIncharge()
     {

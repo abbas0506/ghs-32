@@ -18,7 +18,7 @@ class SectionResultController extends Controller
         //
         $test = Test::findOrFail($testId);
         $section = Section::findOrFail($sectionId);
-        $lectureNos = Allocation::where('section_id', $section->id)->pluck('lecture_no')->unique();
+        $lectureNos =  Schedule::where('section_id', $section->id)->pluck('lecture_no')->unique();
 
         $allocations = $section->allocations->sortBy('lecture_no');
 

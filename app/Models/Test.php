@@ -22,15 +22,14 @@ class Test extends Model
     {
         return $this->belongsTo(User::class);
     }
-
-    public function allocations()
+    public function schedules()
     {
-        return $this->belongsToMany(Allocation::class, 'test_allocations', 'test_id', 'allocation_id');
+        return $this->belongsToMany(Schedule::class, 'test_subjects', 'test_id', 'schedule_id');
     }
 
-    public function testAllocations()
+    public function testSubjects()
     {
-        return $this->hasMany(TestAllocation::class);
+        return $this->hasMany(TestSubject::class);
     }
 
     public function scopeOpen($query)
@@ -53,7 +52,7 @@ class Test extends Model
     {
 
         if (Auth::user()->hasRole('teacher')) {
-            return  $query->whereHas('testAllocations', function ($q) {
+            return  $query->whereHas('testSubjects', function ($q) {
                 $q->where('user_id', Auth::user()->id);
             });
         }
@@ -64,7 +63,7 @@ class Test extends Model
         if (session('role') == 'head' || session('role') == 'admin') {
             return $query;
         }
-        return $query->open()->whereHas('testAllocations', function ($q) {
+        return $query->open()->whereHas('testSubjects', function ($q) {
             $q->where('user_id', Auth::user()->id);
         });
     }

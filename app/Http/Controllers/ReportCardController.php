@@ -21,8 +21,8 @@ class ReportCardController extends Controller
 
         // calculate test ranking
 
-        $students = Student::with('results.testAllocation')
-            ->whereHas('results.testAllocation', function ($query) use ($testId) {
+        $students = Student::with('results.testSubject')
+            ->whereHas('results.testSubject', function ($query) use ($testId) {
                 $query->where('test_id', $testId);
             })
             ->where('section_id', $sectionId)
@@ -31,7 +31,7 @@ class ReportCardController extends Controller
         $studentPercentages = $students->map(function ($student) {
             $obtained_marks = $student->results->sum('obtained_marks');
             $total = $student->results->sum(function ($result) {
-                return $result->testAllocation->max_marks;
+                return $result->testSubject->max_marks;
             });
 
             // Avoid division by zero

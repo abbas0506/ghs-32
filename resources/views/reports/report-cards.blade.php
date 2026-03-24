@@ -135,12 +135,12 @@
                         @foreach ($student->results()->test($test->id)->get() as $result)
                             <tr class="border">
                                 <td>{{ $loop->index + 1 }}</td>
-                                <td class="text-left">{{ $result->testAllocation->subject->name }}</td>
-                                <td>{{ $result->testAllocation->max_marks }}</td>
+                                <td class="text-left">{{ $result->testSubject->subject->name }}</td>
+                                <td>{{ $result->testSubject->max_marks }}</td>
                                 <td>{{ $result->obtained_marks }}</td>
                                 @php
                                     $percentage = round(
-                                        ($result->obtained_marks / $result->testAllocation->max_marks) * 100,
+                                        ($result->obtained_marks / $result->testSubject->max_marks) * 100,
                                         2,
                                     );
                                 @endphp

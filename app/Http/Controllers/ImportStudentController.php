@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Student;
-use App\Models\TestAllocation;
+use App\Models\testSubject;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -17,15 +17,15 @@ class ImportStudentController extends Controller
     public function index($id)
     {
         //find all those students who have already been included in allocation result
-        $testAllocation = TestAllocation::findOrFail($id);
-        $appearingStudentIds = $testAllocation->appearingStudents->pluck('id')->unique()->toArray();
-        $missingStudents = Student::where('section_id', $testAllocation->section_id)
+        $testSubject = TestSubject::findOrFail($id);
+        $appearingStudentIds = $testSubject->appearingStudents->pluck('id')->unique()->toArray();
+        $missingStudents = Student::where('section_id', $testSubject->section_id)
             ->whereNotIn('id', $appearingStudentIds)
             ->get();
 
         //send only missing students list that needs to be included for results
 
-        return view('tests.test-allocations.import', compact('testAllocation', 'missingStudents'));
+        return view('tests.test-subjects.import', compact('testSubject', 'missingStudents'));
     }
 
     /**
@@ -46,7 +46,7 @@ class ImportStudentController extends Controller
             'student_ids_array' => 'required',
         ]);
 
-        $testAllocation = TestAllocation::findOrFail($id);
+        $testSubject = TestSubject::findOrFail($id);
 
         DB::beginTransaction();
         try {
@@ -56,12 +56,12 @@ class ImportStudentController extends Controller
             foreach ($studentIdsArray as $studentId) {
                 Result::create([
                     'student_id' => $studentId,
-                    'test_allocation_id' => $testAllocation->id,
+                    'test_subject_id' => $testSubject->id,
                     'obtained_marks' => 0,
                 ]);
             }
             DB::commit();
-            return redirect()->route('test.test-allocations.show', [$testAllocation->test, $testAllocation])->with('success', 'Successfully imported');
+            return redirect()->route('test.test-subjects.show', [$testSubject->test, $testSubject])->with('success', 'Successfully imported');
         } catch (Exception $e) {
             DB::rollBack();
             return redirect()->back()->withErrors($e->getMessage());

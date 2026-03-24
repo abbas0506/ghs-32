@@ -25,8 +25,8 @@ use App\Http\Controllers\StudentController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\SyllabusController;
 use App\Http\Controllers\TaskController;
-use App\Http\Controllers\TestAllocationController;
-use App\Http\Controllers\TestAllocationResultController;
+use App\Http\Controllers\TestSubjectController;
+use App\Http\Controllers\TestSubjectResultController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserRoleController;
 use App\Http\Controllers\UserScheduleController;
@@ -147,9 +147,9 @@ Route::group(['middleware' => ['auth']], function () {
     // assessment
     Route::resource('tests', TestController::class);
     Route::resource('test.section.results', SectionResultController::class);
-    Route::resource('test.test-allocations', TestAllocationController::class);
-    Route::resource('test-allocation.results', TestAllocationResultController::class);
-    Route::resource('test-allocation.import', ImportStudentController::class);
+    Route::resource('test.test-subjects', TestSubjectController::class);
+    Route::resource('test-subject.results', TestSubjectResultController::class);
+    Route::resource('test-subject.import', ImportStudentController::class);
 
     // lessons
     Route::resource('lessons', LessonController::class);
@@ -161,15 +161,15 @@ Route::group(['middleware' => ['auth']], function () {
     // lock /unlock
     Route::patch('test/{id}/lock', [TestController::class, 'lock'])->name('test.lock');
     Route::patch('test/{id}/unlock', [TestController::class, 'unlock'])->name('test.unlock');
-    Route::patch('test-allocation/{id}/lock', [TestAllocationController::class, 'lock'])->name('test-allocation.lock');
-    Route::patch('test-allocation/{id}/unlock', [TestAllocationController::class, 'unlock'])->name('test-allocation.unlock');
+    Route::patch('test-subject/{id}/lock', [testSubjectController::class, 'lock'])->name('test-subject.lock');
+    Route::patch('test-subject/{id}/unlock', [testSubjectController::class, 'unlock'])->name('test-subject.unlock');
 
     // Tasks
     Route::resource('tasks', TaskController::class);
     Route::resource('task.assignments', AssignmentController::class);
 
     // Reports
-    Route::get('reports/test-allocations/{s}/result/pdf', [ReportController::class, 'subjectResult'])->name('subject-result');
+    Route::get('reports/test-subjects/{s}/result/pdf', [ReportController::class, 'subjectResult'])->name('subject-result');
     Route::get('reports/tests/{t}/sections/{s}/result/pdf', [ReportController::class, 'sectionResult'])->name('section-result');
     Route::get('reports/tests/{t}/sections/{s}/positions/pdf', [ReportController::class, 'sectionPositions'])->name('section-positions');
     Route::get('reports/tests/{t}/sections/{s}/report-cards/pdf', [ReportController::class, 'reportCards'])->name('report-cards');

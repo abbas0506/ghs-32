@@ -12,8 +12,8 @@
     </div>
 
     <?php
-    $submitted = $test->testAllocations()->mine()->resultSubmitted()->count();
-    $total = $test->testAllocations()->mine()->count();
+    $submitted = $test->testSubjects()->mine()->resultSubmitted()->count();
+    $total = $test->testSubjects()->mine()->count();
     $percent = $total > 0 ? round(($submitted / $total) * 100, 0) : 0;
     $hue = $percent * 1.2; // convert 0-100 → 0-120
     ?>
@@ -26,7 +26,7 @@
                     <h2 class="uppercase text-sm md:text-lg font-bold text-gray-800">
                         Results
                         <span class="ml-2 text-teal-600 text-xs md:text-sm font-normal"><i class="bi-arrow-up"></i>
-                            {{ $test->testAllocations()->resultSubmitted()->today()->count() }}
+                            {{ $test->testSubjects()->resultSubmitted()->today()->count() }}
 
                         </span>
                     </h2>
@@ -60,7 +60,7 @@
                 {{-- new allocation --}}
                 @role('admin|head')
                     @if ($test->is_open)
-                        <a href="{{ route('test.test-allocations.create', $test) }}"
+                        <a href="{{ route('test.test-subjects.create', $test) }}"
                             class="flex justify-center items-center w-8 h-8 btn-teal rounded-full text-xs"><i
                                 class="bi-plus-lg text-slate-50"></i></a>
                         {{-- test edit button --}}
@@ -149,23 +149,21 @@
                 </thead>
                 <tbody>
 
-                    @foreach ($test->testAllocations()->mine()->get()->sortBy(['section_id', 'lecture_no']) as $testAllocation)
-                        <tr class="tr {{ $testAllocation->result_date ? 'submitted' : 'pending' }}">
+                    @foreach ($test->testSubjects()->mine()->get()->sortBy(['section_id', 'lecture_no']) as $testSubject)
+                        <tr class="tr {{ $testSubject->result_date ? 'submitted' : 'pending' }}">
                             <td>
                                 <div class="ico gray mx-auto">{{ $loop->index + 1 }} </div>
                             </td>
                             <td class="text-left">
-                                <a href="{{ route('test.test-allocations.show', [$test, $testAllocation]) }}"
-                                    class="link">
-                                    {{ $testAllocation->subject->short_name }} -
-                                    {{ $testAllocation->section->name }}
+                                <a href="{{ route('test.test-subjects.show', [$test, $testSubject]) }}" class="link">
+                                    {{ $testSubject->subject->short_name }} -
+                                    {{ $testSubject->section->name }}
                                 </a>
                                 <br>
-                                <span
-                                    class="text-slate-500 text-xs">{{ $testAllocation->user?->profile->short_name }}</span>
+                                <span class="text-slate-500 text-xs">{{ $testSubject->user?->profile->short_name }}</span>
                             </td>
                             <td>
-                                @if ($testAllocation->result_date)
+                                @if ($testSubject->result_date)
                                     {{-- green rounded pill with submitted label --}}
                                     <span
                                         class="bg-green-100 text-green-600 text-xs px-2 py-[1px] rounded-full">Submitted</span>

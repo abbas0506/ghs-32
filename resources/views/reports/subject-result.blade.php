@@ -56,11 +56,11 @@
                 <table class="w-full">
                     <tbody>
                         <tr>
-                            <td class="text-center text-lg font-bold">{{ $testAllocation->subject->name }},
-                                {{ $testAllocation->section->name }} </td>
+                            <td class="text-center text-lg font-bold">{{ $testSubject->subject->name }},
+                                {{ $testSubject->section->name }} </td>
                         </tr>
                         <tr>
-                            <td class="text-center text-base">{{ $testAllocation->test->title }}</td>
+                            <td class="text-center text-base">{{ $testSubject->test->title }}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -79,9 +79,9 @@
                 </thead>
                 <tbody class="data">
 
-                    @foreach ($testAllocation->results->sortByDesc('obtained_marks')->take(3) as $result)
+                    @foreach ($testSubject->results->sortByDesc('obtained_marks')->take(3) as $result)
                         <!-- calculate percentage -->
-                        @php $percentage=round($result->obtained_marks/$testAllocation->max_marks*100,1); @endphp
+                        @php $percentage=round($result->obtained_marks/$testSubject->max_marks*100,1); @endphp
                         <tr class="">
                             {{-- <td>{{ Number::ordinal($loop->index + 1) }}</td> --}}
                             <td>{{ $loop->index + 1 }}</td>
@@ -100,7 +100,7 @@
                 <tbody>
                     <tr>
                         <td class="text-left text-sm font-bold">Result Detail</td>
-                        <td class="text-right text-sm font-bold">Total Marks: {{ $testAllocation->max_marks }}</td>
+                        <td class="text-right text-sm font-bold">Total Marks: {{ $testSubject->max_marks }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -116,9 +116,9 @@
                 </thead>
                 <tbody class="data">
 
-                    @foreach ($testAllocation->results->sortBy('rollno') as $result)
+                    @foreach ($testSubject->results->sortBy('rollno') as $result)
                         <!-- calculate percentage -->
-                        @php $percentage=round($result->obtained_marks/$testAllocation->max_marks*100,1); @endphp
+                        @php $percentage=round($result->obtained_marks/$testSubject->max_marks*100,1); @endphp
                         <tr class="border">
                             <td>{{ $result->student->rollno }}</td>
                             <td class="text-left">{{ ucwords(strtolower($result->student->name)) }}</td>

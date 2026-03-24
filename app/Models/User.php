@@ -50,7 +50,7 @@ class User extends Authenticatable
     }
     public function allocations()
     {
-        return $this->hasMany(Allocation::class);
+        return $this->hasMany(Schedule::class);
     }
     public function salaries()
     {
@@ -60,9 +60,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Test::class);
     }
-    public function testAllocations()
+    public function testSubjects()
     {
-        return $this->hasMany(TestAllocation::class);
+        return $this->belongsToMany(TestSubject::class);
     }
     public function isIncharge()
     {
@@ -90,7 +90,7 @@ class User extends Authenticatable
             return  Test::all();
         }
         if ($this->hasRole('teacher')) {
-            return  Test::whereHas('testAllocations', function ($query) {
+            return  Test::whereHas('testSubjects', function ($query) {
                 $query->where('user_id', $this->id);
             })->get();
         }
@@ -106,6 +106,6 @@ class User extends Authenticatable
     }
     public function assignments()
     {
-        return $this->hasMany(Assignment::class);
+        return $this->hasMany(TaskLine::class);
     }
 }

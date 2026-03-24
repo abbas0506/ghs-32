@@ -78,8 +78,8 @@
 
                         {{-- calculate percentage of submitted tests --}}
                         @php
-                            $sumbittedCount = $test->testAllocations()->mine()->resultSubmitted()->count();
-                            $totalCount = $test->testAllocations()->mine()->count();
+                            $sumbittedCount = $test->testSubjects()->mine()->resultSubmitted()->count();
+                            $totalCount = $test->testSubjects()->mine()->count();
                             $percent = $totalCount > 0 ? round(($sumbittedCount / $totalCount) * 100, 0) : 0;
                         @endphp
                         <p class="text-sm text-gray-500 mt-1">Status: {{ $percent }}%

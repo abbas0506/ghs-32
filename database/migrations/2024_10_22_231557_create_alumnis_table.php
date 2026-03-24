@@ -20,6 +20,7 @@ return new class extends Migration
             $table->unsignedSmallInteger('session')->nullable();
             $table->text('introduction')->nullable();
             $table->string('photo')->nullable();
+            $table->unsignedInteger('display_order')->default(1000);
             $table->timestamps();
         });
     }

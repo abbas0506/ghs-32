@@ -33,11 +33,11 @@ class Section extends Model
     }
     public function allocations()
     {
-        return $this->hasMany(Allocation::class);
+        return $this->hasMany(Schedule::class);
     }
-    public function testAllocations()
+    public function testSubjects()
     {
-        return $this->hasMany(TestAllocation::class);
+        return $this->hasMany(TestSubject::class);
     }
     public function scopeActive($query)
     {
@@ -73,7 +73,7 @@ class Section extends Model
             return $query;
         }
 
-        return  $query->whereHas('testAllocations', function ($q) {
+        return  $query->whereHas('testSubjects', function ($q) {
             $q->where('user_id', Auth::user()->id);
         });
     }

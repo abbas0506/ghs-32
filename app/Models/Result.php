@@ -9,7 +9,7 @@ class Result extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'test_allocation_id',
+        'test_subject_id',
         'student_id',
         'obtained_marks',
     ];
@@ -18,20 +18,20 @@ class Result extends Model
     {
         return $this->belongsTo(Student::class);
     }
-    public function testAllocation()
+    public function testSubject()
     {
-        return $this->belongsTo(TestAllocation::class);
+        return $this->belongsTo(TestSubject::class);
     }
     public function scopeTest($query, $testId)
     {
-        return $query->whereHas('testAllocation', function ($query) use ($testId) {
+        return $query->whereHas('testSubject', function ($query) use ($testId) {
             $query->where('test_id', $testId);
         });
     }
 
     public function scopeForLectureNo($query, $lectureNo)
     {
-        return $query->whereHas('testAllocation', function ($query) use ($lectureNo) {
+        return $query->whereHas('testSubject', function ($query) use ($lectureNo) {
             $query->where('lecture_no', $lectureNo);
         });
     }

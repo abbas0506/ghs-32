@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Allocation;
 use App\Models\Lecture;
+use App\Models\LectureTiming;
+use App\Models\Schedule;
 use Illuminate\Http\Request;
 use App\Models\Section;
 use Exception;
@@ -14,7 +15,7 @@ class SectionScheduleController extends Controller
     //
     public function index()
     {
-        $lectures = Lecture::all();
+        $lectures = LectureTiming::all();
         $sections = Section::all()->sortByDesc('grade'); //get active sections
         return view('schedule.section-wise.index', compact('sections', 'lectures'));
     }
@@ -27,7 +28,7 @@ class SectionScheduleController extends Controller
         else
             $sections = Section::all();
 
-        $lectures = Lecture::all();
+        $lectures = LectureTiming::all();
         $pdf = PDF::loadview('schedule.section-wise.pdf', compact('sections', 'lectures'))->setPaper('a4', 'landscape');
         $pdf->set_option("isPhpEnabled", true);
         $file = "schedule_" . today()->format('dmy');
@@ -37,10 +38,10 @@ class SectionScheduleController extends Controller
 
     public function clear(Request $request)
     {
-        $allocations = Allocation::all();
+        $schedules =  Schedule::all();
         try {
-            foreach ($allocations as $allocation)
-                $allocation->delete();
+            foreach ($schedules as $schedule)
+                $schedule->delete();
             return redirect('head/class-schedule')->with('success', 'Successfuly removed all entries!');
         } catch (Exception $ex) {
             return back()->with('error', $ex->getMessage());

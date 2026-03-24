@@ -22,12 +22,12 @@ class TestController extends Controller
         // find test that have been created this week
         $testsThisWeek = $tests->where('created_at', '>=', now()->subWeek());
 
-        // find % of number of testAllocations that have results submitted for the above tests
+        // find % of number of testSubjects that have results submitted for the above tests
         $resultsCount = 0;
         $totalAllocations = 0;
         foreach ($tests as $test) {
-            $resultsCount += $test->testAllocations()->mine()->resultSubmitted()->count();
-            $totalAllocations += $test->testAllocations()->mine()->count();
+            $resultsCount += $test->testSubjects()->mine()->resultSubmitted()->count();
+            $totalAllocations += $test->testSubjects()->mine()->count();
         }
 
         $dataProgress = $totalAllocations > 0 ? round(($resultsCount / $totalAllocations) * 100) : 0;
@@ -73,7 +73,7 @@ class TestController extends Controller
             $sections = Section::whereIn('id', $sectionIdsArray)->get();
             foreach ($sections as $section) {
                 foreach ($section->allocations as $allocation) {
-                    $testAllocation = $test->testAllocations()->create([
+                    $testSubject = $test->testSubjects()->create([
                         'section_id' => $allocation->section_id,
                         'lecture_no' => $allocation->lecture_no,
                         'subject_id' => $allocation->subject_id,
@@ -102,15 +102,15 @@ class TestController extends Controller
         $test = Test::findOrFail($id);
         $this->authorize('view', $test);
 
-        $sectionIds = $test->testAllocations->pluck('section_id')->unique()->toArray();
+        $sectionIds = $test->testSubjects->pluck('section_id')->unique()->toArray();
         // $sections = Section::whereIn('id', $sectionIds)->get();
 
         $sections = Auth::user()->accessibleSections()->whereIn('id', $sectionIds);
         // echo $sections->get();
-        $testAllocations = $test->testAllocations()->mine()->get();
+        $testSubjects = $test->testSubjects()->mine()->get();
 
-        // echo $testAllocations;
-        return view('tests.show', compact('test', 'sections', 'testAllocations'));
+        // echo $testSubjects;
+        return view('tests.show', compact('test', 'sections', 'testSubjects'));
     }
 
     /**

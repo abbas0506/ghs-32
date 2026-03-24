@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Grade;
+use App\Models\GradeSubject;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -14,8 +15,15 @@ class GradeSubjectSeeder extends Seeder
     public function run(): void
     {
         //
-        Grade::all()->each(function ($grade) {
-            $grade->subjects()->attach([1, 2, 3, 4, 6, 10]); // Attach subjects with IDs 1, 2, and 3 to each grade
-        });
+        GradeSubject::create(['grade_id' => 0, 'subject_id' => 3]);
+        GradeSubject::create(['grade_id' => 0, 'subject_id' => 4]);
+        GradeSubject::create(['grade_id' => 0, 'subject_id' => 5]);
+
+        GradeSubject::create(['grade_id' => 1, 'subject_id' => 3]);
+        GradeSubject::create(['grade_id' => 1, 'subject_id' => 4]);
+        GradeSubject::create(['grade_id' => 1, 'subject_id' => 7]);
+        GradeSubject::create(['grade_id' => 1, 'subject_id' => 2]);
+        GradeSubject::create(['grade_id' => 1, 'subject_id' => 21]);
+        GradeSubject::create(['grade_id' => 1, 'subject_id' => 22]);
     }
 }

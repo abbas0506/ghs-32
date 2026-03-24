@@ -46,6 +46,7 @@ class SyllabusController extends Controller
             'grade_id' => 'required|exists:grades,id',
         ]);
         DB::beginTransaction();
+
         try {
             $grade = Grade::find($request->input('grade_id'));
             foreach ($grade->subjects as $subject) {
@@ -57,9 +58,10 @@ class SyllabusController extends Controller
                 ]);
             }
             DB::commit();
-            return redirect()->route('syllabi.index', [
-                'grade_id' => $request->input('grade_id'),
-            ])->with('success', 'Syllabus created successfully.');
+            echo $grade->subjects;
+            // return redirect()->route('syllabi.index', [
+            //     'grade_id' => $request->input('grade_id'),
+            // ])->with('success', 'Syllabus created successfully.');
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->route('syllabi.index')->with('warning', 'Failed to create syllabus: ' . $e->getMessage());

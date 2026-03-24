@@ -13,7 +13,7 @@ class SectionSeeder extends Seeder
     public function run(): void
     {
         //
-        // Section::create(['grade_id'=> 0, 'name' => 'Play Group']);
+        Section::create(['grade_id' => 0, 'name' => 'KG']);
         Section::create(['grade_id' => 1, 'name' => 'Nursery']);
         Section::create(['grade_id' => 2, 'name' => 'One']);
         Section::create(['grade_id' => 3, 'name' => 'Two']);

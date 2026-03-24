@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('results', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('test_allocation_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('test_subject_id')->constrained()->cascadeOnDelete();
             $table->foreignId('student_id')->constrained()->cascadeOnDelete();
             $table->unsignedTinyInteger('obtained_marks');
             $table->timestamps();

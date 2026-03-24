@@ -7,8 +7,18 @@
         <div>Vouchers</div>
     </div>
 
+    <div
+        class="w-full md:w-4/5 mx-auto flex items-center gap-3 py-4 border-b border-gray-100 bg-gradient-to-r from-slate-50 to-gray-50 mt-8">
+        <div class="flex items-center justify-center w-9 h-9 rounded-xl bg-teal-100 text-teal-600">
+            <i class="ri-money-rupee-circle-line text-lg"></i>
+        </div>
+        <div>
+            <h2 class="font-semibold text-gray-800 text-sm leading-tight">Fee Vouchers</h2>
+            <p class="text-xs text-gray-400">List of all fee vouchers</p>
+        </div>
+    </div>
 
-    <div class="content-section">
+    <div class="w-full md:w-4/5 mx-auto p-4 md:p-8 bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
         <div class="flex items-center flex-wrap justify-between">
             <!-- search -->
             <div class="flex relative w-full md:w-1/3">
@@ -17,7 +27,7 @@
                 <i class="bx bx-search absolute top-2 right-2"></i>
             </div>
             @role('head')
-                <a href="{{ route('vouchers.create') }}"
+                <a href="{{ route('fee-vouchers.create') }}"
                     class="fixed bottom-4 right-4 flex justify-center items-center bg-teal-400 hover:bg-teal-600 hover:cursor-pointer rounded-full w-12 h-12"><i
                         class="bi-plus-lg"></i></a>
             @endrole
@@ -33,29 +43,29 @@
         <table class="table-auto borderless w-full mt-8">
             <thead>
                 <tr class="">
-                    <th class="w-16">Sr</th>
+                    <th class="w-12">Sr</th>
                     <th class="text-left">Voucher Title</th>
-                    <th>Rs.</th>
+                    <th class="w-20">Rs.</th>
                 </tr>
             </thead>
             <tbody>
 
-                @foreach ($vouchers as $voucher)
+                @foreach ($feeVouchers->sortByDesc('due_date') as $feeVoucher)
                     <tr class="tr">
-                        <td>{{ $loop->index + 1 }}</td>
-                        <td class="text-left">
-                            @if ($voucher->isOpen())
-                                <a href="{{ route('vouchers.show', $voucher) }}" class="link">{{ $voucher->name }}</a>
-                                <br>
-                                <span>@Rs. {{ $voucher->amount }} <span class="text-slate-400 text-xs">till
-                                        {{ $voucher->due_date->format('d-m-Y') }}</span>
-                                @else
-                                    <a href="{{ route('vouchers.show', $voucher) }}">{{ $voucher->name }}</a><br>
-                                    <span>@Rs. {{ $voucher->amount }} <span class="text-slate-400 text-xs">till
-                                            {{ $voucher->due_date->format('d-m-Y') }}</span>
-                            @endif
+                        <td>
+                            <div class="ico cyan mx-auto">
+                                {{ $loop->index + 1 }}
+                            </div>
                         </td>
-                        <td>{{ $voucher->sumOfPaidAmount() }} / {{ $voucher->sumOfPayableAmount() }} </td>
+                        <td class="text-left">
+                            <a href="{{ route('fee-vouchers.show', $feeVoucher) }}"
+                                class="{{ $feeVoucher->isOpen() ? 'link' : '' }}">{{ $feeVoucher->description }}</a>
+                            <br>
+                            <span>Rs. {{ $feeVoucher->amount }} <span class="text-slate-400 text-xs">till
+                                    {{ $feeVoucher->due_date->format('d-m-Y') }}</span>
+
+                        </td>
+                        <td>{{ $feeVoucher->sumOfPaidAmount() }} / {{ $feeVoucher->sumOfDueAmount() }} </td>
                     </tr>
                 @endforeach
 

@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('page-content')
     <h2>
-        Voucher # {{ $voucher->id }}</h2>
+        Voucher # {{ $feeVoucher->id }}</h2>
     <div class="bread-crumb">
         <a href="/">Home</a>
         <div>/</div>
@@ -12,7 +12,7 @@
 
     <div class="text-right">
         <div class="flex w-8 h-8 rounded-full border justify-center items-center">
-            <a href="{{ route('vouchers.show', $voucher) }}"><i class="bi-x text-slate-600"></i></a>
+            <a href="{{ route('vouchers.show', $feeVoucher) }}"><i class="bi-x text-slate-600"></i></a>
         </div>
 
     </div>
@@ -28,7 +28,7 @@
 
     <div class="md:w-4/5 mx-auto bg-white md:p-8 p-4 rounded border mt-3">
         <h2> <i class="bi-receipt text-slate-500"></i> Voucher Info</h2>
-        <form action="{{ route('vouchers.update', $voucher) }}" method='post' class="w-full grid gap-6"
+        <form action="{{ route('vouchers.update', $feeVoucher) }}" method='post' class="w-full grid gap-6"
             onsubmit="return validate(event)">
             @csrf
             @method('PUT')
@@ -36,12 +36,12 @@
                 <div class="md:col-span-2">
                     <label>Voucher Title</label>
                     <input type="text" name='name' class="custom-input" placeholder="For example: December Fee"
-                        value="{{ $voucher->name }}" required>
+                        value="{{ $feeVoucher->name }}" required>
                 </div>
                 <div>
                     <label>Due Date</label>
                     <input type="date" name='due_date' class="custom-input text-center" placeholder="Due date"
-                        value="{{ optional($voucher->due_date)->format('Y-m-d') }}" required>
+                        value="{{ optional($feeVoucher->due_date)->format('Y-m-d') }}" required>
                 </div>
             </div>
             <div class="text-right">

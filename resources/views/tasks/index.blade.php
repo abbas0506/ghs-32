@@ -47,7 +47,11 @@
                             );
                         @endphp
                         <tr class="tr">
-                            <td>{{ $loop->index + 1 }}</td>
+                            <td>
+                                <div class="ico cyan mx-auto">
+                                    {{ $loop->index + 1 }}
+                                </div>
+                            </td>
                             <td class="text-left">
                                 @if ($task->isOpen())
                                     <a href="{{ route('tasks.show', $task) }}" class="link">{{ $task->description }}</a>

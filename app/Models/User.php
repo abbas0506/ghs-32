@@ -76,7 +76,7 @@ class User extends Authenticatable
         } else if (session('role') == 'teacher') {
             return Section::whereIn('id', function ($query) {
                 $query->select('section_id')
-                    ->from('allocations')
+                    ->from('schedules')
                     ->where('user_id', $this->id)
                     ->where('lecture_no', 1);
             })->get();

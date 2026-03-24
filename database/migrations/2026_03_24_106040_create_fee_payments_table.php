@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('fee_voucher_id')->constrained()->cascadeOnDelete();
             $table->foreignId('student_id')->constrained()->cascadeOnDelete();
-            $table->date('payment_date');
+            $table->date('payment_date')->nullable();
             $table->timestamps();
         });
     }

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class FeeVoucher extends Model
 {
@@ -16,8 +17,35 @@ class FeeVoucher extends Model
         'description',
     ];
 
+    protected $casts = [
+        'due_date' => 'date',
+    ];
+
     public function feePayments()
     {
         return $this->hasMany(FeePayment::class);
+    }
+    public function  students()
+    {
+        return $this->belongsToMany(Student::class, 'fee_payments', 'student_id', 'fee_voucher_id');
+    }
+    public function isOpen()
+    {
+        return $this->due_date >= date('Y-m-d');
+    }
+    // get sum of amount paid
+    public function sumOfPaidAmount()
+    {
+        $sections = Auth::user()->accessibleSections();
+        $studentIds = Student::whereIn('section_id', $sections->pluck('id'))->pluck('id');
+
+        return $this->feePayments()->whereIn('student_id', $studentIds)->whereNotNull('payment_date')->count() * $this->amount;
+    }
+    public function sumOfDueAmount()
+    {
+        $sections = Auth::user()->accessibleSections();
+        $studentIds = Student::whereIn('section_id', $sections->pluck('id'))->pluck('id');
+
+        return $this->feePayments()->whereIn('student_id', $studentIds)->count() * $this->amount;
     }
 }

@@ -26,8 +26,8 @@ class TaskController extends Controller
      */
     public function create()
     {
-        //
-        $users = User::all();
+        //find all users with role 'teacher'
+        $users = User::role('teacher')->get();
         return view('tasks.create', compact('users'));
     }
 
@@ -40,7 +40,6 @@ class TaskController extends Controller
         $request->validate([
             'description' => 'required',
             'due_date' => 'required|date',
-            'grouped' => 'nullable',
             'user_ids_array' => 'required_if:grouped,on',
         ]);
 
@@ -56,18 +55,11 @@ class TaskController extends Controller
                 'due_date' => $request->due_date,
             ]);
 
-            if ($request->grouped) {
+            $userIdsArray = array();
+            $userIdsArray = $request->user_ids_array;
+            // Assign to multiple users
+            $task->users()->attach($userIdsArray); // user IDs
 
-                $userIdsArray = array();
-                $userIdsArray = $request->user_ids_array;
-                // Assign to multiple users
-                $task->users()->attach($userIdsArray); // user IDs
-            } else {
-
-                $task->taskLines()->create([
-                    'user_id' => Auth::user()->user?->id,
-                ]);
-            }
             DB::commit();
             return redirect()->route('tasks.index')->with('success', 'Successfully created');
         } catch (Exception $e) {

@@ -8,6 +8,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\FacultyController;
 use App\Http\Controllers\FeeController;
+use App\Http\Controllers\FeeVoucherController;
 use App\Http\Controllers\GallaryController;
 use App\Http\Controllers\ImportStudentController;
 use App\Http\Controllers\LedgerController;
@@ -133,7 +134,9 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('bulk-invoices/search/name', [BulkInvoiceController::class, 'searchByName'])->name('bulk-invoices.search.name');
     Route::post('bulk-invoices/search/class', [BulkInvoiceController::class, 'searchByClass'])->name('bulk-invoices.search.class');
     Route::post('bulk-invoices/print/checked', [BulkInvoiceController::class, 'print'])->name('bulk-invoices.print');
-    Route::resource('fees', FeeController::class);
+
+    // Fee
+    Route::resource('fee-vouchers', FeeVoucherController::class);
     // salaries
     Route::resource('salaries', SalaryController::class);
 

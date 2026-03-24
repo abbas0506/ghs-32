@@ -11,7 +11,6 @@ class FeePayment extends Model
     protected $fillable = [
         'fee_voucher_id',
         'student_id',
-        'amount',
         'payment_date',
     ];
 

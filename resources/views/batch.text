@@ -29,4 +29,4 @@ Select * FROM temp.test_allocations;
 insert into ghs_32.results(id, test_subject_id, student_id, obtained_marks, created_at, updated_at)
 SELECT id, test_allocation_id, student_id, obtained_marks, created_at, updated_at from temp.results;
 
-Delete from users where id=24;
+Delete from ghs_32.users where id=24;

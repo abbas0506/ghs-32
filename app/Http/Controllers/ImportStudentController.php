@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Student;
-use App\Models\testSubject;
+use App\Models\TestSubject;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;

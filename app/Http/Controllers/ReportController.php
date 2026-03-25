@@ -6,7 +6,7 @@ use App\Models\Allocation;
 use App\Models\Section;
 use App\Models\Student;
 use App\Models\Test;
-use App\Models\testSubject;
+use App\Models\TestSubject;
 use Barryvdh\DomPDF\Facade\Pdf as PDF;
 use Exception;
 use Illuminate\Support\Facades\Log;

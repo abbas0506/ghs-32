@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\testSubject;
+use App\Models\TestSubject;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf as PDF;
 

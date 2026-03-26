@@ -102,6 +102,8 @@
                         <i class="bi-gear text-base"></i>
                         <span class="ml-3">Configuration</span>
                     </a>
+                @endrole
+                @role('head|admin')
                     <a href="{{ route('syllabi.index') }}"
                         class="group flex items-center px-4 py-1 rounded-lg font-medium text-sm transition-all duration-300 ease-out relative {{ Route::currentRouteName() === 'bulk-invoices.index' ? 'bg-gradient-to-r from-teal-500 to-green-500 text-white' : 'text-slate-600 hover:text-slate-900' }}">
                         <div

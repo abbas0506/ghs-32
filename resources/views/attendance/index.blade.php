@@ -3,7 +3,7 @@
     <div class="mb-6">
         <h1 class="text-slate-800">Class Attendance</h1>
         <div class="bread-crumb">
-            <a href="{{ url('/') }}">Dashboard</a>
+            <a href="{{ url('/') }}">Home</a>
             <div>/</div>
             <a href="{{ route('attendance.summary') }}">Attendance</a>
             <div>/</div>

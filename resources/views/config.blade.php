@@ -3,7 +3,7 @@
     <div class="mb-6">
         <h1 class="text-slate-800">Configuration</h1>
         <div class="bread-crumb">
-            <a href="{{ url('/') }}">Dashboard</a>
+            <a href="{{ url('/') }}">Home</a>
             <div>/</div>
             <div>Config</div>
         </div>
@@ -43,6 +43,13 @@
                 <p>Tasks</p>
             </div>
             <p class="text-xs md:text-sm text-slate-400 mt-1">Assign task and approve its completion status</p>
+        </a>
+        <a href="{{ route('grade-subjects.index') }}" class="pallet">
+            <div class="flex items-center space-x-3">
+                <i class="bi bi-calendar-event text-lg bg-teal-50 p-1 rounded"></i>
+                <p>Grade & Subjects</p>
+            </div>
+            <p class="text-xs md:text-sm text-slate-400 mt-1">Describe which subjects will be taught at which grade</p>
         </a>
 
     </div>

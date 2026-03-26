@@ -10,6 +10,7 @@ use App\Http\Controllers\FacultyController;
 use App\Http\Controllers\FeeController;
 use App\Http\Controllers\FeeVoucherController;
 use App\Http\Controllers\GallaryController;
+use App\Http\Controllers\GradeSubjectController;
 use App\Http\Controllers\ImportStudentController;
 use App\Http\Controllers\LedgerController;
 use App\Http\Controllers\LessonController;
@@ -92,6 +93,9 @@ Route::group(['middleware' => ['auth']], function () {
     // subjects
     Route::resource('subjects', SubjectController::class);
     Route::resource('sections', SectionController::class);
+
+    // Grade vs subjects
+    Route::resource('grade-subjects', GradeSubjectController::class);
 
     // Classes/Sections
     Route::get('sections/list/{page}', [SectionController::class, 'list'])->name('sections.list');

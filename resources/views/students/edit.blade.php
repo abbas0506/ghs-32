@@ -48,7 +48,7 @@
         <div class="flex items-center">
             <div class="flex-1">
                 <div class="bread-crumb">
-                    <a href="{{ url('/') }}">Dashboard</a>
+                    <a href="{{ url('/') }}">Home</a>
                     <div>/</div>
                     <a href="{{ route('sections.show', $section) }}">{{ $section->name }}</a>
                     <div>/</div>

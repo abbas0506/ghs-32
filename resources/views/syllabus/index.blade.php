@@ -6,7 +6,7 @@
         <div>
             <h1 class="text-2xl font-bold text-gray-800">Syllabus</h1>
             <div class="bread-crumb mt-1">
-                <a href="{{ url('/') }}">Dashboard</a>
+                <a href="{{ url('/') }}">Home</a>
                 <div>/</div>
                 <span class="text-gray-500">Syllabus</span>
             </div>
@@ -52,6 +52,9 @@
                         </span>
                         <a href="{{ route('syllabi.index') }}"
                             class="ml-2 text-xs text-gray-400 underline hover:text-gray-600 transition">Change</a>
+
+                        <a href="{{ route('syllabi.create') }}"
+                            class="ml-2 text-xs text-gray-400 underline hover:text-gray-600 transition">Add New</a>
                     </div>
                 @else
                     <form action="{{ route('syllabi.index') }}" method="GET" id="filterForm">

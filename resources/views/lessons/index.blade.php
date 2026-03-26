@@ -6,7 +6,7 @@
         <div>
             <h1 class="text-2xl font-bold text-gray-800">Lesson Plan</h1>
             <div class="bread-crumb mt-1">
-                <a href="{{ url('/') }}">Dashboard</a>
+                <a href="{{ url('/') }}">Home</a>
                 <div>/</div>
                 <span class="text-gray-500">Lesson Plan</span>
             </div>

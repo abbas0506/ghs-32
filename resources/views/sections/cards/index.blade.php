@@ -6,7 +6,7 @@
         <div class="flex flex-wrap items-center gap-2">
             <div class="flex-1">
                 <div class="bread-crumb">
-                    <a href="{{ url('/') }}">Dashboard</a>
+                    <a href="{{ url('/') }}">Home</a>
                     <div>/</div>
                     <a href="{{ route('sections.index') }}">Sections</a>
                     <div>/</div>

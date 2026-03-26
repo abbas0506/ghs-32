@@ -4,7 +4,7 @@
     <div class="mb-6">
         <h1 class="text-2xl font-bold text-gray-800">New Lesson Plan</h1>
         <div class="bread-crumb mt-1">
-            <a href="{{ url('/') }}">Dashboard</a>
+            <a href="{{ url('/') }}">Home</a>
             <div>/</div>
             <a href="{{ route('lessons.index') }}">Lesson Plans</a>
             <div>/</div>

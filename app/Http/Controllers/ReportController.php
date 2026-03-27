@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Allocation;
+use App\Models\Schedule;
 use App\Models\Section;
 use App\Models\Student;
 use App\Models\Test;

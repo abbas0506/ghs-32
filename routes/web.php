@@ -164,7 +164,7 @@ Route::group(['middleware' => ['auth']], function () {
 
     // syllabus
     Route::resource('syllabi', SyllabusController::class);
-
+    // Route::resource('grade.syllabi', SyllabusController::class);
 
     // lock /unlock
     Route::patch('test/{id}/lock', [TestController::class, 'lock'])->name('test.lock');

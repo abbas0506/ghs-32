@@ -51,6 +51,15 @@
                     class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition">
                     <i class="ri-eye-line"></i> Preview
                 </a>
+                {{-- delete syllabus --}}
+                <form action="{{ route('syllabi.destroy', $syllabus->id) }}" method="POST" id="deleteForm" class="inline">
+                    @csrf
+                    @method('DELETE')
+                    <button type="button" onclick="confirmDelete()"
+                        class="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-red-500 bg-red-50 border border-red-200 rounded-xl hover:bg-red-100 transition">
+                        <i class="ri-delete-bin-line"></i>
+                    </button>
+                </form>
             </div>
         </div>
 
@@ -111,4 +120,23 @@
         </div>
 
     </div>
+@endsection
+@section('script')
+    <script>
+        function confirmDelete() {
+            Swal.fire({
+                title: 'Delete this plan?',
+                text: "This action cannot be undone.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('deleteForm').submit();
+                }
+            });
+        }
+    </script>
 @endsection

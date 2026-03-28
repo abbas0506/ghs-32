@@ -51,9 +51,6 @@
                         </span>
                         <a href="{{ route('grade-subjects.index') }}"
                             class="ml-2 text-xs text-gray-400 underline hover:text-gray-600 transition">Change</a>
-
-                        <a href="{{ route('grade-subjects.create') }}"
-                            class="ml-2 text-xs text-gray-400 underline hover:text-gray-600 transition">Add New</a>
                     </div>
                 @else
                     <form action="{{ route('grade-subjects.index') }}" method="GET" id="filterForm">
@@ -89,7 +86,7 @@
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
                 <div class="px-6 py-4 border-b border-gray-100">
                     <div>
-                        <h2 class="font-semibold text-gray-800">Already Selected Subjects</h2>
+                        <h2 class="font-semibold text-gray-800">Subjects</h2>
                         <p class="text-xs text-gray-400 mt-0.5">
                             {{ $grade->subjects->count() }} subjects found
                         </p>
@@ -132,9 +129,9 @@
                     <div
                         class="flex flex-col md:flex-row items-start md:items-center gap-2 justify-between px-6 py-4 border-b border-gray-100">
                         <div>
-                            <h2 class="font-semibold text-gray-800">Remining Sbjects</h2>
+                            <h2 class="font-semibold text-gray-800">+ Add More</h2>
                             <p class="text-xs text-gray-400 mt-0.5">
-                                {{ $remainingSubjects->count() }} subjects found
+                                {{ $remainingSubjects->count() }} subjects available
                             </p>
                         </div>
                     </div>
@@ -178,9 +175,9 @@
                                 </tbody>
                             @endif
                         </table>
-                        <div class="flex justify-center my-2">
+                        <div class="flex justify-center my-5">
 
-                            <button type="submit" class="btn-green rounded px-3 py-1">Submit</button>
+                            <button type="submit" class="btn-green rounded px-3 py-1">+ Add More</button>
                         </div>
                     </form>
                 </div>

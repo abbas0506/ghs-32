@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Grade;
 use App\Models\Subject;
 use App\Models\Syllabus;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -31,9 +32,19 @@ class SyllabusController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Request $request)
     {
         //
+        // read grade_id from url
+        $grade = Grade::find($request->query('grade_id'));
+        if (!$grade) {
+            abort(404, 'Grade required');
+        }
+        // find all those subjects which have not associated with this grade
+        $alreadyIncludedSubjects = Syllabus::where('grade_id', $grade->id)->pluck('subject_id');
+        $subjects = Subject::whereNotIn('id', $alreadyIncludedSubjects)->get();
+
+        return view('syllabus.create', compact('grade', 'subjects'));
     }
 
     /**
@@ -108,5 +119,14 @@ class SyllabusController extends Controller
     public function destroy(Syllabus $syllabus)
     {
         //
+        $this->authorize('delete', $syllabus);
+        $gradeId = $syllabus->grade_id;
+        try {
+            $syllabus->delete();
+            return redirect('syllabi?grade_id=' . $gradeId)->with('success', 'Successfully deleted');
+        } catch (Exception $e) {
+            return redirect()->back()->withErrors($e->getMessage());
+            // something went wrong
+        }
     }
 }

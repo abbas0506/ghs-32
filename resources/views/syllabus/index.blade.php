@@ -50,11 +50,14 @@
                             <i class="ri-school-line text-teal-500"></i>
                             {{ $grades->find($grade)?->name ?? 'N/A' }}
                         </span>
+
                         <a href="{{ route('syllabi.index') }}"
                             class="ml-2 text-xs text-gray-400 underline hover:text-gray-600 transition">Change</a>
 
-                        <a href="{{ route('syllabi.create') }}"
-                            class="ml-2 text-xs text-gray-400 underline hover:text-gray-600 transition">Add New</a>
+                        @role('head')
+                            <a href="{{ url('syllabi/create?grade_id=' . $grade->id) }}"
+                                class="ml-2 text-xs text-gray-400 underline hover:text-gray-600 transition">+Add More</a>
+                        @endrole
                     </div>
                 @else
                     <form action="{{ route('syllabi.index') }}" method="GET" id="filterForm">
@@ -145,7 +148,7 @@
                         <p class="text-sm text-gray-400 mb-6 max-w-xs">
                             No Syllabus has been created for this grade and subject yet.
                         </p>
-                        @auth
+                        @role('head|admin')
                             <form action="{{ route('syllabi.store') }}" method="POST">
                                 @csrf
                                 <input type="hidden" name="grade_id" value="{{ $grade->id }}">
@@ -155,7 +158,8 @@
                                     Generate Syllabus
                                 </button>
                             </form>
-                        @endauth
+                        @endrole
+
                     </div>
                 @endif
             </div>

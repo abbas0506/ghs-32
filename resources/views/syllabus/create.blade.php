@@ -2,17 +2,17 @@
 @section('page-content')
     {{-- Page Header --}}
     <div class="mb-6">
-        <h1 class="text-2xl font-bold text-gray-800">New Lesson Plan</h1>
+        <h1 class="text-2xl font-bold text-gray-800">Syllabus:Add Subject</h1>
         <div class="bread-crumb mt-1">
             <a href="{{ url('/') }}">Home</a>
             <div>/</div>
-            <a href="{{ route('lessons.index') }}">Lesson Plans</a>
+            <a href="{{ route('syllabi.index') }}">Syllabus</a>
             <div>/</div>
-            <span class="text-gray-500">Create</span>
+            <span class="text-gray-500">Add Subject</span>
         </div>
     </div>
 
-    <div class="md:w-2/3 lg:w-1/2 mx-auto space-y-5">
+    <div class="w-full md:w-4/5 mx-auto space-y-5">
 
         {{-- Flash Messages --}}
         @if ($errors->any())
@@ -21,79 +21,93 @@
             <x-message></x-message>
         @endif
 
-        {{-- Info card --}}
-        <div class="flex items-start gap-3 bg-blue-50 border border-blue-200 rounded-xl px-5 py-4">
-            <i class="ri-information-line text-blue-400 text-xl mt-0.5 shrink-0"></i>
-            <div class="text-sm text-blue-700">
-                <p class="font-semibold mb-0.5">How this works</p>
-                <p>Selecting a grade and subject will automatically generate <strong>72 daily lesson plan</strong> entries.
-                    You can then fill in the content for each day individually.</p>
-            </div>
-        </div>
+        @if ($grade)
+            {{-- Active filter pills --}}
+            <div class="flex items-center gap-3 flex-wrap">
+                <span
+                    class="inline-flex items-center gap-2 px-3 py-1.5 bg-teal-50 border border-teal-200 text-teal-700 rounded-full text-sm font-medium">
+                    <i class="ri-school-line text-teal-500"></i>
+                    {{ $grade->name ?? 'N/A' }}
+                </span>
 
+                <a href="{{ route('syllabi.index') }}"
+                    class="ml-2 text-xs text-gray-400 underline hover:text-gray-600 transition">Change</a>
+
+            </div>
+        @else
+            {{-- Empty state --}}
+            <div class="flex flex-col items-center justify-center py-16 px-6 text-center">
+                <div class="w-20 h-20 rounded-2xl bg-gray-100 flex items-center justify-center mb-4">
+                    <i class="ri-file-list-3-line text-4xl text-gray-300"></i>
+                </div>
+                <h3 class="text-base font-semibold text-gray-600 mb-1">Grade not selected</h3>
+                <p class="text-sm text-gray-400 mb-6 max-w-xs">
+                    Probably this page has been accessed via direct url
+                </p>
+                @role('head|admin')
+                    <a href="{{ route('syllabi.index') }}"
+                        class="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-teal-500 to-green-500 text-white text-sm font-semibold rounded-xl shadow hover:from-teal-600 hover:to-green-600 transition">
+                        <i class="ri-add-circle-line text-base"></i>
+                        Select Grade
+                    </a>
+                @endrole
+
+            </div>
+        @endif
         {{-- Form Card --}}
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100">
             <div class="px-6 py-5 border-b border-gray-100 bg-gradient-to-r from-slate-50 to-gray-50 rounded-t-2xl">
                 <h2 class="font-semibold text-gray-800 flex items-center gap-2">
                     <i class="ri-book-open-line text-teal-500"></i>
-                    Select Grade & Subject
+                    + Add Subject
                 </h2>
             </div>
 
-            <form action="{{ route('lessons.store') }}" method="POST" class="px-6 py-6 space-y-5">
-                @csrf
+            <div>
+                {{-- Subject that can be added --}}
+                <form action="{{ route('syllabi.store') }}" method="post">
+                    @csrf
+                    <input type="hidden" name="grade_id" value="{{ $grade->id }}">
+                    <table class="table-fixed borderless w-full text-sm xs md:sm">
+                        <thead class="">
+                            <tr>
+                                <th class="w-16">#</th>
+                                <th class="w-40 text-left">Subject</th>
+                                <th class="w-16"><input type="checkbox" id='chkAll' class="rounded"
+                                        onclick="checkAll()"><br><label for="">Check all</label></th>
+                                </th>
 
-                {{-- Grade --}}
-                <div>
-                    <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">
-                        Grade <span class="text-red-400">*</span>
-                    </label>
-                    <select name="grade_id" required
-                        class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm shadow-sm focus:ring-2 focus:ring-teal-400 focus:border-teal-400 bg-gray-50 transition @error('grade_id') border-red-400 @enderror">
-                        <option value="">— Choose Grade —</option>
-                        @foreach ($grades as $g)
-                            <option value="{{ $g->id }}" {{ old('grade_id') == $g->id ? 'selected' : '' }}>
-                                {{ $g->name }}
-                            </option>
-                        @endforeach
-                    </select>
-                    @error('grade_id')
-                        <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
-                    @enderror
-                </div>
+                            </tr>
+                        </thead>
 
-                {{-- Subject --}}
-                <div>
-                    <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">
-                        Subject <span class="text-red-400">*</span>
-                    </label>
-                    <select name="subject_id" required
-                        class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm shadow-sm focus:ring-2 focus:ring-teal-400 focus:border-teal-400 bg-gray-50 transition @error('subject_id') border-red-400 @enderror">
-                        <option value="">— Choose Subject —</option>
-                        @foreach ($subjects as $s)
-                            <option value="{{ $s->id }}" {{ old('subject_id') == $s->id ? 'selected' : '' }}>
-                                {{ $s->name }}
-                            </option>
-                        @endforeach
-                    </select>
-                    @error('subject_id')
-                        <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
-                    @enderror
-                </div>
 
-                <div class="flex items-center justify-between pt-2 border-t border-gray-100">
-                    <a href="{{ route('lessons.index') }}"
-                        class="text-sm text-gray-400 hover:text-gray-600 transition inline-flex items-center gap-1">
-                        <i class="ri-arrow-left-line"></i> Cancel
-                    </a>
-                    <button type="submit"
-                        class="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-teal-500 to-green-500 text-white text-sm font-semibold rounded-xl shadow hover:from-teal-600 hover:to-green-600 transition">
-                        <i class="ri-add-circle-line"></i>
-                        Generate 72-Day Plan
-                    </button>
-                </div>
-            </form>
+                        @if ($subjects->count())
+                            <tbody>
+
+                                @foreach ($subjects as $subject)
+                                    <tr class="tr">
+                                        <td>
+                                            <div class="ico teal mx-auto">{{ $loop->index + 1 }}</div>
+                                        </td>
+                                        <td class="text-left">{{ $subject->name }}</td>
+                                        <td>
+                                            <input type="checkbox" class="w-4 h-4 rounded" name="subject_ids_array[]"
+                                                value="{{ $subject->id }}">
+                                        </td>
+
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        @endif
+                    </table>
+                    <div class="flex justify-center my-5">
+
+                        <button type="submit" class="btn-blue rounded px-3 py-1"><i class="bi-plus-circle"></i> Add
+                            Now</button>
+                    </div>
+                </form>
+
+            </div>
+
         </div>
-
-    </div>
-@endsection
+    @endsection

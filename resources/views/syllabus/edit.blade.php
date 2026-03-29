@@ -9,12 +9,12 @@
                 <div>/</div>
                 <a href="{{ route('syllabi.index') }}">Syllabus</a>
                 <div>/</div>
-                <a href="{{ route('syllabi.index', ['grade' => $syllabus->grade_id]) }}"
+                <a href="{{ route('syllabi.index', ['grade_id' => $syllabus->grade_id]) }}"
                     class="text-teal-600 hover:underline">
-                    {{ $syllabus->grade?->name }} – {{ $syllabus->subject?->name }}
+                    {{ $syllabus->grade?->name }}
                 </a>
                 <div>/</div>
-                <span class="text-gray-500">Subject {{ $syllabus->lesson_no }}</span>
+                <div>{{ $syllabus->subject->name }}</div>
             </div>
         </div>
 
@@ -104,12 +104,6 @@
                         <i class="ri-arrow-left-line"></i> Back to list
                     </a>
                     <div class="flex items-center gap-3">
-
-                        <button type="submit" name="_save_and_next" value="1"
-                            class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-teal-700 bg-teal-50 border border-teal-200 rounded-xl hover:bg-teal-100 transition">
-                            Save & Next <i class="ri-arrow-right-line"></i>
-                        </button>
-
                         <button type="submit"
                             class="inline-flex items-center gap-2 px-5 py-2 bg-gradient-to-r from-teal-500 to-green-500 text-white text-sm font-semibold rounded-xl shadow hover:from-teal-600 hover:to-green-600 transition">
                             <i class="ri-save-line"></i> Save Changes

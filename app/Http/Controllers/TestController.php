@@ -72,7 +72,7 @@ class TestController extends Controller
             ]);
             $sections = Section::whereIn('id', $sectionIdsArray)->get();
             foreach ($sections as $section) {
-                foreach ($section->allocations as $allocation) {
+                foreach ($section->schedules as $allocation) {
                     $testSubject = $test->testSubjects()->create([
                         'section_id' => $allocation->section_id,
                         'lecture_no' => $allocation->lecture_no,

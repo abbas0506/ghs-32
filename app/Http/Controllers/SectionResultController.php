@@ -20,7 +20,7 @@ class SectionResultController extends Controller
         $section = Section::findOrFail($sectionId);
         $lectureNos =  Schedule::where('section_id', $section->id)->pluck('lecture_no')->unique();
 
-        $allocations = $section->allocations->sortBy('lecture_no');
+        $allocations = $section->schedules->sortBy('lecture_no');
 
         $pdf = PDF::loadview('pdf.section-result', compact('test', 'section', 'lectureNos', 'allocations'))->setPaper('a4', 'portrait');
         $pdf->set_option("isPhpEnabled", true);

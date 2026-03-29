@@ -44,9 +44,9 @@
             <div class="px-6 py-5">
                 @if ($grade)
                     {{-- Active filter pills --}}
-                    <div class="flex items-center gap-3 flex-wrap">
+                    <div class="flex items-center gap-1 md:gap-3 flex-wrap">
                         <span
-                            class="inline-flex items-center gap-2 px-3 py-1.5 bg-teal-50 border border-teal-200 text-teal-700 rounded-full text-sm font-medium">
+                            class="inline-flex items-center gap-1 md:gap-2 px-3 py-1.5 bg-teal-50 border border-teal-200 text-teal-700 rounded-full text-sm font-medium">
                             <i class="ri-school-line text-teal-500"></i>
                             {{ $grades->find($grade)?->name ?? 'N/A' }}
                         </span>
@@ -56,7 +56,7 @@
 
                         @role('head')
                             <a href="{{ url('syllabi/create?grade_id=' . $grade->id) }}"
-                                class="ml-2 text-xs text-gray-400 underline hover:text-gray-600 transition">+Add More</a>
+                                class="ml-2 text-xs text-gray-400 underline hover:text-gray-600 transition">+Add Subject</a>
                         @endrole
                     </div>
                 @else
@@ -113,26 +113,41 @@
                         <table class="table-fixed borderless w-full text-sm xs md:sm">
                             <thead class="">
                                 <tr>
-                                    <th class="w-16">#</th>
-                                    <th class="w-16 text-left">Subject</th>
-                                    <th class="w-32 text-left">Term 1</th>
-                                    <th class="w-32 text-left">Term 2</th>
-                                    <th class="w-32 text-left">Term 3</th>
-                                </tr>
+                                    <th class="w-12">#</th>
+                                    <th class="w-24 text-left">Subject</th>
+                                    <th class="w-16">Status</th>
                             </thead>
                             <tbody>
                                 @foreach ($syllabi as $syllabus)
+                                    @php
+
+                                        $themeColor =
+                                            $syllabus->completionPercentage() > 66
+                                                ? 'green'
+                                                : ($syllabus->completionPercentage() > 33
+                                                    ? 'cyan'
+                                                    : 'red');
+                                    @endphp
+
                                     <tr class="tr">
                                         <td>
-                                            <div class="ico teal mx-auto">{{ $loop->index + 1 }}</div>
+                                            <a href="{{ route('syllabi.edit', $syllabus) }}" class="ico teal mx-auto">
+                                                {{ $loop->index + 1 }}</a>
                                         </td>
-                                        <td class="text-left">
-                                            <a href="{{ route('syllabi.edit', $syllabus) }}"
-                                                class="link">{{ $syllabus->subject->short_name }}</a>
+                                        <td class="text-left text-slate-600">
+                                            {{ $syllabus->subject->name }}
                                         </td>
-                                        <td class="text-left">{{ $syllabus->term1 }}</td>
-                                        <td class="text-left">{{ $syllabus->term2 }}</td>
-                                        <td class="text-left">{{ $syllabus->term3 }}</td>
+                                        <td>
+                                            <div class="w-4/5 text-right">
+                                                <span
+                                                    class="text-xs font-semibold text-{{ $themeColor }}-600">{{ $syllabus->completionPercentage() }}%</span>
+                                                <div class="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
+                                                    <div class="bg-gradient-to-r from-{{ $themeColor }}-200 to-{{ $themeColor }}-500 h-2 rounded-full transition-all"
+                                                        style="width: {{ min($syllabus->completionPercentage(), 100) }}%">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -149,7 +164,7 @@
                             No Syllabus has been created for this grade and subject yet.
                         </p>
                         @role('head|admin')
-                            <form action="{{ route('syllabi.store') }}" method="POST">
+                            <form action="{{ route('syllabi.init') }}" method="POST">
                                 @csrf
                                 <input type="hidden" name="grade_id" value="{{ $grade->id }}">
                                 <button type="submit"

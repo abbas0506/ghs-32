@@ -31,7 +31,7 @@ class Section extends Model
     {
         return $this->hasMany(Student::class);
     }
-    public function allocations()
+    public function schedules()
     {
         return $this->hasMany(Schedule::class);
     }

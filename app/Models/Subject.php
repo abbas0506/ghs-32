@@ -12,4 +12,13 @@ class Subject extends Model
         'name',
         'short_name'
     ];
+
+    public function lessons()
+    {
+        return $this->hasMany(Lesson::class);
+    }
+    public function lessonPlanCompletionPercentageForGrade($gradeId)
+    {
+        return round($this->lessons()->havingGradeId($gradeId)->whereNotNull('objective')->count() / 72 * 100, 1);
+    }
 }

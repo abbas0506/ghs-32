@@ -30,4 +30,13 @@ class Syllabus extends Model
     {
         return $this->belongsTo(Subject::class);
     }
+    public function  completionPercentage(): int
+    {
+        $percentage = 0;
+        if ($this->term1 && strlen($this->term1) > 1) $percentage += 33;
+        if ($this->term2 && strlen($this->term2) > 1) $percentage += 33;
+        if ($this->term3 && strlen($this->term3) > 1) $percentage += 33;
+        if ($percentage == 99) $percentage = 100;
+        return $percentage;
+    }
 }

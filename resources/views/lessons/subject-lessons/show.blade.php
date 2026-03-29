@@ -47,18 +47,11 @@
                 </p>
             </div>
             <div class="flex items-center gap-2 shrink-0">
-                <a href="{{ route('lessons.edit', $lesson->id) }}"
+                <a href="{{ route('grade.subject.lessons.edit', [$lesson->grade, $lesson->subject, $lesson]) }}"
                     class="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-white bg-gradient-to-r from-teal-500 to-green-500 rounded-xl shadow hover:from-teal-600 hover:to-green-600 transition">
                     <i class="ri-pencil-line"></i> Edit
                 </a>
-                <form action="{{ route('lessons.destroy', $lesson->id) }}" method="POST" id="deleteForm" class="inline">
-                    @csrf
-                    @method('DELETE')
-                    <button type="button" onclick="confirmDelete()"
-                        class="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-red-500 bg-red-50 border border-red-200 rounded-xl hover:bg-red-100 transition">
-                        <i class="ri-delete-bin-line"></i>
-                    </button>
-                </form>
+
             </div>
         </div>
 
@@ -189,19 +182,19 @@
 
         {{-- Footer nav --}}
         <div class="flex items-center justify-between pb-4">
-            <a href="{{ route('lessons.index', ['grade' => $lesson->grade_id, 'subject' => $lesson->subject_id]) }}"
+            <a href="{{ route('lessons.index', ['grade_id' => $lesson->grade_id]) }}"
                 class="text-sm text-gray-400 hover:text-gray-600 transition inline-flex items-center gap-1">
                 <i class="ri-arrow-left-line"></i> Back to list
             </a>
             <div class="flex items-center gap-3">
                 @if ($prevPlan)
-                    <a href="{{ route('lessons.show', $prevPlan->id) }}"
+                    <a href="{{ route('grade.subject.lessons.show', [$lesson->grade, $lesson->subject, $prevPlan->id]) }}"
                         class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-500 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition">
                         <i class="ri-arrow-left-s-line"></i> Prev
                     </a>
                 @endif
                 @if ($nextPlan)
-                    <a href="{{ route('lessons.show', $nextPlan->id) }}"
+                    <a href="{{ route('grade.subject.lessons.show', [$lesson->grade, $lesson->subject, $nextPlan->id]) }}"
                         class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-500 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition">
                         Next <i class="ri-arrow-right-s-line"></i>
                     </a>

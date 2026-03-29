@@ -66,7 +66,7 @@
                             <td class="font-bold"> {{ $section->name }}</td>
                             @foreach ($lectures as $lecture)
                                 <td class="p-1">
-                                    @foreach ($section->allocations()->havingLectureNo($lecture->lecture_no)->get() as $allocation)
+                                    @foreach ($section->schedules()->havingLectureNo($lecture->lecture_no)->get() as $allocation)
                                         <div class="text-sm bg-teal-50">
                                             <a href="{{ route('section.lecture.schedule.edit', [$section, $lecture->lecture_no, $allocation]) }}"
                                                 class="link">{{ $allocation->subject->short_name }}</a>

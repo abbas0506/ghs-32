@@ -6,6 +6,7 @@ use App\Models\Grade;
 use App\Models\Lesson;
 use App\Models\LessonCue;
 use App\Models\Subject;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -17,33 +18,31 @@ class LessonController extends Controller
     public function index(Request $request)
     {
         //
-        $subjects = Subject::all();
+        $subjects = collect();
         $grades = Grade::all();
 
-        $grade = $request->query('grade');
-        $subject = $request->query('subject');
+        $grade = Grade::find($request->query('grade_id'));
 
-        if ($grade && $subject) {
-            $lessons = Lesson::where('grade_id', $grade)
-                ->where('subject_id', $subject)
-                ->orderBy('lesson_no')
-                ->get();
-        } else {
-            $lessons = collect();
-            // echo 'No filters applied';
+        if ($grade) {
+            $subjectIds = $grade->lessons->pluck('subject_id')->unique();
+            $subjects = Subject::whereIn('id', $subjectIds)->get();
         }
-        return view('lessons.index', compact('lessons', 'subjects', 'grades', 'grade', 'subject'));
+        return view('lessons.index', compact('grades', 'grade', 'subjects'));
     }
 
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Request $request)
     {
         //
-        $subjects = Subject::all();
-        $grades = Grade::all();
-        return view('lessons.create', compact('subjects', 'grades'));
+        $grade = Grade::find($request->query('grade_id'));
+        $subjects = collect();
+        if ($grade) {
+            $subjectIds = $grade->lessons->pluck('subject_id')->unique();
+            $subjects = Subject::whereNotIn('id', $subjectIds)->get();
+        }
+        return view('lessons.create', compact('grade', 'subjects'));
     }
 
     /**
@@ -53,138 +52,100 @@ class LessonController extends Controller
     {
         //
         $request->validate([
-            'subject_id' => 'required|exists:subjects,id',
             'grade_id' => 'required|exists:grades,id',
+            'subject_ids_array' => 'required|array|min:1'
         ]);
+
+        $subjectIdsArray = collect();
+        $subjectIdsArray = $request->subject_ids_array;
+        $subjects = Subject::whereIn('id', $subjectIdsArray)->get();
+
         DB::beginTransaction();
+        $gradeId = $request->input('grade_id');
+        $grade = Grade::find($gradeId);
         try {
-            for ($day = 1; $day <= 72; $day++) {
-                $lesson = Lesson::create([
-                    'subject_id' => $request->input('subject_id'),
-                    'grade_id' => $request->input('grade_id'),
-                    'lesson_no' => $day,
-                    'title' => "Lesson detail not set",
-                    'activity' => "",
-                    'homework' => "",
-                    'remarks' => "",
-                ]);
+            foreach ($subjects as $subject) {
+                for ($day = 1; $day <= 72; $day++) {
+                    $grade->lessons()->create([
+                        'subject_id' => $subject->id,
+                        'lesson_no' => $day,
+                        'title' => "Blank",
+                        'activity' => "",
+                        'homework' => "",
+                        'remarks' => "",
+                    ]);
+                }
             }
             DB::commit();
             return redirect()->route('lessons.index', [
-                'grade' => $request->input('grade_id'),
-                'subject' => $request->input('subject_id'),
+                'grade_id' => $gradeId
             ])->with('success', 'Lesson plan created successfully.');
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->route('lessons.index')->with('warning', 'Failed to create lesson plans: ' . $e->getMessage());
+            return redirect()->route('lessons.index', [
+                'grade_id' => $gradeId
+            ])->with('error', $e->getMessage());
         }
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Lesson $lesson)
-    {
-        $lesson->load(['grade', 'subject', 'cues', 'resources']);
-
-        $prevPlan = Lesson::where('grade_id', $lesson->grade_id)
-            ->where('subject_id', $lesson->subject_id)
-            ->where('lesson_no', $lesson->lesson_no - 1)
-            ->first();
-
-        $nextPlan = Lesson::where('grade_id', $lesson->grade_id)
-            ->where('subject_id', $lesson->subject_id)
-            ->where('lesson_no', $lesson->lesson_no + 1)
-            ->first();
-
-        return view('lessons.show', compact('lesson', 'prevPlan', 'nextPlan'));
-    }
+    public function show(Lesson $lesson) {}
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Lesson $lesson)
-    {
-        $lesson->load(['grade', 'subject']);
-
-        $prevPlan = Lesson::where('grade_id', $lesson->grade_id)
-            ->where('subject_id', $lesson->subject_id)
-            ->where('lesson_no', $lesson->lesson_no - 1)
-            ->first();
-
-        $nextPlan = Lesson::where('grade_id', $lesson->grade_id)
-            ->where('subject_id', $lesson->subject_id)
-            ->where('lesson_no', $lesson->lesson_no + 1)
-            ->first();
-
-        return view('lessons.edit', compact('lesson', 'prevPlan', 'nextPlan'));
-    }
+    public function edit(Lesson $lesson) {}
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Lesson $lesson)
-    {
-        $request->validate([
-            'title'     => 'required|string|max:255',
-            'objective' => 'nullable|string',
-            'activity'  => 'nullable|string',
-            'homework'  => 'nullable|string',
-            'remarks'   => 'nullable|string',
-            'cues'      => 'required|array|min:1',
-        ]);
-
-        // $cues = array();
-        // $cues = $request->cues;
-
-        $lesson->update($request->only(['title', 'objective', 'activity', 'homework', 'remarks']));
-
-        $cues = collect($request->input('cues'))
-            ->filter(function ($cue) {
-                return !is_null($cue) && trim($cue) !== '';
-            })
-            ->values(); // reindex
-
-        // remove all existing cues of lesson
-        $lesson->cues()->delete();
-
-        //add new clues for the lesson
-        foreach ($cues as $cue) {
-            $lesson->cues()->create([
-                'content' => $cue
-            ]);
-        }
-
-        // "Save & Next" goes straight to the next day's edit page
-        if ($request->has('_save_and_next')) {
-            $nextPlan = Lesson::where('grade_id', $lesson->grade_id)
-                ->where('subject_id', $lesson->subject_id)
-                ->where('lesson_no', $lesson->lesson_no + 1)
-                ->first();
-
-            if ($nextPlan) {
-                return redirect()->route('lessons.edit', $nextPlan->id)
-                    ->with('success', 'Day ' . $lesson->lesson_no . ' saved. Now editing Day ' . $nextPlan->lesson_no . '.');
-            }
-        }
-
-        return redirect()->route('lessons.index', [
-            'grade'   => $lesson->grade_id,
-            'subject' => $lesson->subject_id,
-        ])->with('success', 'Day ' . $lesson->lesson_no . ' lesson plan updated successfully.');
-    }
+    public function update(Request $request, Lesson $lesson) {}
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Lesson $lesson)
+    public function destroy(Lesson $lesson) {}
+
+    public function  init(Request $request)
     {
-        $gradeId   = $lesson->grade_id;
-        $subjectId = $lesson->subject_id;
-        $lesson->delete();
-        return redirect()->route('lessons.index', [
-            'grade'   => $gradeId,
-            'subject' => $subjectId,
-        ])->with('success', 'Lesson plan deleted successfully.');
+
+        $request->validate([
+            'grade_id' => 'required|numeric'
+        ]);
+        $subjects = collect();
+        $grades = Grade::all();
+
+        $grade = Grade::find($request->input('grade_id'));
+
+        if ($grade) {
+            if ($grade->lessons->count() == 0) {
+                // init lesson plans for all subjects
+                DB::beginTransaction();
+                try {
+                    foreach ($grade->subjects as $subject) {
+                        for ($day = 1; $day <= 72; $day++) {
+                            $grade->lessons()->create([
+                                'subject_id' => $subject->id,
+                                'lesson_no' => $day,
+                                'title' => "Blank",
+                                'activity' => "",
+                                'homework' => "",
+                                'remarks' => "",
+                            ]);
+                        }
+                    }
+                    DB::commit();
+                } catch (Exception $e) {
+                    DB::rollBack();
+                    return redirect()->back()->withErrors($e->getMessage());
+                    // something went wrong
+                }
+            }
+            $subjectIds = $grade->lessons->pluck('subject_id')->unique();
+            $subjects = Subject::whereIn('id', $subjectIds)->get();
+        }
+        return redirect()->route('lessons.index', ['grade_id' => $grade->id])->with('success', 'Lesson plan successfully initiated!');
     }
 }

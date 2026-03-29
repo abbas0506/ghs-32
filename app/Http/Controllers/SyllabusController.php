@@ -55,12 +55,16 @@ class SyllabusController extends Controller
         //
         $request->validate([
             'grade_id' => 'required|exists:grades,id',
+            'subject_ids_array' => 'required|array|min:1'
         ]);
-        DB::beginTransaction();
 
+        $subjectIdsArray = collect();
+        $subjectIdsArray = $request->subject_ids_array;
+        $subjects = Subject::whereIn('id', $subjectIdsArray)->get();
+        DB::beginTransaction();
+        $grade = Grade::find($request->input('grade_id'));
         try {
-            $grade = Grade::find($request->input('grade_id'));
-            foreach ($grade->subjects as $subject) {
+            foreach ($subjects as $subject) {
                 $grade->syllabi()->create([
                     'subject_id' => $subject->id,
                     'term1' => '',
@@ -74,7 +78,7 @@ class SyllabusController extends Controller
             ])->with('success', 'Syllabus created successfully.');
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->route('syllabi.index')->with('warning', 'Failed to create syllabus: ' . $e->getMessage());
+            return redirect('syllabi?grade_id=' . $grade->id)->with('warning', 'Failed to create syllabus: ' . $e->getMessage());
         }
     }
 
@@ -110,7 +114,7 @@ class SyllabusController extends Controller
             'term3' => 'required',
         ]);
         $syllabus->update($validated);
-        return view('syllabus.edit', compact('syllabus'))->with('success', 'Syllabus updated successfully.');
+        return redirect('syllabi?grade_id=' . $syllabus->grade_id)->with('success', 'Syllabus updated successfully.');
     }
 
     /**
@@ -123,10 +127,35 @@ class SyllabusController extends Controller
         $gradeId = $syllabus->grade_id;
         try {
             $syllabus->delete();
-            return redirect('syllabi?grade_id=' . $gradeId)->with('success', 'Successfully deleted');
+            return redirect()->route('syllabi.index', ['grade_id' => $gradeId])->with('success', 'Successfully deleted');
         } catch (Exception $e) {
             return redirect()->back()->withErrors($e->getMessage());
             // something went wrong
+        }
+    }
+    public function init(Request $request)
+    {
+        $request->validate([
+            'grade_id' => 'required|exists:grades,id',
+        ]);
+        DB::beginTransaction();
+        $grade = Grade::find($request->input('grade_id'));
+        try {
+            foreach ($grade->subjects as $subject) {
+                $grade->syllabi()->create([
+                    'subject_id' => $subject->id,
+                    'term1' => '',
+                    'term2' => '',
+                    'term3' => '',
+                ]);
+            }
+            DB::commit();
+            return redirect()->route('syllabi.index', [
+                'grade_id' => $request->input('grade_id'),
+            ])->with('success', 'Syllabus created successfully.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect('syllabi?grade_id=' . $grade->id)->with('warning', 'Failed to create syllabus: ' . $e->getMessage());
         }
     }
 }

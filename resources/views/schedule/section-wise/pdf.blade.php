@@ -89,7 +89,7 @@
                             <td class="font-semibold">{{ $section->name }}</td>
                             @foreach ($lectures as $lecture)
                                 <td class="p-1">
-                                    @foreach ($section->allocations()->havingLectureNo($lecture->lecture_no)->get() as $allocation)
+                                    @foreach ($section->schedules()->havingLectureNo($lecture->lecture_no)->get() as $allocation)
                                         <div class="text-sm bg-teal-50">
                                             <div class="font-bold">{{ $allocation->subject->short_name }}</div>
                                             <div>{{ $allocation->user->profile->short_name_name }}</div>

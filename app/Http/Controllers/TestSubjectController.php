@@ -41,9 +41,9 @@ class TestSubjectController extends Controller
                 $query->select(DB::raw(1))
                     ->from('test_subjects')
                     ->where('test_subjects.test_id', $test->id)
-                    ->whereColumn('test_subjects.section_id', 'allocations.section_id')
-                    ->whereColumn('test_subjects.lecture_no', 'allocations.lecture_no')
-                    ->whereColumn('test_subjects.subject_id', 'allocations.subject_id');
+                    ->whereColumn('test_subjects.section_id', 'schedules.section_id')
+                    ->whereColumn('test_subjects.lecture_no', 'schedules.lecture_no')
+                    ->whereColumn('test_subjects.subject_id', 'schedules.subject_id');
             })
             ->get();
 

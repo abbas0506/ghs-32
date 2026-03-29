@@ -30,4 +30,8 @@ class Grade extends Model
     {
         return $this->hasMany(Syllabus::class);
     }
+    public function lessons()
+    {
+        return $this->hasMany(Lesson::class);
+    }
 }

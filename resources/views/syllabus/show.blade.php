@@ -3,16 +3,18 @@
     {{-- Page Header --}}
     <div class="flex items-center justify-between flex-wrap gap-3 mb-6">
         <div>
-            <h1 class="text-2xl font-bold text-gray-800">Syllabus Plan</h1>
+            <h1 class="text-2xl font-bold text-gray-800">Syllabus</h1>
             <div class="bread-crumb mt-1">
                 <a href="{{ url('/') }}">Home</a>
                 <div>/</div>
-                <a href="{{ route('syllabi.index') }}">Syllabus Plan</a>
+                <a href="{{ route('syllabi.index') }}">Syllabus</a>
                 <div>/</div>
-                <a href="{{ route('syllabi.index', ['grade' => $syllabus->grade_id]) }}"
+                <a href="{{ route('syllabi.index', ['grade_id' => $syllabus->grade_id]) }}"
                     class="text-teal-600 hover:underline">
-                    {{ $syllabus->grade?->name }} – {{ $syllabus->subject?->name }}
+                    {{ $syllabus->grade?->name }}
                 </a>
+                <div>/</div>
+                <div>{{ $syllabus->subject->name }}</div>
             </div>
         </div>
     </div>

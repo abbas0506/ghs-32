@@ -11,6 +11,7 @@ use App\Http\Controllers\FeeController;
 use App\Http\Controllers\FeeVoucherController;
 use App\Http\Controllers\GallaryController;
 use App\Http\Controllers\GradeSubjectController;
+use App\Http\Controllers\GradeSubjectLessonController;
 use App\Http\Controllers\ImportStudentController;
 use App\Http\Controllers\LedgerController;
 use App\Http\Controllers\LessonController;
@@ -25,6 +26,7 @@ use App\Http\Controllers\SectionResultController;
 use App\Http\Controllers\SectionScheduleController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\SubjectController;
+use App\Http\Controllers\SubjectLessonController;
 use App\Http\Controllers\SyllabusController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\TaskLineController;
@@ -161,9 +163,11 @@ Route::group(['middleware' => ['auth']], function () {
 
     // lessons
     Route::resource('lessons', LessonController::class);
-
+    Route::post('lessons/init', [LessonController::class, 'init'])->name('lessons.init');
+    Route::resource('grade.subject.lessons', SubjectLessonController::class);
     // syllabus
     Route::resource('syllabi', SyllabusController::class);
+    Route::post('syllabi/init', [SyllabusController::class, 'init'])->name('syllabi.init');
     // Route::resource('grade.syllabi', SyllabusController::class);
 
     // lock /unlock

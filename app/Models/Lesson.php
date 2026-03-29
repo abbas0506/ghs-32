@@ -37,4 +37,8 @@ class Lesson extends Model
     {
         return $this->hasMany(LessonCue::class);
     }
+    public function scopeHavingGradeId($query, $gradeId)
+    {
+        return $query->where('grade_id', $gradeId);
+    }
 }

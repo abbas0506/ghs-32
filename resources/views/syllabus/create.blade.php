@@ -2,11 +2,15 @@
 @section('page-content')
     {{-- Page Header --}}
     <div class="mb-6">
-        <h1 class="text-2xl font-bold text-gray-800">Syllabus:Add Subject</h1>
+        <h1 class="text-xl md:text-2xl font-bold text-gray-800">Syllabus:Add Subject</h1>
         <div class="bread-crumb mt-1">
             <a href="{{ url('/') }}">Home</a>
             <div>/</div>
             <a href="{{ route('syllabi.index') }}">Syllabus</a>
+            <div>/</div>
+            <a href="{{ route('syllabi.index', ['grade_id' => $grade->id]) }}" class="text-teal-600 hover:underline">
+                {{ $grade?->name }}
+            </a>
             <div>/</div>
             <span class="text-gray-500">Add Subject</span>
         </div>
@@ -59,8 +63,11 @@
             <div class="px-6 py-5 border-b border-gray-100 bg-gradient-to-r from-slate-50 to-gray-50 rounded-t-2xl">
                 <h2 class="font-semibold text-gray-800 flex items-center gap-2">
                     <i class="ri-book-open-line text-teal-500"></i>
-                    + Add Subject
+                    Subject List
                 </h2>
+                <p class="text-slate-400 text-xs md:text-sm">
+                    Check any of the following subjects and click on add now button
+                </p>
             </div>
 
             <div>
@@ -71,10 +78,10 @@
                     <table class="table-fixed borderless w-full text-sm xs md:sm">
                         <thead class="">
                             <tr>
-                                <th class="w-16">#</th>
-                                <th class="w-40 text-left">Subject</th>
+                                <th class="w-12">#</th>
+                                <th class="w-24 text-left">Subject</th>
                                 <th class="w-16"><input type="checkbox" id='chkAll' class="rounded"
-                                        onclick="checkAll()"><br><label for="">Check all</label></th>
+                                        onclick="checkAll()"></th>
                                 </th>
 
                             </tr>

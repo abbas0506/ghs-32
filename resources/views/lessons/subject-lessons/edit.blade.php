@@ -21,13 +21,13 @@
         {{-- Day navigation --}}
         <div class="flex items-center gap-2">
             @if ($prevPlan)
-                <a href="{{ route('lessons.edit', $prevPlan->id) }}"
+                <a href="{{ route('grade.subject.lessons.edit', [$lesson->grade, $lesson->subject, $prevPlan->id]) }}"
                     class="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition shadow-sm">
                     <i class="ri-arrow-left-s-line"></i> Lesson {{ $prevPlan->lesson_no }}
                 </a>
             @endif
             @if ($nextPlan)
-                <a href="{{ route('lessons.edit', $nextPlan->id) }}"
+                <a href="{{ route('grade.subject.lessons.edit', [$lesson->grade, $lesson->subject, $nextPlan->id]) }}"
                     class="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition shadow-sm">
                     Lesson {{ $nextPlan->lesson_no }} <i class="ri-arrow-right-s-line"></i>
                 </a>
@@ -62,7 +62,7 @@
                 </p>
             </div>
             <div class="ml-auto flex items-center gap-2">
-                <a href="{{ route('lessons.show', $lesson->id) }}"
+                <a href="{{ route('grade.subject.lessons.show', [$lesson->grade, $lesson->subject, $lesson]) }}"
                     class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition">
                     <i class="ri-eye-line"></i> Preview
                 </a>
@@ -71,7 +71,8 @@
 
         {{-- Form Card --}}
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100">
-            <form action="{{ route('lessons.update', $lesson->id) }}" method="POST" class="divide-y divide-gray-50">
+            <form action="{{ route('grade.subject.lessons.update', [$lesson->grade, $lesson->subject, $lesson]) }}"
+                method="POST" class="divide-y divide-gray-50">
                 @csrf
                 @method('PUT')
 
@@ -153,7 +154,7 @@
 
                 {{-- Actions --}}
                 <div class="px-6 py-4 bg-gray-50/60 rounded-b-2xl flex flex-wrap-reverse items-center justify-between">
-                    <a href="{{ route('lessons.index', ['grade' => $lesson->grade_id, 'subject' => $lesson->subject_id]) }}"
+                    <a href="{{ route('lessons.index', ['grade_id' => $lesson->grade_id]) }}"
                         class="text-sm text-gray-400 hover:text-gray-600 transition inline-flex items-center gap-1">
                         <i class="ri-arrow-left-line"></i> Back to list
                     </a>

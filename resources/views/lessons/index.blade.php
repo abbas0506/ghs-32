@@ -33,7 +33,7 @@
                     <h2 class="font-semibold text-gray-800 text-sm leading-tight">Filter Lessons</h2>
                     <p class="text-xs text-gray-400">Select grade and subject to view lessons</p>
                 </div>
-                @if ($grade && $subject)
+                @if ($grade)
                     <a href="{{ route('lessons.index') }}"
                         class="ml-auto inline-flex items-center gap-1 text-xs text-gray-500 hover:text-red-500 transition">
                         <i class="ri-close-line"></i> Clear filter
@@ -42,22 +42,22 @@
             </div>
 
             <div class="px-6 py-5">
-                @if ($grade && $subject)
+                @if ($grade)
                     {{-- Active filter pills --}}
-                    <div class="flex items-center gap-3 flex-wrap">
+                    <div class="flex items-center gap-1 md:gap-3 flex-wrap">
                         <span
-                            class="inline-flex items-center gap-2 px-3 py-1.5 bg-teal-50 border border-teal-200 text-teal-700 rounded-full text-sm font-medium">
+                            class="inline-flex items-center gap-1 md:gap-2 px-3 py-1.5 bg-teal-50 border border-teal-200 text-teal-700 rounded-full text-sm font-medium">
                             <i class="ri-school-line text-teal-500"></i>
                             {{ $grades->find($grade)?->name ?? 'N/A' }}
                         </span>
-                        <i class="ri-arrow-right-line text-gray-300"></i>
-                        <span
-                            class="inline-flex items-center gap-2 px-3 py-1.5 bg-indigo-50 border border-indigo-200 text-indigo-700 rounded-full text-sm font-medium">
-                            <i class="ri-book-2-line text-indigo-500"></i>
-                            {{ $subjects->find($subject)?->name ?? 'N/A' }}
-                        </span>
+
                         <a href="{{ route('lessons.index') }}"
                             class="ml-2 text-xs text-gray-400 underline hover:text-gray-600 transition">Change</a>
+
+                        @role('head')
+                            <a href="{{ route('lessons.create', ['grade_id' => $grade->id]) }}"
+                                class="ml-2 text-xs text-gray-400 underline hover:text-gray-600 transition">+Add Subject</a>
+                        @endrole
                     </div>
                 @else
                     <form action="{{ route('lessons.index') }}" method="GET" id="filterForm">
@@ -66,7 +66,7 @@
                                 <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">
                                     Grade
                                 </label>
-                                <select name="grade"
+                                <select name="grade_id"
                                     class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm shadow-sm focus:ring-2 focus:ring-teal-400 focus:border-teal-400 bg-gray-50 transition">
                                     <option value="">— Choose Grade —</option>
                                     @foreach ($grades as $g)
@@ -76,25 +76,11 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <div>
-                                <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">
-                                    Subject
-                                </label>
-                                <select name="subject"
-                                    class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm shadow-sm focus:ring-2 focus:ring-teal-400 focus:border-teal-400 bg-gray-50 transition">
-                                    <option value="">— Choose Subject —</option>
-                                    @foreach ($subjects as $s)
-                                        <option value="{{ $s->id }}" {{ $subject == $s->id ? 'selected' : '' }}>
-                                            {{ $s->name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
                         </div>
                         <div class="mt-5">
                             <button type="submit"
                                 class="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-teal-500 to-green-500 text-white text-sm font-semibold rounded-xl shadow hover:from-teal-600 hover:to-green-600 transition">
-                                <i class="ri-search-line"></i> Load Plan
+                                <i class="ri-search-line"></i> Load Lesson Plan
                             </button>
                         </div>
                     </form>
@@ -103,81 +89,73 @@
         </div>
 
         {{-- Plans Table --}}
-        @if ($grade && $subject)
+        @if ($grade)
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
                 <div
                     class="flex flex-col md:flex-row items-start md:items-center gap-2 justify-between px-6 py-4 border-b border-gray-100">
                     <div>
                         <h2 class="font-semibold text-gray-800">Lesson Plan</h2>
                         <p class="text-xs text-gray-400 mt-0.5">
-                            {{ $lessons->count() }} {{ Str::plural('plan', $lessons->count()) }} lessons found
+                            {{ $subjects->count() }} subjects found
                         </p>
                     </div>
-                    @if ($lessons->count())
+                    @if ($subjects->count())
                         <div class="relative">
-                            <input type="text" id="searchInput" placeholder="Search plans…" oninput="filterPlans(event)"
+                            <input type="text" id="searchInput" placeholder="Search plans…" oninput="search(event)"
                                 class="pl-8 pr-3 py-2 text-sm border border-gray-200 rounded-xl bg-gray-50 focus:ring-2 focus:ring-teal-400 focus:border-teal-400 w-48 transition">
                             <i class="ri-search-line absolute left-2.5 top-2.5 text-gray-400 text-sm"></i>
                         </div>
                     @endif
                 </div>
 
-                @if ($lessons->count())
+                @if ($subjects->count())
                     <div class="overflow-auto">
                         <table class="table-fixed borderless w-full text-sm xs md:sm">
                             <thead class="">
                                 <tr>
-                                    <th class="w-16">#</th>
-                                    <th class="w-48 text-left">Lesson</th>
-                                    <th class="w-32 text-left">Assignment</th>
-                                </tr>
+                                    <th class="w-12">#</th>
+                                    <th class="w-24 text-left">Subject</th>
+                                    <th class="w-16">Status</th>
                             </thead>
                             <tbody>
-                                @foreach ($lessons as $lesson)
+                                @foreach ($subjects as $subject)
+                                    @php
+
+                                        $completionPercentage = $subject->lessonPlanCompletionPercentageForGrade(
+                                            $grade->id,
+                                        );
+                                        $themeColor =
+                                            $completionPercentage > 66
+                                                ? 'green'
+                                                : ($completionPercentage > 33
+                                                    ? 'cyan'
+                                                    : 'red');
+                                    @endphp
+
                                     <tr class="tr">
                                         <td>
-                                            <a href="{{ route('lessons.show', $lesson->id) }}" class="ico green mx-auto">
-                                                {{ $lesson->lesson_no }}
-                                            </a>
+                                            <a href="{{ route('grade.subject.lessons.index', [$grade, $subject]) }}"
+                                                class="ico teal mx-auto">
+                                                {{ $loop->index + 1 }}</a>
                                         </td>
-                                        <td class="text-left">
-                                            <h3 class="text-gray-600 font-semibold">{{ $lesson->title }}</h3>
-                                            <ul>
-                                                @foreach ($lesson->cues as $cue)
-                                                    <li class="list-disc ml-4">
-                                                        {{ $cue->content }}
-                                                    </li>
-                                                @endforeach
-                                            </ul>
-
+                                        <td class="text-left text-slate-600">
+                                            {{ $subject->name }}
                                         </td>
-                                        <td class="text-left">
-                                            {{ $lesson->homework }}
+                                        <td>
+                                            <div class="w-4/5 text-right">
+                                                <span
+                                                    class="text-xs font-semibold text-{{ $themeColor }}-600">{{ $completionPercentage }}%</span>
+                                                <div class="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
+                                                    <div class="bg-gradient-to-r from-{{ $themeColor }}-200 to-{{ $themeColor }}-500 h-2 rounded-full transition-all"
+                                                        style="width: {{ min($completionPercentage, 100) }}%">
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </td>
                                     </tr>
                                 @endforeach
                             </tbody>
                         </table>
-                    </div>
-
-                    {{-- Progress bar --}}
-                    @php
-                        $filled = $lessons
-                            ->filter(fn($p) => $p->title && $p->title !== 'Topic ' . $p->lesson_no)
-                            ->count();
-                        $total = $lessons->count();
-                        $pct = $total ? round(($filled / $total) * 100) : 0;
-                    @endphp
-                    <div class="px-6 py-4 border-t border-gray-50 bg-gray-50/50">
-                        <div class="flex items-center justify-between text-xs text-gray-500 mb-1.5">
-                            <span>Content filled</span>
-                            <span class="font-semibold">{{ $filled }}/{{ $total }} plans
-                                ({{ $pct }}%)</span>
-                        </div>
-                        <div class="w-full bg-gray-200 rounded-full h-1.5">
-                            <div class="bg-gradient-to-r from-teal-400 to-green-400 h-1.5 rounded-full transition-all duration-500"
-                                style="width: {{ $pct }}%"></div>
-                        </div>
                     </div>
                 @else
                     {{-- Empty state --}}
@@ -189,18 +167,18 @@
                         <p class="text-sm text-gray-400 mb-6 max-w-xs">
                             No lesson plan has been created for this grade and subject yet.
                         </p>
-                        @auth
-                            <form action="{{ route('lessons.store') }}" method="POST">
+                        @role('head|admin')
+                            <form action="{{ route('lessons.init') }}" method="POST">
                                 @csrf
-                                <input type="hidden" name="grade_id" value="{{ $grade }}">
-                                <input type="hidden" name="subject_id" value="{{ $subject }}">
+                                <input type="hidden" name="grade_id" value="{{ $grade->id }}">
                                 <button type="submit"
                                     class="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-teal-500 to-green-500 text-white text-sm font-semibold rounded-xl shadow hover:from-teal-600 hover:to-green-600 transition">
                                     <i class="ri-add-circle-line text-base"></i>
                                     Generate Lesson Plan
                                 </button>
                             </form>
-                        @endauth
+                        @endrole
+
                     </div>
                 @endif
             </div>
@@ -212,6 +190,21 @@
 
 @section('script')
     <script>
+        function search(event) {
+            var searchtext = event.target.value.toLowerCase();
+            var str = 0;
+            $('.tr').each(function() {
+                if (!(
+                        $(this).children().eq(0).prop('outerText').toLowerCase().includes(searchtext) ||
+                        $(this).children().eq(1).prop('outerText').toLowerCase().includes(searchtext)
+                    )) {
+                    $(this).addClass('hidden');
+                } else {
+                    $(this).removeClass('hidden');
+                }
+            });
+        }
+
         function delme(planId) {
             event.preventDefault();
             Swal.fire({

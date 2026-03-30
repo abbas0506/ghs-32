@@ -14,11 +14,11 @@
 
         .footer {
             position: fixed;
-            bottom: 50px;
+            bottom: 0px;
             left: 30px;
             right: 50px;
             background-color: white;
-            height: 50px;
+            /* height: 20px; */
         }
 
         .page-break {
@@ -105,7 +105,7 @@
                 </tbody>
             </table>
 
-            <div style="margin-top:20px; text-align:right;font-size:10px;">
+            <div style="margin-top:20px; text-align:right;font-size:10px;" class="footer">
                 Printed on: {{ now()->format('d M Y, h:i A') }}
             </div>
 

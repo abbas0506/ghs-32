@@ -165,6 +165,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::resource('lessons', LessonController::class);
     Route::post('lessons/init', [LessonController::class, 'init'])->name('lessons.init');
     Route::resource('grade.subject.lessons', SubjectLessonController::class);
+
     // syllabus
     Route::resource('syllabi', SyllabusController::class);
     Route::post('syllabi/init', [SyllabusController::class, 'init'])->name('syllabi.init');

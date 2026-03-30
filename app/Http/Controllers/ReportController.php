@@ -28,10 +28,125 @@ class ReportController extends Controller
     {
         $test = Test::find($testId);
         $section = Section::find($sectionId);
-        $lectureNos =  Schedule::where('section_id', $section->id)->pluck('lecture_no')->unique();
-        $allocations = $section->schedules->sortBy('lecture_no');
 
-        $pdf = PDF::loadview('reports.section-result', compact('test', 'section', 'lectureNos', 'allocations'))->setPaper('a4', 'portrait');
+        // $subjects = $test->testSubjects
+        //     ->pluck('subject')
+        //     ->unique('id')
+        //     ->values();
+
+
+
+        // $test = Test::with([
+        //     'testSubjects.subject',
+        //     'testSubjects.results', // assuming relation
+        // ])->findOrFail($testId);
+
+
+
+
+        $students = Student::where('section_id', $sectionId)
+            ->orderBy('rollno', 'asc') // ✅ sorting
+            ->get();
+
+        $groupedSubjects = $test->testSubjects
+            ->where('section_id', $sectionId) // 🔥 CRITICAL FIX
+            ->groupBy('subject_id');
+
+        $subjects = $groupedSubjects->map(function ($items) {
+            return $items->first()->subject;
+        })->values();
+
+        $subjectMaxMarks = $groupedSubjects->mapWithKeys(function ($items, $subjectId) {
+            return [
+                $subjectId => $items->sum('max_marks') // total max per subject
+            ];
+        });
+
+        $data = $students->map(function ($student) use ($groupedSubjects) {
+
+            $row = [
+                'rollno' => $student->rollno,
+                'name' => $student->name,
+                'subjects' => [],
+                'obtained' => 0,
+                'total' => 0,
+                'percentage' => 0,
+                'grade' => '',
+                'position' => 0,
+            ];
+
+            foreach ($groupedSubjects as $subjectId => $testSubjects) {
+
+                $subjectObt = 0;
+                $subjectMax = 0;
+                $hasSubject = false; // ✅ KEY FLAG
+
+                foreach ($testSubjects as $testSubject) {
+
+                    $result = $testSubject->results
+                        ->where('student_id', $student->id)
+                        ->first();
+
+                    if ($result) {
+                        $hasSubject = true; // student actually has this subject
+                        $subjectObt += $result->obtained_marks ?? 0;
+                        $subjectMax += $testSubject->max_marks ?? 0;
+                    }
+                }
+
+                // store marks (even if 0, for display)
+                $row['subjects'][$subjectId] = $subjectObt;
+
+                // ✅ CRITICAL FIX:
+                // only add to total if student has this subject
+                if ($hasSubject) {
+                    $row['obtained'] += $subjectObt;
+                    $row['total'] += $subjectMax;
+                }
+            }
+
+            // ✅ Percentage
+            $row['percentage'] = $row['total'] > 0
+                ? round(($row['obtained'] / $row['total']) * 100, 1)
+                : 0;
+
+            // ✅ Grade
+            $p = $row['percentage'];
+
+            if ($p >= 90) $row['grade'] = 'A+';
+            elseif ($p >= 80) $row['grade'] = 'A';
+            elseif ($p >= 70) $row['grade'] = 'B';
+            elseif ($p >= 60) $row['grade'] = 'C';
+            elseif ($p >= 50) $row['grade'] = 'D';
+            else $row['grade'] = 'F';
+
+            return $row;
+        });
+        // sort by obtained DESC for ranking
+        $sorted = $data->sortByDesc('obtained')->values();
+
+        $rank = 1;
+        $prevMarks = null;
+        $sameRank = 0;
+
+        foreach ($sorted as $index => $item) {
+
+            if ($prevMarks !== null && $item['obtained'] == $prevMarks) {
+                $sameRank++;
+            } else {
+                $rank = $index + 1;
+                $sameRank = 0;
+            }
+
+            $item['position'] = $rank;
+            $prevMarks = $item['obtained'];
+
+            $sorted[$index] = $item;
+        }
+
+        $data = $sorted->sortBy('rollno')->values();
+
+        $pdf = PDF::loadview('reports.section-result', compact('test', 'section', 'data', 'subjects', 'subjectMaxMarks'))->setPaper('a4', 'portrait');
         $pdf->set_option("isPhpEnabled", true);
         $file = $section->name . "-" . rand(1, 100) . ".pdf";
         return $pdf->stream($file);

@@ -51,7 +51,7 @@
                 <table class="w-full">
                     <tbody>
                         <tr>
-                            <td class="text-center text-xl font-bold">Section Result : {{ $section->name }} </td>
+                            <td class="text-center text-xl font-bold">{{ $test->title }} </td>
                         </tr>
                         <tr>
                             <td class="text-center text-sm">Govt. High School 32/2L, Okara</td>
@@ -60,55 +60,55 @@
                 </table>
             </div>
             <!-- table header -->
-            <h4 class="mt-6 text-center underline underline-offset-2">{{ $test->title }}</h4>
+            <h4 class="mt-4 text-center underline underline-offset-2">Class {{ $section->name }}</h4>
             <!--  -->
-            <table class="table-auto text-sm border w-full mt-1">
+            <table class="w-full mt-4 border-collapse border text-xs">
                 <thead>
-                    <tr class="border text-sm">
-                        <th>Roll#</th>
+                    <tr>
+                        <th>Roll No</th>
                         <th>Name</th>
-                        @foreach ($lectureNos as $lectureNo)
+
+                        @foreach ($subjects as $subject)
                             <th>
-                                @if ($allocations->where('lecture_no', $lectureNo)->count() == 1)
-                                    {{ $allocations->where('lecture_no', $lectureNo)->first()->subject->short_name }}
-                                @else
-                                    @foreach ($allocations->where('lecture_no', $lectureNo) as $allocation)
-                                        {{ $allocation->subject->short_name }}
-                                        @if (!$loop->last)
-                                            /
-                                        @endif
-                                    @endforeach
-                                @endif
+                                {{ $subject->short_name }}<br>
+                                <small>({{ $subjectMaxMarks[$subject->id] ?? 0 }})</small>
                             </th>
                         @endforeach
-                        <th>Obt.</th>
+
+                        <th>Obtained</th>
                         <th>Total</th>
-                        <th>Overall %</th>
+                        <th>%</th>
+                        <th>Grade</th>
+                        <th>Position</th>
                     </tr>
                 </thead>
-                <tbody class="data">
-                    @foreach ($section->students->sortBy('rollno') as $student)
-                        <tr class="tr">
-                            <td>{{ $student->rollno }}</td>
-                            <td style="text-align: left; padding-left:8px;">{{ ucwords(strtolower($student->name)) }}
-                            </td>
-                            @foreach ($lectureNos as $lectureNo)
-                                <td class="w-8">
-                                    {{ $student->results()->test($test->id)->forLectureNo($lectureNo)->first()?->obtained_marks }}
+
+                <tbody>
+                    @foreach ($data as $row)
+                        <tr>
+                            <td>{{ $row['rollno'] }}</td>
+                            <td>{{ Str::upper($row['name']) }}</td>
+
+                            @foreach ($subjects as $subject)
+                                <td>
+                                    {{ $row['subjects'][$subject->id] > 0 ? $row['subjects'][$subject->id] : '-' }}
                                 </td>
                             @endforeach
-                            <td>{{ $student->results()->test($test->id)->sum('obtained_marks') }}</td>
-                            <td>{{ $student->maximumMarks($test->id) }}</td>
-                            <td>
-                                @if ($student->maximumMarks($test->id) > 0)
-                                    {{ round(($student->results()->test($test->id)->sum('obtained_marks') / $student->maximumMarks($test->id)) * 100, 0) }}
-                                    %
-                                @endif
-                            </td>
+
+                            <td>{{ $row['obtained'] }}</td>
+                            <td>{{ $row['total'] }}</td>
+                            <td>{{ $row['percentage'] }}%</td>
+                            <td>{{ $row['grade'] }}</td>
+                            <td>{{ $row['position'] }}</td>
                         </tr>
                     @endforeach
                 </tbody>
             </table>
+
+            <div style="margin-top:20px; text-align:right;font-size:10px;">
+                Printed on: {{ now()->format('d M Y, h:i A') }}
+            </div>
+
     </main>
 
     <script type="text/php">

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Lecture;
+use App\Models\LectureTiming;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf as PDF;
@@ -15,8 +15,8 @@ class UserScheduleController extends Controller
     public function  index()
     {
         //
-        $users = User::with('profile')->has('allocations')->get()->sortByDesc('profile.bps'); //get active sections
-        $lectures = Lecture::all();
+        $users = User::with('profile')->has('schedules')->get()->sortByDesc('profile.bps'); //get active sections
+        $lectures = LectureTiming::all();
         return view('schedule.user-wise.index', compact('users', 'lectures'));
     }
 
@@ -32,9 +32,9 @@ class UserScheduleController extends Controller
         if (session('user_ids'))
             $users = User::whereIn('id', session('user_ids'))->get();
         else
-            $users = User::has('allocations')->get()->sortByDesc('bps');;
+            $users = User::has('schedules')->get()->sortByDesc('bps');;
 
-        $lectures = Lecture::all();
+        $lectures = LectureTiming::all();
         $pdf = PDF::loadview('schedule.user-wise.pdf', compact('users', 'lectures'))->setPaper('a4', 'portrait');
         $pdf->set_option("isPhpEnabled", true);
         $file = "user-schedule.pdf";
@@ -59,5 +59,15 @@ class UserScheduleController extends Controller
             return redirect()->back()->withErrors($e->getMessage());
             // something went wrong
         }
+    }
+    public function slips()
+    {
+        $users = User::has('schedules')->get()->sortByDesc('bps');;
+
+        $lectureTimings = LectureTiming::all();
+        $pdf = PDF::loadview('schedule.user-wise.schedule-slips', compact('users', 'lectureTimings'))->setPaper('a4', 'portrait');
+        $pdf->set_option("isPhpEnabled", true);
+        $file = "schedule-slips.pdf";
+        return $pdf->stream($file);
     }
 }

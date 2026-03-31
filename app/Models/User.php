@@ -48,10 +48,11 @@ class User extends Authenticatable
     {
         return $this->hasOne(Profile::class, 'user_id');
     }
-    public function allocations()
+    public function schedules()
     {
         return $this->hasMany(Schedule::class);
     }
+
     public function salaries()
     {
         return $this->hasMany(Salary::class);

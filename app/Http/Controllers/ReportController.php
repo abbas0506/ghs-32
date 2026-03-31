@@ -29,21 +29,6 @@ class ReportController extends Controller
         $test = Test::find($testId);
         $section = Section::find($sectionId);
 
-        // $subjects = $test->testSubjects
-        //     ->pluck('subject')
-        //     ->unique('id')
-        //     ->values();
-
-
-
-        // $test = Test::with([
-        //     'testSubjects.subject',
-        //     'testSubjects.results', // assuming relation
-        // ])->findOrFail($testId);
-
-
-
-
         $students = Student::where('section_id', $sectionId)
             ->orderBy('rollno', 'asc') // ✅ sorting
             ->get();

@@ -126,6 +126,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('user-schedule/print', [UserScheduleController::class, 'print'])->name('user-schedule.print');
     Route::post('user-schedule/post', [UserScheduleController::class, 'post'])->name('user-schedule.post');
 
+    Route::get('schedule-slips', [UserScheduleController::class, 'slips'])->name('schedule-slips');
+
     // attendance
     Route::get('attendance/summary', [SectionAttendanceController::class, 'summary'])->name('attendance.summary');
     Route::get('attendance/filter', [SectionAttendanceController::class, 'filter'])->name('attendance.filter');
@@ -156,7 +158,6 @@ Route::group(['middleware' => ['auth']], function () {
 
     // assessment
     Route::resource('tests', TestController::class);
-    Route::resource('test.section.results', SectionResultController::class);
     Route::resource('test.test-subjects', TestSubjectController::class);
     Route::resource('test-subject.results', TestSubjectResultController::class);
     Route::resource('test-subject.import', ImportStudentController::class);

@@ -89,11 +89,11 @@
                         <tr>
                             <td>{{ $loop->index + 1 }}</td>
                             <td class="font-bold">{{ $user->profile->short_name }}
-                                <br><span class="font-normal">({{ $user->allocations->count() }})</span>
+                                <br><span class="font-normal">({{ $user->schedules->count() }})</span>
                             </td>
                             @foreach ($lectures as $lecture)
                                 <td class="p-1">
-                                    @foreach ($user->allocations()->havingLectureNo($lecture->lecture_no)->get() as $allocation)
+                                    @foreach ($user->schedules()->havingLectureNo($lecture->lecture_no)->get() as $allocation)
                                         <div>
                                             <div style="font-size:10px">
                                                 <span class="font-bold">{{ $allocation->subject->short_name }}

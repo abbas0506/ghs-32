@@ -33,6 +33,9 @@
         <x-message></x-message>
     @endif
 
+    {{-- print schedule slips --}}
+    <a href="{{ route('schedule-slips') }}">Schedule Slips</a>
+
     <div class="overflow-x-auto bg-white w-full mt-8">
         <div>
             <input type="checkbox" id="chkAll" class="w-4 h-4 rounded ml-2" onclick="checkAll()" checked>
@@ -62,11 +65,11 @@
                                     value="{{ $user->id }}" checked></td>
                             <td>{{ $loop->index + 1 }}</td>
                             <td class="font-semibold">{{ $user->profile?->short_name }} <br>
-                                ({{ $user->allocations->count() }})
+                                ({{ $user->schedules->count() }})
                             </td>
                             @foreach (range(1, 8) as $lecture_no)
                                 <td class="p-1">
-                                    @foreach ($user->allocations()->havingLectureNo($lecture_no)->get() as $allocation)
+                                    @foreach ($user->schedules()->havingLectureNo($lecture_no)->get() as $allocation)
                                         <div class="text-sm bg-teal-50">
                                             <p class="font-bold">{{ $allocation->subject->short_name }}-
                                                 {{ $allocation->section->grade?->grade_no }}

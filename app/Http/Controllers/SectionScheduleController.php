@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Lecture;
 use App\Models\LectureTiming;
 use App\Models\Schedule;
 use Illuminate\Http\Request;

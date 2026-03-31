@@ -18,7 +18,7 @@ class SingleuserScheduleController extends Controller
         if (session('user_ids'))
             $users = User::whereIn('id', session('user_ids'))->get();
         else
-            $users = User::has('allocations')->get()->sortByDesc('bps');;
+            $users = User::has('schedules')->get()->sortByDesc('bps');;
 
         $pdf = PDF::loadview('schedule.user-wise.pdf', compact('users'))->setPaper('a4', 'landscape');
         $pdf->set_option("isPhpEnabled", true);

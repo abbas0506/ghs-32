@@ -193,13 +193,8 @@
                         <hr class="my-4">
                         <div class="grid gap-2 text-xs md:text-sm">
                             <div class="flex items-center justify-between">
-                                <p class="text-slate-600">Overall Class Result</p>
+                                <p class="text-slate-600">Result Sheet</p>
                                 <a href="{{ route('section-result', [$test, $section]) }}" target="_blank">
-                                    <i class="bi bi-file-earmark-pdf text-red-600 mr-2"></i> </a>
-                            </div>
-                            <div class="flex items-center justify-between">
-                                <p class="text-slate-600">Overall Class Position List</p>
-                                <a href="{{ route('section-positions', [$test, $section]) }}" target="_blank">
                                     <i class="bi bi-file-earmark-pdf text-red-600 mr-2"></i> </a>
                             </div>
                             <div class="flex items-center justify-between">

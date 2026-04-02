@@ -61,7 +61,34 @@
             </div>
             <!-- table header -->
             <h4 class="mt-4 text-center underline underline-offset-2">Class {{ $section->name }}</h4>
-            <!--  -->
+
+            {{-- Position Holders --}}
+            <div class="font-bold text-sm mt-4 underline">Top 3 Postion Holders</div>
+            <table class="table-auto border-collapse w-full mt-1 text-xs" cellspacing="0">
+                <thead>
+                    <tr class="">
+                        <th class="w-12"></th>
+                        <th class=""></th>
+                        <th class="w-16"></th>
+                        <th class="w-16"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($topStudents as $student)
+                        <tr>
+                            <td><strong>#{{ $student['position'] }}</strong></td>
+                            <td class="text-left">{{ $student['name'] }} S/O {{ $student['father'] }} (Roll No:
+                                {{ $student['rollno'] }})
+                            </td>
+                            <td>{{ $student['obtained'] }}/{{ $student['total'] }}</td>
+                            <td>{{ $student['percentage'] }}% — {{ $student['grade'] }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+            <hr class="w-8 m-auto mt-4">
+
+            {{-- All students --}}
             <table class="w-full mt-4 border-collapse border text-xs">
                 <thead>
                     <tr>

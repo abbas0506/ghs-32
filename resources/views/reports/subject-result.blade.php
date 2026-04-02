@@ -56,20 +56,20 @@
                 <table class="w-full">
                     <tbody>
                         <tr>
-                            <td class="text-center text-lg font-bold">{{ $testSubject->subject->name }},
-                                {{ $testSubject->section->name }} </td>
+                            <td class="text-center text-lg">{{ $testSubject->test->title }}</td>
                         </tr>
                         <tr>
-                            <td class="text-center text-base">{{ $testSubject->test->title }}</td>
+                            <td class="text-center text-base">{{ $testSubject->subject->name }},
+                                {{ $testSubject->section->name }} </td>
                         </tr>
                     </tbody>
                 </table>
             </div>
 
-            {{-- Position Holders --}}
-            <div class="font-bold text-sm mt-4 underline">Top 3</div>
-            <table class="table-auto borderless w-full mt-1" cellspacing="0">
-                <thead class="data">
+            {{-- ── TOP 3 ── --}}
+            <div class="font-bold text-sm mt-4 underline">Top 3 Postion Holders</div>
+            <table class="table-auto border-collapse w-full mt-1 text-xs" cellspacing="0">
+                <thead>
                     <tr class="">
                         <th class="w-12"></th>
                         <th class=""></th>
@@ -77,65 +77,55 @@
                         <th class="w-16"></th>
                     </tr>
                 </thead>
-                <tbody class="data">
-
-                    @foreach ($testSubject->results->sortByDesc('obtained_marks')->take(3) as $result)
-                        <!-- calculate percentage -->
-                        @php $percentage=round($result->obtained_marks/$testSubject->max_marks*100,1); @endphp
-                        <tr class="">
-                            {{-- <td>{{ Number::ordinal($loop->index + 1) }}</td> --}}
-                            <td>{{ $loop->index + 1 }}</td>
-                            <td class="text-left">{{ ucwords(strtolower($result->student->name)) }} s/o
-                                {{ ucwords(strtolower($result->student->father_name)) }}</td>
-                            <td>{{ $result->obtained_marks }}</td>
-                            <td>{{ $percentage }} %</td>
+                <tbody>
+                    @foreach ($topStudents as $student)
+                        <tr>
+                            <td><strong>#{{ $student['position'] }}</strong></td>
+                            <td class="text-left">{{ $student['name'] }} S/O {{ $student['father'] }} (Roll No:
+                                {{ $student['rollno'] }})
+                            </td>
+                            <td>{{ $student['obtained'] }}/{{ $student['total'] }}</td>
+                            <td>{{ $student['percentage'] }}% — {{ $student['grade'] }}</td>
                         </tr>
                     @endforeach
                 </tbody>
             </table>
             <hr class="w-8 m-auto mt-4">
 
-            {{-- Overall results --}}
-            <table class="w-full mt-3">
-                <tbody>
+            {{-- ── FULL RESULT TABLE ── --}}
+            <h5 style="font-size: 12px;">
+                {{ $subject->name }} — {{ $section->name }}
+                | Lecture: {{ $testSubject->lecture_no }}
+                | Date: {{ $testSubject->test_date }}
+                | Max Marks: {{ $testSubject->max_marks }}
+            </h5>
+            <table class="table-auto text-xs w-full">
+                <thead>
                     <tr>
-                        <td class="text-left text-sm font-bold">Result Detail</td>
-                        <td class="text-right text-sm font-bold">Total Marks: {{ $testSubject->max_marks }}</td>
-                    </tr>
-                </tbody>
-            </table>
-            <table class="table-auto w-full mt-1" cellspacing="0">
-                <thead class="data">
-                    <tr class="border">
-                        <th class="w-12">Roll #</th>
-                        <th class="">Student Name</th>
+                        <th class="w-12">Roll No</th>
+                        <th>Name</th>
                         <th class="w-16">Obtained</th>
-                        <th class="w-16">Percentage</th>
-                        <th class="w-16">Status</th>
+                        <th class="w-16">Total</th>
+                        <th class="w-16">%</th>
+                        <th class="w-16">Grade</th>
+                        <th class="w-16">Position</th>
                     </tr>
                 </thead>
-                <tbody class="data">
-
-                    @foreach ($testSubject->results->sortBy('rollno') as $result)
-                        <!-- calculate percentage -->
-                        @php $percentage=round($result->obtained_marks/$testSubject->max_marks*100,1); @endphp
-                        <tr class="border">
-                            <td>{{ $result->student->rollno }}</td>
-                            <td class="text-left">{{ ucwords(strtolower($result->student->name)) }}</td>
-                            <td>{{ $result->obtained_marks }}</td>
-                            <td>{{ $percentage }} %</td>
-                            <td>
-                                @if ($percentage >= 33)
-                                    Pass
-                                @else
-                                    Fail
-                                @endif
-                            </td>
-
+                <tbody>
+                    @foreach ($data as $student)
+                        <tr>
+                            <td>{{ $student['rollno'] }}</td>
+                            <td>{{ $student['name'] }}</td>
+                            <td>{{ $student['obtained'] }}</td>
+                            <td>{{ $student['total'] }}</td>
+                            <td>{{ $student['percentage'] }}%</td>
+                            <td>{{ $student['grade'] }}</td>
+                            <td>{{ $student['position'] }}</td>
                         </tr>
                     @endforeach
                 </tbody>
             </table>
+
         </div>
     </main>
 

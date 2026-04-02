@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>user Wise Schedule</title>
+    <title>Teacher Wise Schedule</title>
     <link href="{{ public_path('css/pdf_tw.css') }}" rel="stylesheet">
     <style>
         @page {
@@ -49,7 +49,7 @@
                 <table class="w-full">
                     <tbody>
                         <tr>
-                            <td class="text-center text-xl font-bold">user Wise Time Table {{ now()->format('Y') }}
+                            <td class="text-center text-xl font-bold">Teacher Wise Time Table {{ now()->format('Y') }}
                             </td>
                         </tr>
                         <tr>

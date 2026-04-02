@@ -97,8 +97,11 @@ class Section extends Model
             ->whereDate('date', '>=', $sessionStart)
             ->whereDate('date', '<=', $currentDate)
             ->get();
+        if ($overallAttendance->count() == 0) {
+            return 0;
+        }
 
-        return round($overallPresence->count() / $overallAttendance->count() * 100, 1);
+        return round($overallPresence->count() / ($overallAttendance->count()) * 100, 1);
     }
 
     public function newAdmissions()

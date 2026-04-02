@@ -45,7 +45,7 @@ class TestSubject extends Model
 
     public function results()
     {
-        return $this->hasMany(Result::class);
+        return $this->hasMany(Result::class, 'test_subject_id');
     }
     public function appearingStudents()
     {

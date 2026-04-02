@@ -5,11 +5,11 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>user Wise Schedule</title>
+    <title>Schedule Slips</title>
     <link href="{{ public_path('css/pdf_tw.css') }}" rel="stylesheet">
     <style>
         @page {
-            margin: 50px 50px 50px 80px;
+            margin: 50px 30px 50px 30px;
         }
 
         .footer {
@@ -29,10 +29,7 @@
         .data tr td {
             font-size: 11px;
             text-align: center;
-            /* padding-bottom: 0px;
-            padding-top: 0px; */
-            /* border: 0.5px solid; */
-            line-height: 12px;
+            padding: 0px
         }
     </style>
 </head>
@@ -46,24 +43,25 @@
 <body>
     <main>
         <div class="custom-container">
-            <h3>Schedule Slips</h3>
-            <table class="table-auto w-full" cellspacing="0">
+            <small>Schedule slips printed on {{ now()->format('d-M-Y') }}</small>
+            <table class="table-auto w-full mt-1" cellspacing="0">
                 <tbody class="data">
                     @foreach ($users as $user)
                         @if ($i % $numOfColumns == 0)
                             <tr class="text-sm">
                         @endif
-
-
-                        <td class="p-4">
-                            <h4 class="text-center">{{ $user->profile->name }}</h4>
-                            <table class="w-full mt-1 border-collapse border text-xs">
+                        {{-- time table --}}
+                        <td
+                            style="border: 0.5px solid #777; padding: 10px; vertical-align: center; horizonatal-align: center; width: {{ 100 / $numOfColumns }}%">
+                            <h4 class="text-center m-0 text-decoration underline underline-offset-2">
+                                {{ $user->profile->name }}</h4>
+                            <table class="w-full border-collapse border text-xs mt-2">
                                 <thead>
                                     <tr>
                                         <th>#</th>
                                         <th>Time</th>
-                                        <th>Class</th>
-                                        <th>Subject</th>
+                                        <th style="text-align: left">Subject</th>
+                                        <th style="text-align: left">Class</th>
                                     </tr>
                                     @foreach ($user->schedules->sortBy('lecture_no') as $schedule)
                                         @php
@@ -73,17 +71,16 @@
                                         @endphp
                                         <tr>
                                             <td>{{ $schedule->lecture_no }}</td>
-                                            <td>{{ $lectureTiming->starts_at->format('H:i') }} -
-                                                {{ $lectureTiming->starts_at->addMinutes($lectureTiming->duration)->format('H:i') }}
-                                            </td>
-                                            <td>{{ $schedule->section->name }}</td>
-                                            <td>{{ $schedule->subject->short_name }}</td>
+                                            <td>{{ $lectureTiming->timeInterval($schedule->lecture_no) }}</td>
+                                            <td style="text-align: left">{{ $schedule->subject->name }}</td>
+                                            <td style="text-align: left">{{ $schedule->section->name }}</td>
                                         </tr>
                                     @endforeach
 
                                 </thead>
                             </table>
-                            <div style="margin-top: 10px; color:rgb(46, 60, 60)">Printed on {{ now()->format('d-m-Y') }}
+                            <div style="margin-top: 10px; color:rgb(92, 105, 110)">Printed on
+                                {{ now()->format('d-m-Y') }}
                             </div>
                         </td>
 

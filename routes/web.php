@@ -183,7 +183,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::resource('task.task-lines', TaskLineController::class);
 
     // Reports
-    Route::get('reports/test-subjects/{s}/result/pdf', [ReportController::class, 'subjectResult'])->name('subject-result');
+    Route::get('reports/test-subjects/{s}/result/pdf', [ReportController::class, 'testSubjectResult'])->name('subject-result');
     Route::get('reports/tests/{t}/sections/{s}/result/pdf', [ReportController::class, 'sectionResult'])->name('section-result');
     Route::get('reports/tests/{t}/sections/{s}/positions/pdf', [ReportController::class, 'sectionPositions'])->name('section-positions');
     Route::get('reports/tests/{t}/sections/{s}/report-cards/pdf', [ReportController::class, 'reportCards'])->name('report-cards');

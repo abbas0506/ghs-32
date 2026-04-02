@@ -15,15 +15,104 @@ use Illuminate\Support\Facades\Log;
 class ReportController extends Controller
 {
     //
-    public function subjectResult($id)
+    public function testSubjectResult($testSubjectId)
     {
-        $testSubject = TestSubject::find($id);
+        $testSubject = TestSubject::with(['test', 'section', 'subject', 'results.student'])
+            ->findOrFail($testSubjectId);
 
-        $pdf = PDF::loadview('reports.subject-result', compact('testSubject'))->setPaper('a4', 'portrait');
+        $test    = $testSubject->test;
+        $section = $testSubject->section;
+        $subject = $testSubject->subject;
+
+        // All students in this section, sorted by rollno
+        $students = Student::where('section_id', $testSubject->section_id)
+            ->orderBy('rollno', 'asc')
+            ->get();
+
+        $data = $students->map(function ($student) use ($testSubject) {
+
+            $result = $testSubject->results
+                ->where('student_id', $student->id)
+                ->first();
+
+            $obtained   = $result ? ($result->obtained_marks ?? 0) : 0;
+            $max        = $testSubject->max_marks ?? 0;
+            $percentage = $max > 0 ? round(($obtained / $max) * 100, 1) : 0;
+
+            // Grade
+            if ($percentage >= 90) $grade = 'A+';
+            elseif ($percentage >= 80) $grade = 'A';
+            elseif ($percentage >= 70) $grade = 'B';
+            elseif ($percentage >= 60) $grade = 'C';
+            elseif ($percentage >= 50) $grade = 'D';
+            else                        $grade = 'F';
+
+            return [
+                'rollno'     => $student->rollno,
+                'name'       => $student->name,
+                'father'     => $student->father_name,
+                'obtained'   => $obtained,
+                'total'      => $max,
+                'percentage' => $percentage,
+                'grade'      => $grade,
+                'position'   => 0,
+            ];
+        });
+
+        // ── Ranking (ties handled same as sectionResult) ──────────────────
+        $sorted = $data->sortByDesc('obtained')->values();
+
+        $rank      = 1;
+        $prevMarks = null;
+        $sameRank  = 0;
+
+        foreach ($sorted as $index => $item) {
+
+            if ($prevMarks !== null && $item['obtained'] == $prevMarks) {
+                $sameRank++;
+            } else {
+                $rank     = $index + 1;
+                $sameRank = 0;
+            }
+
+            $item['position'] = $rank;
+            $prevMarks        = $item['obtained'];
+            $sorted[$index]   = $item;
+        }
+
+        // ── Top 3 (tie-aware) ─────────────────────────────────────────────
+        $topStudents = $sorted->filter(fn($item) => $item['position'] <= 3)->values();
+
+        // ── Restore roll-no order for main table ──────────────────────────
+        $data = $sorted->sortBy('rollno')->values();
+
+        $pdf = PDF::loadView('reports.subject-result', compact(
+            'test',
+            'section',
+            'subject',
+            'testSubject',
+            'data',
+            'topStudents'
+        ))->setPaper('a4', 'portrait');
+
         $pdf->set_option("isPhpEnabled", true);
-        $file = $testSubject->subject->short_name . "-" . rand(1, 100) . ".pdf";
+
+        $file = $subject->short_name . "-" . rand(1, 100) . ".pdf";
         return $pdf->stream($file);
     }
+
+
+
+
+    // public function subjectResult($id)
+    // {
+    //     $testSubject = TestSubject::find($id);
+
+    //     $pdf = PDF::loadview('reports.subject-result', compact('testSubject'))->setPaper('a4', 'portrait');
+    //     $pdf->set_option("isPhpEnabled", true);
+    //     $file = $testSubject->subject->short_name . "-" . rand(1, 100) . ".pdf";
+    //     return $pdf->stream($file);
+    // }
     public function sectionResult($testId, $sectionId)
     {
         $test = Test::find($testId);
@@ -52,6 +141,7 @@ class ReportController extends Controller
             $row = [
                 'rollno' => $student->rollno,
                 'name' => $student->name,
+                'father' => $student->father_name,
                 'subjects' => [],
                 'obtained' => 0,
                 'total' => 0,
@@ -131,66 +221,14 @@ class ReportController extends Controller
 
         $data = $sorted->sortBy('rollno')->values();
 
-        $pdf = PDF::loadview('reports.section-result', compact('test', 'section', 'data', 'subjects', 'subjectMaxMarks'))->setPaper('a4', 'portrait');
+        // Get top 3 position holders
+        $topStudents = $sorted->filter(function ($item) {
+            return $item['position'] <= 3;
+        })->values();
+
+        $pdf = PDF::loadview('reports.section-result', compact('test', 'section', 'data', 'topStudents', 'subjects', 'subjectMaxMarks'))->setPaper('a4', 'portrait');
         $pdf->set_option("isPhpEnabled", true);
         $file = $section->name . "-" . rand(1, 100) . ".pdf";
-        return $pdf->stream($file);
-    }
-    public function sectionPositions($testId, $sectionId)
-    {
-        $test = Test::find($testId);
-        $section = Section::find($sectionId);
-
-        $section = Section::findOrFail($sectionId);
-        $test = Test::findOrFail($testId);
-
-        // calculate test ranking
-
-        $students = Student::with('results.testSubject')
-            ->whereHas('results.testSubject', function ($query) use ($testId) {
-                $query->where('test_id', $testId);
-            })
-            ->where('section_id', $sectionId)
-            ->get();
-
-        $studentPercentages = $students->map(function ($student) use ($test) {
-            // obtained_marks marks, total marks
-            $obtained_marks = $student->results->where('testSubject.test_id', $test->id)->sum('obtained_marks');
-            $total = $student->results->where('testSubject.test_id', $test->id)->sum('testSubject.max_marks');
-
-            // Avoid division by zero
-            $percentage = $total > 0 ? ($obtained_marks / $total) * 100 : 0;
-
-            return [
-                'id' => $student->id,
-                'rollno' => $student->rollno,
-                'name' => $student->name,
-                'max_marks' => $total,
-                'obtained_marks' => $obtained_marks,
-                'percentage' => round($percentage, 0),
-            ];
-        });
-
-        // Sort by percentage descending
-        $sortedPercentages = $studentPercentages->sortByDesc('percentage');
-
-        $sortedResult = collect();
-        $i = 0;
-        foreach ($sortedPercentages as $sortedPercentage) {
-            $sortedResult->push([
-                'id' => $sortedPercentage['id'],
-                'rollno' => $sortedPercentage['rollno'],
-                'name' => $sortedPercentage['name'],
-                'max_marks' => $sortedPercentage['max_marks'],
-                'obtained_marks' => $sortedPercentage['obtained_marks'],
-                'percentage' => $sortedPercentage['percentage'],
-                'position' => ++$i,
-            ]);
-        }
-
-        $pdf = PDF::loadview('reports.section-positions', compact('test', 'section', 'sortedResult'))->setPaper('a4', 'portrait');
-        $pdf->set_option("isPhpEnabled", true);
-        $file = "positions - " . $section->name . ".pdf";
         return $pdf->stream($file);
     }
 

@@ -6,7 +6,7 @@
             font-size: 12px;
         }
     </style>
-    <h1>user Wise Schedule</h1>
+    <h1>Teacher Wise Schedule</h1>
     <div class="bread-crumb">
         <a href="{{ url('/') }}">Home</a>
         <div>/</div>
@@ -22,7 +22,7 @@
         <div class="flex gap-3">
             <a href="{{ url('class-schedule') }}"><i class="bi-repeat text-green-700"></i></a>
             <a href="#" onclick="setPrintModeAndSubmitForm(0)"><i class="bi-printer text-cyan-700"></i></a>
-            <a href="#" onclick="setPrintModeAndSubmitForm(1)"><i class="bi-grid text-cyan-700"></i></a>
+            <a href="{{ route('schedule-slips') }}" target="_blank"><i class="bi-grid text-cyan-700"></i></a>
         </div>
     </div>
 
@@ -32,9 +32,6 @@
     @else
         <x-message></x-message>
     @endif
-
-    {{-- print schedule slips --}}
-    <a href="{{ route('schedule-slips') }}">Schedule Slips</a>
 
     <div class="overflow-x-auto bg-white w-full mt-8">
         <div>

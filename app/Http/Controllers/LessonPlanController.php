@@ -6,12 +6,7 @@ use App\Models\Grade;
 use App\Models\Lesson;
 use App\Models\Subject;
 use Illuminate\Http\Request;
-use Barryvdh\DomPDF\Facade\Pdf;
-use App\Helpers\UrduHelper;
-
 use Mpdf\Mpdf;
-use Mpdf\Config\ConfigVariables;
-use Mpdf\Config\FontVariables;
 
 class LessonPlanController extends Controller
 {
@@ -45,18 +40,7 @@ class LessonPlanController extends Controller
             ->orderBy('subject_id')
             ->get();
 
-        // ── Reshape all Urdu fields on every lesson + cues ──────────────────
-        $lessons->each(function ($lesson) {
-            $lesson->title     = UrduHelper::reshape($lesson->title);
-            $lesson->objective = UrduHelper::reshape($lesson->objective);
-            $lesson->activity  = UrduHelper::reshape($lesson->activity);
-            $lesson->homework  = UrduHelper::reshape($lesson->homework);
-            $lesson->remarks   = UrduHelper::reshape($lesson->remarks);
-
-            $lesson->cues->each(function ($cue) {
-                $cue->content = UrduHelper::reshape($cue->content);
-            });
-        });
+        // mPDF handles Urdu shaping natively via lang="ur" in the template.
 
         // ── Group after reshaping ────────────────────────────────────────────
         $lessons = $lessons->groupBy('lesson_no');
@@ -72,67 +56,26 @@ class LessonPlanController extends Controller
             'total'    => $lessons->flatten()->count(),
         ];
 
-        $pdf = Pdf::loadView('lesson-plans.pdf', compact('lessons', 'meta'))
-            ->setPaper('a4', 'landscape')
-            ->setOptions([
-                'defaultFont'             => 'urdu',
-                'isRemoteEnabled'         => false,
-                'isPhpEnabled'            => true,
-                'fontDir'                 => storage_path('fonts/'),
-                'fontCache'               => storage_path('fonts/'),
-                'isFontSubsettingEnabled' => true,
-            ]);
+        $mpdf = new Mpdf([
+            'mode'             => 'utf-8',
+            'format'           => 'A4-L',
+            'autoScriptToLang' => true,
+            'autoLangToFont'   => true,
+            'default_font'     => 'dejavusanscondensed',
+        ]);
+
+        $html = view('lesson-plans.pdf', compact('lessons', 'meta'))->render();
+        $mpdf->WriteHTML($html);
 
         $filename = 'lesson-plans-'
             . str($grade->name)->slug() . '-'
             . 'L' . $request->from . '-L' . $request->to
             . '.pdf';
 
-        return $pdf->stream($filename);
+        return response($mpdf->Output('', 'S'))
+            ->header('Content-Type', 'application/pdf')
+            ->header('Content-Disposition', 'inline; filename="' . $filename . '"');
     }
 
-    // public function generate()
-    // {
-    //     // Default configs
-    //     $defaultConfig = (new ConfigVariables())->getDefaults();
-    //     $fontDirs = $defaultConfig['fontDir'];
 
-    //     $defaultFontConfig = (new FontVariables())->getDefaults();
-    //     $fontData = $defaultFontConfig['fontdata'];
-
-    //     // Initialize mPDF
-    //     $mpdf = new Mpdf([
-    //         'mode' => 'utf-8',
-    //         'format' => 'A4',
-
-    //         // 👇 Add custom font path
-    //         'fontDir' => array_merge($fontDirs, [
-    //             resource_path('fonts'),
-    //         ]),
-
-    //         // 👇 Register font
-    //         'fontdata' => $fontData + [
-    //             'nastaliq' => [
-    //                 'R' => 'NotoNastaliqUrdu-Regular.ttf',
-    //                 'useOTL' => 0xFF,        // CRITICAL: Joins the letters
-    //                 // 'useKashida' => 75,
-    //             ],
-    //         ],
-
-    //         // 👇 Default font
-    //         'default_font' => 'nastaliq',
-    //         'mode' => 'utf-8',
-    //         'format' => 'A4',
-    //         'direction' => 'rtl',
-    //     ]);
-
-    //     // Load blade view
-    //     $html = view('example')->render();
-
-    //     // Write HTML to PDF
-    //     $mpdf->WriteHTML($html);
-
-    //     // Output PDF
-    //     return $mpdf->Output('example.pdf', 'I'); // I = open in browser
-    // }
 }

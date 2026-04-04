@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ur" dir="rtl">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
@@ -13,32 +13,26 @@
         }
 
         body {
-            font-family: 'urdu', 'DejaVu Sans', sans-serif;
+            font-family: 'dejavusanscondensed', sans-serif;
             font-size: 9pt;
             color: #1a1a2e;
-            direction: rtl;
-            text-align: right;
+            direction: ltr;
         }
 
         /* English-only elements */
         .en {
-            font-family: 'DejaVu Sans', sans-serif;
+            font-family: 'dejavusanscondensed', sans-serif;
             direction: ltr;
+            text-align: left !important;
         }
 
-        /* Urdu or mixed content — reshaped text renders correctly with just rtl */
+        /* Urdu / mixed content — mPDF uses xbriyaz via lang="ur" */
         .ur {
-            font-family: 'urdu', serif;
+            font-family: 'xbriyaz', sans-serif;
             direction: rtl;
-            text-align: right;
-            line-height: 2.1;
+            text-align: right !important;
+            line-height: 1.8;
             font-size: 10pt;
-        }
-
-        /* For cells that may have BOTH English labels and Urdu values */
-        .mixed {
-            direction: rtl;
-            text-align: right;
         }
 
         .footer {
@@ -47,21 +41,29 @@
             left: 30px;
             right: 50px;
             background-color: white;
-            /* height: 20px; */
         }
 
         .page-break {
             page-break-after: always;
         }
 
-        .data tr th,
-        .data tr td {
-            font-family: 'DejaVu Sans', sans-serif;
-            font-size: 11px;
+        /* Table headers: always center */
+        .data tr th {
+            font-family: 'dejavusanscondensed', sans-serif;
+            font-size: 10px;
             text-align: center;
             vertical-align: top;
-            text-align: left;
             border: 0.5px solid;
+            padding: 4px;
+        }
+
+        /* Table data cells: do NOT set text-align here — let .ur / .en control it */
+        .data tr td {
+            font-family: 'dejavusanscondensed', sans-serif;
+            font-size: 10px;
+            vertical-align: top;
+            border: 0.5px solid;
+            padding: 4px;
         }
 
         table.borderless tr th,
@@ -99,7 +101,7 @@
             <h4 class="mt-4 text-center underline underline-offset-2">Grade{{ $meta['grade']->name ?? '—' }} </h4>
 
 
-            @forelse($lessons as $lessonNo => $group)
+                @forelse($lessons as $lessonNo => $group)
                 <div class="w-full mt-2">
                     <div class="text-sm font-bold"><u>Lesson Plan # {{ $lessonNo }}</u></div>
                     <table class="table-auto borderless xs w-full mt-1">
@@ -114,31 +116,52 @@
                         </thead>
                         <tbody class="data">
                             @foreach ($group as $lesson)
+                                @php
+                                    // Determine language for each field
+                                    $titleIsUrdu     = \App\Helpers\UrduHelper::hasUrdu($lesson->title ?? '');
+                                    $objectiveIsUrdu = \App\Helpers\UrduHelper::hasUrdu($lesson->objective ?? '');
+                                    $activityIsUrdu  = \App\Helpers\UrduHelper::hasUrdu($lesson->activity ?? '');
+                                    $homeworkIsUrdu  = \App\Helpers\UrduHelper::hasUrdu($lesson->homework ?? '');
+                                    $remarksIsUrdu   = \App\Helpers\UrduHelper::hasUrdu($lesson->remarks ?? '');
+
+                                    // Inline style strings — inline styles override CSS cascade & mPDF bidi
+                                    $urStyle = 'text-align:right; direction:rtl; font-family:xbriyaz; line-height:1.8; font-size:10pt;';
+                                    $enStyle = 'text-align:left;  direction:ltr; font-family:dejavusanscondensed;';
+
+                                    $titleStyle     = $titleIsUrdu     ? $urStyle : $enStyle;
+                                    $objectiveStyle = $objectiveIsUrdu ? $urStyle : $enStyle;
+                                    $activityStyle  = $activityIsUrdu  ? $urStyle : $enStyle;
+                                    $homeworkStyle  = $homeworkIsUrdu  ? $urStyle : $enStyle;
+                                    $remarksStyle   = $remarksIsUrdu   ? $urStyle : $enStyle;
+                                @endphp
                                 <tr class="tr">
-                                    <td class="mixed">
-                                        {{ $lesson->subject->name ?? '—' }}
-                                    </td>
+                                    <td style="text-align:center">{{ $lesson->subject->name ?? '—' }}</td>
                                     <td>
                                         @if ($lesson->title)
-                                            <div style="font-weight: 400; text-align:left">{{ $lesson->title ?? '—' }}
-                                            </div>
-                                            <div style="text-align: left" class="mixed">{{ $lesson->objective ?? '—' }}
-                                            </div>
-                                            <ul style="text-align: left">
+                                            <div style="font-weight:400; {{ $titleStyle }}"
+                                                 {{ $titleIsUrdu ? 'lang="ur"' : '' }}
+                                            >{{ $lesson->title ?? '—' }}</div>
+                                            <div style="{{ $objectiveStyle }}"
+                                                 {{ $objectiveIsUrdu ? 'lang="ur"' : '' }}
+                                            >{{ $lesson->objective ?? '—' }}</div>
+                                            <ul>
                                                 @foreach ($lesson->cues as $cue)
-                                                    <li style="font-size:9px;text-align:left;margin-top:3px;"
-                                                        class="mixed">
-                                                        {{ $cue->content }}
-                                                    </li>
+                                                    @php
+                                                        $cueIsUrdu = \App\Helpers\UrduHelper::hasUrdu($cue->content ?? '');
+                                                        $cueStyle  = $cueIsUrdu ? $urStyle : $enStyle;
+                                                    @endphp
+                                                    <li style="font-size:9px; margin-top:3px; {{ $cueStyle }}"
+                                                        {{ $cueIsUrdu ? 'lang="ur"' : '' }}
+                                                    >{{ $cue->content }}</li>
                                                 @endforeach
                                             </ul>
                                         @else
-                                            <div>No title</div>
+                                            <div style="{{ $enStyle }}">No title</div>
                                         @endif
                                     </td>
-                                    <td style="text-align: left" class="mixed">{{ $lesson->activity ?? '—' }}</td>
-                                    <td style="text-align: left" class="mixed">{{ $lesson->homework ?? '—' }}</td>
-                                    <td style="text-align: left" class="mixed">{{ $lesson->remarks ?? '—' }}</td>
+                                    <td style="{{ $activityStyle }}" {{ $activityIsUrdu ? 'lang="ur"' : '' }}>{{ $lesson->activity ?? '—' }}</td>
+                                    <td style="{{ $homeworkStyle }}" {{ $homeworkIsUrdu ? 'lang="ur"' : '' }}>{{ $lesson->homework ?? '—' }}</td>
+                                    <td style="{{ $remarksStyle  }}" {{ $remarksIsUrdu  ? 'lang="ur"' : '' }}>{{ $lesson->remarks  ?? '—' }}</td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -148,26 +171,12 @@
                 <div class="no-data">No lesson plans found for the selected criteria.</div>
             @endforelse
 
-            <div style="margin-top:20px; text-align:right;font-size:10px;" class="footer">
-                Printed on: {{ now()->format('d M Y, h:i A') }}
-            </div>
+    <div style="margin-top:20px; text-align:right;font-size:10px;" class="footer">
+        Printed on: {{ now()->format('d M Y, h:i A') }}
+    </div>
 
-    </main>
+</main>
 
-    <script type="text/php">
-        if (isset($pdf) ) {
-            $x = 285;
-            $y = 20;
-            $text = "{PAGE_NUM} of {PAGE_COUNT}";
-            $font = $fontMetrics->get_font("helvetica", "bold");
-            $size = 6;
-            $color = array(0,0,0);
-            $word_space = 0.0;  //  default
-            $char_space = 0.0;  //  default
-            $angle = 0.0;   //  default
-            $pdf->page_text($x, $y, $text, $font, $size, $color, $word_space, $char_space, $angle);
-        }
-    </script>
 </body>
 
 </html>

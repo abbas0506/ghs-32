@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
+use PDF;
 
 class SectionController extends Controller
 {
@@ -269,5 +270,15 @@ class SectionController extends Controller
             // something went wrong
         }
     }
-    public function print($section, $page) {}
+    public function list($sectionId)
+    {
+
+        // $this->authorize('viewAny', Section::class);
+        $section = Section::findOrFail($sectionId);
+        $students = $section->students->sortBy('rollno');
+        $pdf = PDF::loadview('reports.attendance-list', compact('section'))->setPaper('a4', 'portrait');
+        $pdf->set_option("isPhpEnabled", true);
+        $file = "cards.pdf";
+        return $pdf->stream($file);
+    }
 }

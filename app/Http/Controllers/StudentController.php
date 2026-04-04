@@ -17,8 +17,7 @@ class StudentController extends Controller
     {
         //
         $section = Section::findOrFail($sectionId);
-        $feeTypes = FeeType::all();
-        return view('students.create', compact('section', 'feeTypes'));
+        return view('students.create', compact('section'));
     }
 
     /**

@@ -57,6 +57,17 @@ return array(
          */
         "font_cache" => storage_path('fonts'),
 
+
+        // my fonts for urdu text handling
+        'fonts' => [
+            'urdu' => [
+                'R'  => 'NotoNastaliqUrdu-Regular.ttf',
+            ],
+            'latin' => [
+                'R'  => 'PlusJakartaSans-Regular.ttf',
+            ],
+        ],
+
         /**
          * The location of a temporary directory.
          *
@@ -96,9 +107,9 @@ return array(
             "https://" => ["rules" => []]
         ],
 
-         /**
-          * @var string
-          */
+        /**
+         * @var string
+         */
         'log_output_file' => null,
 
         /**
@@ -171,13 +182,13 @@ return array(
          */
         "default_paper_size" => "a4",
 
-         /**
-          * The default paper orientation.
-          *
-          * The orientation of the page (portrait or landscape).
-          *
-          * @var string
-          */
+        /**
+         * The default paper orientation.
+         *
+         * The orientation of the page (portrait or landscape).
+         *
+         * @var string
+         */
         'default_paper_orientation' => "portrait",
 
         /**

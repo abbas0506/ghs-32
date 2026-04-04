@@ -4,7 +4,7 @@
     {{-- Page Header --}}
     <div class="flex items-center justify-between flex-wrap gap-3 mb-2">
         <div>
-            <h1 class="text-2xl font-bold text-gray-800">Lesson Plan</h1>
+            <h1 class="text-2xl font-bold text-gray-800">Lesson Plans</h1>
             <div class="bread-crumb mt-1">
                 <a href="{{ url('/') }}">Home</a>
                 <div>/</div>
@@ -81,7 +81,7 @@
                         <div
                             class="flex flex-col md:flex-row items-start md:items-center gap-2 justify-between px-6 py-4 border-b border-gray-100">
                             <div>
-                                <h2 class="font-semibold text-gray-800">Lesson Plan</h2>
+                                <h2 class="font-semibold text-gray-800">Lesson Plans</h2>
                                 <p class="text-xs text-gray-400 mt-0.5">
                                     {{ $lessons->count() }} {{ Str::plural('plan', $lessons->count()) }} lessons found
                                 </p>

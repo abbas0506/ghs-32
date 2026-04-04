@@ -33,10 +33,10 @@
 
         .card-logo-bg {
             position: absolute;
-            top: 160px;
+            top: 140px;
             /* Adjust based on where you want the image */
-            left: 27px;
-            width: 150px;
+            left: 40px;
+            width: 130px;
             opacity: 0.25;
         }
 
@@ -50,6 +50,8 @@
 
         .card-content {
             position: relative;
+            height: 300px;
+            width: 200px;
             z-index: 1;
         }
 
@@ -84,10 +86,10 @@
                             <tr class="text-sm">
                         @endif
 
-                        <td class="p-6">
+                        <td class="p-2">
                             <div class="p-2 card-container">
                                 <!-- Background Logo -->
-                                <img src="{{ public_path('images/logo/punjab.png') }}" class="card-logo-bg"
+                                <img src="{{ public_path('images/logo/black.png') }}" class="card-logo-bg"
                                     alt="Background Logo">
                                 <!-- wave patten -->
                                 <img src="{{ public_path('images/bg/waves.png') }}" class="wave-pattern"

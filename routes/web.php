@@ -100,7 +100,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::resource('grade-subjects', GradeSubjectController::class);
 
     // Classes/Sections
-    Route::get('sections/list/{page}', [SectionController::class, 'list'])->name('sections.list');
+    Route::get('sections/list/{section}/print', [SectionController::class, 'list'])->name('sections.list.print');
     Route::resource('section.students', StudentController::class);
     Route::get('sections/import/{section}', [SectionController::class, 'import'])->name('sections.import');
     Route::post('sections/import', [SectionController::class, 'postImport'])->name('sections.import.post');
@@ -187,4 +187,9 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('reports/tests/{t}/sections/{s}/result/pdf', [ReportController::class, 'sectionResult'])->name('section-result');
     Route::get('reports/tests/{t}/sections/{s}/positions/pdf', [ReportController::class, 'sectionPositions'])->name('section-positions');
     Route::get('reports/tests/{t}/sections/{s}/report-cards/pdf', [ReportController::class, 'reportCards'])->name('report-cards');
+
+
+    Route::get('/lesson-plans',      [LessonPlanController::class, 'index'])->name('lesson-plans.index');
+    Route::get('/lesson-plans/pdf',  [LessonPlanController::class, 'exportPdf'])->name('lesson-plans.pdf');
+    Route::get('/lesson-plans/generate',  [LessonPlanController::class, 'generate'])->name('lesson-plans.generate');
 });

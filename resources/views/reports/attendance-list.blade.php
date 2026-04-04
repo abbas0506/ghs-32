@@ -53,7 +53,7 @@
                 <table class="w-full">
                     <tbody>
                         <tr>
-                            <td class="text-center text-xl font-bold">Attendance List {{ $section->name }}</td>
+                            <td class="text-center text-xl font-bold">Attendance List</td>
                         </tr>
                         <tr>
                             <td class="text-center text-sm">Govt. High School 32/2L, Okara</td>
@@ -67,9 +67,10 @@
             <div class="mt-8">
                 <table class="w-full">
                     <tbody>
-                        <tr class="text-xs">
-                            <td class="text-left">Total Students: {{ $section->students->count() }}</td>
-                            <td class="text-right">Printed on {{ now()->format('d-M-Y') }}</td>
+                        <tr class="">
+                            <td class="text-left font-bold text-base">Class {{ $section->name }} | Total Students:
+                                {{ $section->students->count() }}</td>
+                            <td class="text-right text-xs">Printed on {{ now()->format('d-M-Y') }}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -81,9 +82,6 @@
                     <tr style="background-color: #bbb;">
                         <th class="w-8">Roll#</th>
                         <th>Name</th>
-                        <th>Father</th>
-                        <th>Group</th>
-                        <th>Photo</th>
                         <th class="border w-8"></th>
                         <th class="border w-8"></th>
                         <th class="border w-8"></th>
@@ -101,18 +99,9 @@
                     @foreach ($section->students->sortBy('rollno') as $student)
                         <tr class="text-base">
                             <td>{{ $student->rollno }}</td>
-                            <td style="text-align: left !important; padding:2px 6px;">
-                                {{ ucwords(strtolower($student->name)) }}</td>
-                            <td style="text-align: left !important; padding:2px 6px;">
-                                {{ ucwords(strtolower($student->father_name)) }}</td>
-                            <td>{{ $student->group?->namename }}</td>
-                            <td>
-                                @if ($student->photo)
-                                    <img src="{{ public_path('storage/' . $student->photo) }}"
-                                        style="width:32px; height:32px; border-radius:10%; border:0.5px solid #fff; object-fit:cover;">
-                                @else
-                                    <span style="color: #999;">No Photo</span>
-                                @endif
+                            <td style="text-align: left !important; padding:1px 6px;">
+                                {{ ucwords(strtolower($student->name)) }} s/o
+                                {{ ucwords(strtolower($student->father_name)) }}
                             </td>
                             <td class="border"></td>
                             <td class="border"></td>

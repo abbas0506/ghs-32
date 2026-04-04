@@ -4,11 +4,11 @@
     {{-- Page Header --}}
     <div class="flex items-center justify-between flex-wrap gap-3 mb-2">
         <div>
-            <h1 class="text-2xl font-bold text-gray-800">Lesson Plan</h1>
+            <h1 class="text-2xl font-bold text-gray-800">Lesson Plans</h1>
             <div class="bread-crumb mt-1">
                 <a href="{{ url('/') }}">Home</a>
                 <div>/</div>
-                <span class="text-gray-500">Lesson Plan</span>
+                <span class="text-gray-500">Lesson Plans</span>
             </div>
         </div>
     </div>
@@ -34,10 +34,15 @@
                     <p class="text-xs text-gray-400">Select grade and subject to view lessons</p>
                 </div>
                 @if ($grade)
-                    <a href="{{ route('lessons.index') }}"
-                        class="ml-auto inline-flex items-center gap-1 text-xs text-gray-500 hover:text-red-500 transition">
-                        <i class="ri-close-line"></i> Clear filter
-                    </a>
+                    <div class="flex items-center space-x-3">
+
+                        <a href="{{ route('lessons.create', ['grade_id' => $grade->id]) }}" class="btn-green rounded-lg">
+                            <i class="bi-plus"></i>
+                        </a>
+                        <a href="{{ route('lesson-plans.index', ['grade_id' => $grade->id]) }}" class="btn-cyan rounded-lg">
+                            <i class="bi-printer"></i>
+                        </a>
+                    </div>
                 @endif
             </div>
 
@@ -94,7 +99,7 @@
                 <div
                     class="flex flex-col md:flex-row items-start md:items-center gap-2 justify-between px-6 py-4 border-b border-gray-100">
                     <div>
-                        <h2 class="font-semibold text-gray-800">Lesson Plan</h2>
+                        <h2 class="font-semibold text-gray-800">Lesson Plans</h2>
                         <p class="text-xs text-gray-400 mt-0.5">
                             {{ $subjects->count() }} subjects found
                         </p>

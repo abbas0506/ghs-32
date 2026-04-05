@@ -9,7 +9,8 @@
     <link href="{{ public_path('css/pdf_tw.css') }}" rel="stylesheet">
     <style>
         @page {
-            margin: 50px 80px 50px 50px;
+            margin: 100px 80px 50px 50px;
+            header: html_schoolHeader;
         }
 
         body {
@@ -64,6 +65,7 @@
             vertical-align: top;
             border: 0.5px solid;
             padding: 4px;
+            line-height: 1.15;
         }
 
         table.borderless tr th,
@@ -78,33 +80,31 @@
 
 <body>
 
+    <htmlpageheader name="schoolHeader">
+        <!-- Header: Logo on Left, School/Grade Name on Right -->
+        <table class="w-full" style="padding-bottom: 5px;">
+            <tr>
+                <td style="width: 70px; vertical-align: middle;">
+                    <img alt="logo" src="{{ public_path('/images/logo/ghs-32.png') }}" style="width: 50px;">
+                </td>
+                <td style="vertical-align: middle; text-align: center;">
+                    <h2 style="font-size: 16pt; font-weight: bold; margin: 0; padding: 0;">Lesson Plan — Grade {{ $meta['grade']->name ?? '—' }}</h2>
+                    <h4 style="font-size: 12pt; font-weight:600; margin: 10px 0 0 0; padding: 0; text-decoration: underline;">
+                        Govt. High School 32/2L, Okara
+                    </h4>
+                </td>
+            </tr>
+        </table>
+    </htmlpageheader>
+
     <main>
         <div class="custom-container">
-
-            <div class="w-1/2 mx-auto">
-                <div class="relative">
-                    <div class="absolute"><img alt="logo" src="{{ public_path('/images/logo/ghs-32.png') }}"
-                            class="w-16"></div>
-                </div>
-                <table class="w-full">
-                    <tbody>
-                        <tr>
-                            <td class="text-center text-xl font-bold"> </td>
-                        </tr>
-                        <tr>
-                            <td class="text-center text-sm">Govt. High School 32/2L, Okara</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            <!-- table header -->
-            <h4 class="mt-4 text-center underline underline-offset-2">Grade{{ $meta['grade']->name ?? '—' }} </h4>
 
 
                 @forelse($lessons as $lessonNo => $group)
                 <div class="w-full mt-2">
                     <div class="text-sm font-bold"><u>Lesson Plan # {{ $lessonNo }}</u></div>
-                    <table class="table-auto borderless xs w-full mt-1">
+                    <table class="table-auto borderless sm w-full mt-1">
                         <thead class="data">
                             <tr>
                                 <th style="width: 15%">Subject</th>
@@ -141,27 +141,23 @@
                                             <div style="font-weight:400; {{ $titleStyle }}"
                                                  {{ $titleIsUrdu ? 'lang="ur"' : '' }}
                                             >{{ $lesson->title ?? '—' }}</div>
-                                            <div style="{{ $objectiveStyle }}"
-                                                 {{ $objectiveIsUrdu ? 'lang="ur"' : '' }}
-                                            >{{ $lesson->objective ?? '—' }}</div>
+                                            <div {{ $objectiveIsUrdu ? 'lang="ur"' : '' }}>{{ $lesson->objective ?? '—' }}</div>
                                             <ul>
                                                 @foreach ($lesson->cues as $cue)
                                                     @php
                                                         $cueIsUrdu = \App\Helpers\UrduHelper::hasUrdu($cue->content ?? '');
                                                         $cueStyle  = $cueIsUrdu ? $urStyle : $enStyle;
                                                     @endphp
-                                                    <li style="font-size:9px; margin-top:3px; {{ $cueStyle }}"
-                                                        {{ $cueIsUrdu ? 'lang="ur"' : '' }}
-                                                    >{{ $cue->content }}</li>
+                                                    <li {{ $cueIsUrdu ? 'lang="ur"' : '' }}>{{ $cue->content }}</li>
                                                 @endforeach
                                             </ul>
                                         @else
                                             <div style="{{ $enStyle }}">No title</div>
                                         @endif
                                     </td>
-                                    <td style="{{ $activityStyle }}" {{ $activityIsUrdu ? 'lang="ur"' : '' }}>{{ $lesson->activity ?? '—' }}</td>
-                                    <td style="{{ $homeworkStyle }}" {{ $homeworkIsUrdu ? 'lang="ur"' : '' }}>{{ $lesson->homework ?? '—' }}</td>
-                                    <td style="{{ $remarksStyle  }}" {{ $remarksIsUrdu  ? 'lang="ur"' : '' }}>{{ $lesson->remarks  ?? '—' }}</td>
+                                    <td {{ $activityIsUrdu ? 'lang="ur"' : '' }}>{{ $lesson->activity ?? '—' }}</td>
+                                    <td {{ $homeworkIsUrdu ? 'lang="ur"' : '' }}>{{ $lesson->homework ?? '—' }}</td>
+                                    <td {{ $remarksIsUrdu  ? 'lang="ur"' : '' }}>{{ $lesson->remarks  ?? '—' }}</td>
                                 </tr>
                             @endforeach
                         </tbody>

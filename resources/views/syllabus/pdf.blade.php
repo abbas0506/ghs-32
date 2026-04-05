@@ -9,7 +9,8 @@
     <link href="{{ public_path('css/pdf_tw.css') }}" rel="stylesheet">
     <style>
         @page {
-            margin: 50px 80px 50px 50px;
+            margin: 100px 80px 50px 50px;
+            header: html_schoolHeader;
         }
 
         body {
@@ -78,27 +79,23 @@
 
 <body>
 
+    <htmlpageheader name="schoolHeader">
+        <!-- Header: Logo on Left, School/Grade Name on Right -->
+        <table class="w-full" style="padding-bottom: 5px;">
+            <tr>
+                <td style="width: 70px; vertical-align: middle;">
+                    <img alt="logo" src="{{ public_path('/images/logo/black.png') }}" style="width: 50px;">
+                </td>
+                <td>
+                    <div style="font-size: 16pt; font-weight: bold; margin: 0; padding: 0;">Syllabus Outline  — Grade {{ $meta['grade']->grade_no ?? '—' }} </div>
+                    <div style="font-size: 12pt; font-weight: 600; margin: 0;">Government High School 32/2L, Okara</div>  
+                </td>
+            </tr>
+        </table>
+    </htmlpageheader>
+
     <main>
         <div class="custom-container">
-
-            <div class="w-1/2 mx-auto">
-                <div class="relative">
-                    <div class="absolute"><img alt="logo" src="{{ public_path('/images/logo/ghs-32.png') }}"
-                            class="w-16"></div>
-                </div>
-                <table class="w-full">
-                    <tbody>
-                        <tr>
-                            <td class="text-center text-xl font-bold"> </td>
-                        </tr>
-                        <tr>
-                            <td class="text-center text-sm">Govt. High School 32/2L, Okara</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            <!-- table header -->
-            <h4 class="mt-4 text-center underline underline-offset-2">Syllabus - Grade {{ $meta['grade']->name ?? '—' }} </h4>
 
             <div class="w-full mt-2">
                 <table class="table-auto borderless xs w-full mt-1">

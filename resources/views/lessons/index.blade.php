@@ -58,11 +58,6 @@
 
                         <a href="{{ route('lessons.index') }}"
                             class="ml-2 text-xs text-gray-400 underline hover:text-gray-600 transition">Change</a>
-
-                        @role('head')
-                            <a href="{{ route('lessons.create', ['grade_id' => $grade->id]) }}"
-                                class="ml-2 text-xs text-gray-400 underline hover:text-gray-600 transition">+Add Subject</a>
-                        @endrole
                     </div>
                 @else
                     <form action="{{ route('lessons.index') }}" method="GET" id="filterForm">

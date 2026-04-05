@@ -9,9 +9,9 @@
                 <div>/</div>
                 <a href="{{ route('lessons.index') }}">Lesson Plan</a>
                 <div>/</div>
-                <a href="{{ route('lessons.index', ['grade' => $lesson->grade_id, 'subject' => $lesson->subject_id]) }}"
+                <a href="{{ route('lessons.index', ['grade_id' => $lesson->grade_id]) }}"
                     class="text-teal-600 hover:underline">
-                    {{ $lesson->grade?->name }} – {{ $lesson->subject?->name }}
+                    {{ $lesson->grade?->name }}
                 </a>
                 <div>/</div>
                 <span class="text-gray-500">Lesson {{ $lesson->lesson_no }}</span>

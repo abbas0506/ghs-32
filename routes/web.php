@@ -170,6 +170,7 @@ Route::group(['middleware' => ['auth']], function () {
     // syllabus
     Route::resource('syllabi', SyllabusController::class);
     Route::post('syllabi/init', [SyllabusController::class, 'init'])->name('syllabi.init');
+    Route::get('syllabi-pdf', [SyllabusController::class, 'exportPdf'])->name('syllabi.pdf');
     // Route::resource('grade.syllabi', SyllabusController::class);
 
     // lock /unlock

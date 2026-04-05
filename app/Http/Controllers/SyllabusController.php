@@ -8,6 +8,7 @@ use App\Models\Syllabus;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Mpdf\Mpdf;
 
 class SyllabusController extends Controller
 {
@@ -76,7 +77,7 @@ class SyllabusController extends Controller
             return redirect()->route('syllabi.index', [
                 'grade_id' => $request->input('grade_id'),
             ])->with('success', 'Syllabus created successfully.');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             DB::rollBack();
             return redirect('syllabi?grade_id=' . $grade->id)->with('warning', 'Failed to create syllabus: ' . $e->getMessage());
         }
@@ -153,9 +154,40 @@ class SyllabusController extends Controller
             return redirect()->route('syllabi.index', [
                 'grade_id' => $request->input('grade_id'),
             ])->with('success', 'Syllabus created successfully.');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             DB::rollBack();
             return redirect('syllabi?grade_id=' . $grade->id)->with('warning', 'Failed to create syllabus: ' . $e->getMessage());
         }
+    }
+
+    public function exportPdf(Request $request)
+    {
+        $request->validate([
+            'grade_id' => 'required|integer|exists:grades,id',
+        ]);
+
+        $grade = Grade::findOrFail($request->grade_id);
+        $syllabi = Syllabus::with('subject')->where('grade_id', $grade->id)->get();
+
+        $meta = [
+            'grade' => $grade,
+        ];
+
+        $mpdf = new Mpdf([
+            'mode'             => 'utf-8',
+            'format'           => 'A4-L',
+            'autoScriptToLang' => true,
+            'autoLangToFont'   => true,
+            'default_font'     => 'dejavusanscondensed',
+        ]);
+
+        $html = view('syllabus.pdf', compact('syllabi', 'meta'))->render();
+        $mpdf->WriteHTML($html);
+
+        $filename = 'syllabus-' . str($grade->name)->slug() . '.pdf';
+
+        return response($mpdf->Output('', 'S'))
+            ->header('Content-Type', 'application/pdf')
+            ->header('Content-Disposition', 'inline; filename="' . $filename . '"');
     }
 }

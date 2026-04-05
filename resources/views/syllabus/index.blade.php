@@ -34,10 +34,15 @@
                     <p class="text-xs text-gray-400">Select grade to view syllabi</p>
                 </div>
                 @if ($grade)
-                    <a href="{{ route('syllabi.index') }}"
-                        class="ml-auto inline-flex items-center gap-1 text-xs text-gray-500 hover:text-red-500 transition">
-                        <i class="ri-close-line"></i> Clear filter
-                    </a>
+                    <div class="flex items-center space-x-3">
+                        @role('head')
+                            <a href="{{ url('syllabi/create?grade_id=' . $grade->id) }}"
+                                class="ml-2 btn-cyan rounded-lg"><i class="ri-add-circle-line"></i></a>
+                        @endrole
+                        <a href="{{ route('syllabi.pdf', ['grade_id' => $grade->id]) }}" class="btn-cyan rounded-lg" target="_blank">
+                            <i class="bi-printer"></i>
+                        </a>
+                    </div>
                 @endif
             </div>
 
@@ -54,10 +59,7 @@
                         <a href="{{ route('syllabi.index') }}"
                             class="ml-2 text-xs text-gray-400 underline hover:text-gray-600 transition">Change</a>
 
-                        @role('head')
-                            <a href="{{ url('syllabi/create?grade_id=' . $grade->id) }}"
-                                class="ml-2 text-xs text-gray-400 underline hover:text-gray-600 transition">+Add Subject</a>
-                        @endrole
+                        
                     </div>
                 @else
                     <form action="{{ route('syllabi.index') }}" method="GET" id="filterForm">

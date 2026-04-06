@@ -62,6 +62,7 @@ class LessonPlanController extends Controller
             'autoScriptToLang' => true,
             'autoLangToFont'   => true,
             'default_font'     => 'dejavusanscondensed',
+            'tempDir'          => storage_path('app/mpdf-tmp'),
         ]);
 
         $html = view('lesson-plans.pdf', compact('lessons', 'meta'))->render();

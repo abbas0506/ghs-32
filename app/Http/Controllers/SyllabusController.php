@@ -179,6 +179,7 @@ class SyllabusController extends Controller
             'autoScriptToLang' => true,
             'autoLangToFont'   => true,
             'default_font'     => 'dejavusanscondensed',
+            'tempDir'          => storage_path('app/mpdf-tmp'),
         ]);
 
         $html = view('syllabus.pdf', compact('syllabi', 'meta'))->render();

@@ -63,6 +63,15 @@ class LessonPlanController extends Controller
             'autoLangToFont'   => true,
             'default_font'     => 'dejavusanscondensed',
             'tempDir'          => storage_path('app/mpdf-tmp'),
+            'fontDir'          => [storage_path('fonts')],
+            'fontdata'         => [
+                'notanastaliqurdu' => [
+                    'R' => 'NotoNastaliqUrdu-Regular.ttf',
+                    'B' => 'NotoNastaliqUrdu-Bold.ttf',
+                    'useOTL'    => 0xFF,
+                    'useKashida' => 75,
+                ],
+            ],
         ]);
 
         $html = view('lesson-plans.pdf', compact('lessons', 'meta'))->render();

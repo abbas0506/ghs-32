@@ -27,9 +27,9 @@
             text-align: left !important;
         }
 
-        /* Urdu / mixed content — mPDF uses xbriyaz via lang="ur" */
+        /* Urdu / mixed content — Noto Nastaleeq (Noto Nastaliq Urdu) */
         .ur {
-            font-family: 'xbriyaz', sans-serif;
+            font-family: 'notanastaliqurdu', sans-serif;
             direction: rtl;
             text-align: right !important;
             line-height: 1.8;
@@ -88,8 +88,10 @@
                     <img alt="logo" src="{{ public_path('/images/logo/ghs-32.png') }}" style="width: 50px;">
                 </td>
                 <td style="vertical-align: middle; text-align: center;">
-                    <h2 style="font-size: 16pt; font-weight: bold; margin: 0; padding: 0;">Lesson Plan — Grade {{ $meta['grade']->name ?? '—' }}</h2>
-                    <h4 style="font-size: 12pt; font-weight:600; margin: 10px 0 0 0; padding: 0; text-decoration: underline;">
+                    <h2 style="font-size: 16pt; font-weight: bold; margin: 0; padding: 0;">Lesson Plan — Grade
+                        {{ $meta['grade']->name ?? '—' }}</h2>
+                    <h4
+                        style="font-size: 12pt; font-weight:600; margin: 10px 0 0 0; padding: 0; text-decoration: underline;">
                         Govt. High School 32/2L, Okara
                     </h4>
                 </td>
@@ -101,7 +103,7 @@
         <div class="custom-container">
 
 
-                @forelse($lessons as $lessonNo => $group)
+            @forelse($lessons as $lessonNo => $group)
                 <div class="w-full mt-2">
                     <div class="text-sm font-bold"><u>Lesson Plan # {{ $lessonNo }}</u></div>
                     <table class="table-auto borderless sm w-full mt-1">
@@ -118,35 +120,38 @@
                             @foreach ($group as $lesson)
                                 @php
                                     // Determine language for each field
-                                    $titleIsUrdu     = \App\Helpers\UrduHelper::hasUrdu($lesson->title ?? '');
+                                    $titleIsUrdu = \App\Helpers\UrduHelper::hasUrdu($lesson->title ?? '');
                                     $objectiveIsUrdu = \App\Helpers\UrduHelper::hasUrdu($lesson->objective ?? '');
-                                    $activityIsUrdu  = \App\Helpers\UrduHelper::hasUrdu($lesson->activity ?? '');
-                                    $homeworkIsUrdu  = \App\Helpers\UrduHelper::hasUrdu($lesson->homework ?? '');
-                                    $remarksIsUrdu   = \App\Helpers\UrduHelper::hasUrdu($lesson->remarks ?? '');
+                                    $activityIsUrdu = \App\Helpers\UrduHelper::hasUrdu($lesson->activity ?? '');
+                                    $homeworkIsUrdu = \App\Helpers\UrduHelper::hasUrdu($lesson->homework ?? '');
+                                    $remarksIsUrdu = \App\Helpers\UrduHelper::hasUrdu($lesson->remarks ?? '');
 
                                     // Inline style strings — inline styles override CSS cascade & mPDF bidi
-                                    $urStyle = 'text-align:right; direction:rtl; font-family:xbriyaz; line-height:1.8; font-size:10pt;';
+                                    $urStyle =
+                                        'text-align:right; direction:rtl; font-family:notanastaliqurdu; line-height:1.8; font-size:10pt;';
                                     $enStyle = 'text-align:left;  direction:ltr; font-family:dejavusanscondensed;';
 
-                                    $titleStyle     = $titleIsUrdu     ? $urStyle : $enStyle;
+                                    $titleStyle = $titleIsUrdu ? $urStyle : $enStyle;
                                     $objectiveStyle = $objectiveIsUrdu ? $urStyle : $enStyle;
-                                    $activityStyle  = $activityIsUrdu  ? $urStyle : $enStyle;
-                                    $homeworkStyle  = $homeworkIsUrdu  ? $urStyle : $enStyle;
-                                    $remarksStyle   = $remarksIsUrdu   ? $urStyle : $enStyle;
+                                    $activityStyle = $activityIsUrdu ? $urStyle : $enStyle;
+                                    $homeworkStyle = $homeworkIsUrdu ? $urStyle : $enStyle;
+                                    $remarksStyle = $remarksIsUrdu ? $urStyle : $enStyle;
                                 @endphp
                                 <tr class="tr">
                                     <td style="text-align:center">{{ $lesson->subject->name ?? '—' }}</td>
                                     <td>
                                         @if ($lesson->title)
                                             <div style="font-weight:400; {{ $titleStyle }}"
-                                                 {{ $titleIsUrdu ? 'lang="ur"' : '' }}
-                                            >{{ $lesson->title ?? '—' }}</div>
-                                            <div {{ $objectiveIsUrdu ? 'lang="ur"' : '' }}>{{ $lesson->objective ?? '—' }}</div>
+                                                {{ $titleIsUrdu ? 'lang="ur"' : '' }}>{{ $lesson->title ?? '—' }}</div>
+                                            <div {{ $objectiveIsUrdu ? 'lang="ur"' : '' }}>
+                                                {{ $lesson->objective ?? '—' }}</div>
                                             <ul>
                                                 @foreach ($lesson->cues as $cue)
                                                     @php
-                                                        $cueIsUrdu = \App\Helpers\UrduHelper::hasUrdu($cue->content ?? '');
-                                                        $cueStyle  = $cueIsUrdu ? $urStyle : $enStyle;
+                                                        $cueIsUrdu = \App\Helpers\UrduHelper::hasUrdu(
+                                                            $cue->content ?? '',
+                                                        );
+                                                        $cueStyle = $cueIsUrdu ? $urStyle : $enStyle;
                                                     @endphp
                                                     <li {{ $cueIsUrdu ? 'lang="ur"' : '' }}>{{ $cue->content }}</li>
                                                 @endforeach
@@ -157,7 +162,7 @@
                                     </td>
                                     <td {{ $activityIsUrdu ? 'lang="ur"' : '' }}>{{ $lesson->activity ?? '—' }}</td>
                                     <td {{ $homeworkIsUrdu ? 'lang="ur"' : '' }}>{{ $lesson->homework ?? '—' }}</td>
-                                    <td {{ $remarksIsUrdu  ? 'lang="ur"' : '' }}>{{ $lesson->remarks  ?? '—' }}</td>
+                                    <td {{ $remarksIsUrdu ? 'lang="ur"' : '' }}>{{ $lesson->remarks ?? '—' }}</td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -167,11 +172,11 @@
                 <div class="no-data">No lesson plans found for the selected criteria.</div>
             @endforelse
 
-    <div style="margin-top:20px; text-align:right;font-size:10px;" class="footer">
-        Printed on: {{ now()->format('d M Y, h:i A') }}
-    </div>
+            <div style="margin-top:20px; text-align:right;font-size:10px;" class="footer">
+                Printed on: {{ now()->format('d M Y, h:i A') }}
+            </div>
 
-</main>
+    </main>
 
 </body>
 

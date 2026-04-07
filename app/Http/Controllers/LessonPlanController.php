@@ -56,6 +56,9 @@ class LessonPlanController extends Controller
             'total'    => $lessons->flatten()->count(),
         ];
 
+        $defaultConfig   = (new \Mpdf\Config\ConfigVariables())->getDefaults();
+        $defaultFontConf = (new \Mpdf\Config\FontVariables())->getDefaults();
+
         $mpdf = new Mpdf([
             'mode'             => 'utf-8',
             'format'           => 'A4-L',
@@ -63,12 +66,12 @@ class LessonPlanController extends Controller
             'autoLangToFont'   => true,
             'default_font'     => 'dejavusanscondensed',
             'tempDir'          => storage_path('app/mpdf-tmp'),
-            'fontDir'          => [storage_path('fonts')],
-            'fontdata'         => [
+            'fontDir'          => array_merge($defaultConfig['fontDir'], [storage_path('fonts')]),
+            'fontdata'         => $defaultFontConf['fontdata'] + [
                 'notanastaliqurdu' => [
-                    'R' => 'NotoNastaliqUrdu-Regular.ttf',
-                    'B' => 'NotoNastaliqUrdu-Bold.ttf',
-                    'useOTL'    => 0xFF,
+                    'R'          => 'NotoNastaliqUrdu-Regular.ttf',
+                    'B'          => 'NotoNastaliqUrdu-Bold.ttf',
+                    'useOTL'     => 0x80,
                     'useKashida' => 75,
                 ],
             ],

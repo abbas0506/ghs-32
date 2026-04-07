@@ -85,10 +85,13 @@ class StudentController extends Controller
             'father_name' => 'required|string|max:50',
             'dob' => 'nullable|date',
             'bform' => 'nullable|string|max:15|unique:students,bform,' . $student->id,
+            'gender' => 'required|string|max:1',
             'phone' => 'nullable|string|max:16',
             'address' => 'nullable|string|max:100',
-            'rollno' => 'integer|min:1',
-            'fee' => 'integer|min:0',
+            'rollno' => 'required|integer|min:1',
+            'admission_no' => 'nullable|string|max:50|unique:students,admission_no,' . $student->id,
+            'admission_date' => 'nullable|date',
+            'fee' => 'required|integer|min:0',
         ]);
 
         try {

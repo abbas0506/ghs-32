@@ -1,57 +1,146 @@
 @extends('layouts.app')
 @section('page-content')
-    <h2>View Student</h2>
-    <div class="bread-crumb">
-        <a href="{{ url('/') }}">Home</a>
-        <div>/</div>
-        <a href="{{ route('sections.index') }}">Sections</a>
-        <div>/</div>
-        <a href="{{ route('sections.show', $section) }}">{{ $section->name }}</a>
-        <div>/</div>
-        <div>View Student</div>
+    <div class="flex items-center justify-between flex-wrap gap-3 mb-6">
+        <div>
+            <h2 class="text-xl font-bold text-gray-800">Student Profile</h2>
+            <div class="bread-crumb mt-1">
+                <a href="{{ url('/') }}">Home</a>
+                <div>/</div>
+                <a href="{{ route('sections.index') }}">Sections</a>
+                <div>/</div>
+                <a href="{{ route('sections.show', $section) }}" class="text-teal-600 hover:underline">{{ $section->name }}</a>
+                <div>/</div>
+                <span class="text-gray-500">Student #{{ $student->rollno }}</span>
+            </div>
+        </div>
+        <div class="flex items-center gap-2">
+             @can('update', $student)
+                <a href="{{ route('section.students.edit', [$section, $student]) }}" class="inline-flex items-center gap-2 px-4 py-2 bg-indigo-50 text-indigo-600 font-semibold rounded-xl hover:bg-indigo-100 transition">
+                    <i class="ri-pencil-line"></i>Edit
+                </a>
+            @endcan
+            @can('delete', $student)
+                <form action="{{ route('section.students.destroy', [$section, $student]) }}" method="post" onsubmit="return confirmDel(event)">
+                    @csrf
+                    @method('DELETE')
+                    <button class="inline-flex items-center gap-2 px-4 py-2 bg-red-50 text-red-600 font-semibold rounded-xl hover:bg-red-100 transition">
+                        <i class="ri-delete-bin-line"></i> Delete
+                    </button>
+                </form>
+            @endcan
+        </div>
     </div>
-    <!-- display info -->
 
-    <div class="mt-4 text-slate-800">
-        <a href="{{ route('sections.show', $section) }}"><i class="ri-arrow-left-long-line"></i></a>
-    </div>
-
-    <div class="md:w-4/5 mx-auto mt-4 flex flex-wrap items-center justify-between relative">
-        <div class="flex items-center gap-3">
-            <div class="ico cyan w-10 h-10"><i class="ri-user-6-fill"></i></div>
-            <div class="font-semibold leading-tight text-sm md:text-base">{{ $student->name }} <br>
-                <span class="text-slate-400 font-normal text-xs">{{ $student->father_name }}</span>
+    <div class="max-w-4xl mx-auto space-y-6">
+        {{-- Profile Header Card --}}
+        <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+            <div class="bg-gradient-to-r from-teal-500 to-green-500 h-32"></div>
+            <div class="px-8 pb-8">
+                <div class="relative flex flex-col md:flex-row items-center md:items-end gap-6 -mt-16">
+                    <div class="w-32 h-32 rounded-xl bg-white p-1 shadow-xl">
+                        <div class="w-full h-full rounded-2xl bg-gray-50 overflow-hidden border-2 border-white">
+                            @if ($student->photo)
+                                <img src="{{ asset('storage/' . $student->photo) }}" alt="{{ $student->name }}" class="w-full h-full object-cover">
+                            @else
+                                <div class="w-full h-full flex flex-col items-center justify-center text-gray-300">
+                                    <i class="ri-user-line text-4xl"></i>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+                    <div class="flex-1 text-center md:text-left mb-2">
+                        <h1 class="text-3xl font-bold text-gray-800">{{ $student->name }}</h1>
+                        <p class="text-gray-500 text-lg font-medium">S/O {{ $student->father_name }}</p>
+                    </div>
+                    <div class="md:mb-3">
+                         <span class="inline-flex items-center px-4 py-1.5 rounded-full text-sm font-bold bg-teal-100 text-teal-700">
+                            {{ $student->status ? 'Active Student' : 'Inactive' }}
+                        </span>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div>
-            <div class="flex items-center justify-center gap-1">
-                @can('update', $student)
-                    <a href="{{ route('section.students.edit', [$section, $student]) }}">
-                        <i class="bx bx-pencil text-green-600"></i></a>
-                @endcan
-                @can('delete', $student)
-                    <form action="{{ route('section.students.destroy', [$section, $student]) }}" method="post"
-                        onsubmit="return confirmDel(event)">
-                        @csrf
-                        @method('DELETE')
-                        <button><i class="bx bx-trash text-red-600"></i></button>
-                    </form>
-                @endcan
+        {{-- Info Grid --}}
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {{-- Academic Stats --}}
+            <div class="md:col-span-2 space-y-6">
+                <div class="bg-white rounded-xl p-4 md:p-8 shadow-sm border border-gray-100">
+                    <h3 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-6 flex items-center gap-2">
+                        <i class="ri-graduation-cap-line text-teal-500"></i> Academic Details
+                    </h3>
+                    <div class="grid grid-cols-2 gap-y-8">
+                        <div>
+                            <p class="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-1">Class / Section</p>
+                            <p class="text-gray-700 font-bold text-lg">{{ $section->name }}</p>
+                        </div>
+                        <div>
+                            <p class="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-1">Admission Number</p>
+                            <p class="text-indigo-600 font-bold text-lg">#{{ $student->admission_no ?? 'N/A' }}</p>
+                        </div>
+                        <div>
+                            <p class="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-1">Roll Number</p>
+                            <p class="text-gray-700 font-bold text-lg">{{ $student->rollno }}</p>
+                        </div>
+                        <div>
+                            <p class="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-1">Monthly Fee</p>
+                            <div class="flex items-center gap-1">
+                                <span class="text-gray-400 text-sm font-bold">Rs.</span>
+                                <span class="text-green-600 font-bold text-2xl">{{ number_format($student->fee) }}</span>
+                            </div>
+                        </div>
+                         <div>
+                            <p class="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-1">Admission Date</p>
+                            <p class="text-gray-700 font-semibold">{{ $student->admission_date ? $student->admission_date->format('d M, Y') : 'N/A' }}</p>
+                        </div>
+                    </div>
+                </div>
 
+                <div class="bg-white rounded-3xl p-8 shadow-sm border border-gray-100">
+                    <h3 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-6 flex items-center gap-2">
+                        <i class="ri-user-settings-line text-indigo-400"></i> Personal Information
+                    </h3>
+                    <div class="grid grid-cols-2 gap-y-8">
+                         <div>
+                            <p class="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-1">Gender</p>
+                            <p class="text-gray-700 font-semibold uppercase tracking-wide">{{ $student->gender == 'm' ? 'Male' : 'Female' }}</p>
+                        </div>
+                        <div>
+                            <p class="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-1">Date of Birth</p>
+                            <p class="text-gray-700 font-semibold">{{ $student->dob ? $student->dob->format('d M, Y') : 'N/A' }}</p>
+                        </div>
+                        <div class="col-span-2">
+                            <p class="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-1">B-Form / CNIC</p>
+                            <p class="text-gray-700 font-semibold tracking-wider">{{ $student->bform ?? 'N/A' }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Contact & Address --}}
+            <div class="space-y-6">
+                 <div class="bg-white rounded-3xl p-8 shadow-sm border border-gray-100 h-full">
+                    <h3 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-6 flex items-center gap-2">
+                        <i class="ri-contacts-book-line text-orange-400"></i> Contact info
+                    </h3>
+                    <div class="space-y-8">
+                        <div>
+                            <p class="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">Emergency Phone</p>
+                            <a href="tel:{{ $student->phone }}" class="inline-flex items-center gap-2 text-teal-600 font-bold hover:underline">
+                                <i class="ri-phone-fill"></i> {{ $student->phone ?? 'N/A' }}
+                            </a>
+                        </div>
+                         <div>
+                            <p class="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">Residential Address</p>
+                            <div class="flex items-start gap-2 text-gray-600 text-sm leading-relaxed font-medium">
+                                <i class="ri-map-pin-2-fill mt-1 text-gray-300"></i>
+                                <span>{{ $student->address ?? 'No address provided' }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-
-    </div>
-
-    <div class="md:w-4/5 mx-auto grid gap-3 md:p-8 p-5 border rounded mt-6">
-        <h2 class="text-cyan-800">Other Info</h2>
-        <p>Class {{ $section->name }} / <span class="text-slate-400 text-xs">Roll # {{ $student->rollno }}</span></p>
-        <div>
-            <p class="text-sm"> Phone: {{ $student->phone }}</p>
-            <p class="text-slate-500 text-xs">Address: {{ $student->address }}</p>
-        </div>
-
     </div>
 @endsection
 @section('script')

@@ -56,30 +56,13 @@ class LessonPlanController extends Controller
             'total'    => $lessons->flatten()->count(),
         ];
 
-        $defaultConfig   = (new \Mpdf\Config\ConfigVariables())->getDefaults();
-        $defaultFontConf = (new \Mpdf\Config\FontVariables())->getDefaults();
-
         $mpdf = new Mpdf([
             'mode'             => 'utf-8',
             'format'           => 'A4-L',
-            // We mark up Urdu elements manually with lang="ur" + inline font-family,
-            // so auto-detection is not needed and autoLangToFont must be OFF so mPDF
-            // does not override our CSS font-family with its built-in xbriyaz mapping.
-            'autoScriptToLang' => false,
-            'autoLangToFont'   => false,
+            'autoScriptToLang' => true,
+            'autoLangToFont'   => true,
             'default_font'     => 'dejavusanscondensed',
             'tempDir'          => storage_path('app/mpdf-tmp'),
-            'fontDir'          => array_merge($defaultConfig['fontDir'], [storage_path('fonts')]),
-            'fontdata'         => $defaultFontConf['fontdata'] + [
-                'notanastaliqurdu' => [
-                    'R'          => 'NotoNastaliqUrdu-Regular.ttf',
-                    // 0x80 = bit 8: GSUB/GPOS for all RTL & complex scripts (Arabic, Urdu etc.)
-                    // Do NOT use 0xFF — it processes every OTL lookup in the font and
-                    // causes "undefined array key" crashes with complex calligraphic fonts.
-                    'useOTL'     => 0x80,
-                    'useKashida' => 75,
-                ],
-            ],
         ]);
 
         $html = view('lesson-plans.pdf', compact('lessons', 'meta'))->render();

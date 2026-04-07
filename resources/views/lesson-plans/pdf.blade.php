@@ -143,7 +143,8 @@
                                         @if ($lesson->title)
                                             <div style="font-weight:400; {{ $titleStyle }}"
                                                 {{ $titleIsUrdu ? 'lang="ur"' : '' }}>{{ $lesson->title ?? '—' }}</div>
-                                            <div {{ $objectiveIsUrdu ? 'lang="ur"' : '' }}>
+                                            <div style="{{ $objectiveStyle }}"
+                                                {{ $objectiveIsUrdu ? 'lang="ur"' : '' }}>
                                                 {{ $lesson->objective ?? '—' }}</div>
                                             <ul>
                                                 @foreach ($lesson->cues as $cue)
@@ -153,16 +154,20 @@
                                                         );
                                                         $cueStyle = $cueIsUrdu ? $urStyle : $enStyle;
                                                     @endphp
-                                                    <li {{ $cueIsUrdu ? 'lang="ur"' : '' }}>{{ $cue->content }}</li>
+                                                    <li style="{{ $cueStyle }}"
+                                                        {{ $cueIsUrdu ? 'lang="ur"' : '' }}>{{ $cue->content }}</li>
                                                 @endforeach
                                             </ul>
                                         @else
                                             <div style="{{ $enStyle }}">No title</div>
                                         @endif
                                     </td>
-                                    <td {{ $activityIsUrdu ? 'lang="ur"' : '' }}>{{ $lesson->activity ?? '—' }}</td>
-                                    <td {{ $homeworkIsUrdu ? 'lang="ur"' : '' }}>{{ $lesson->homework ?? '—' }}</td>
-                                    <td {{ $remarksIsUrdu ? 'lang="ur"' : '' }}>{{ $lesson->remarks ?? '—' }}</td>
+                                    <td style="{{ $activityStyle }}" {{ $activityIsUrdu ? 'lang="ur"' : '' }}>
+                                        {{ $lesson->activity ?? '—' }}</td>
+                                    <td style="{{ $homeworkStyle }}" {{ $homeworkIsUrdu ? 'lang="ur"' : '' }}>
+                                        {{ $lesson->homework ?? '—' }}</td>
+                                    <td style="{{ $remarksStyle }}" {{ $remarksIsUrdu ? 'lang="ur"' : '' }}>
+                                        {{ $lesson->remarks ?? '—' }}</td>
                                 </tr>
                             @endforeach
                         </tbody>

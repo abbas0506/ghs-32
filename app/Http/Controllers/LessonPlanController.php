@@ -71,7 +71,7 @@ class LessonPlanController extends Controller
                 'notanastaliqurdu' => [
                     'R'          => 'NotoNastaliqUrdu-Regular.ttf',
                     'B'          => 'NotoNastaliqUrdu-Bold.ttf',
-                    'useOTL'     => 0x80,
+                    'useOTL'     => 0xFF,
                     'useKashida' => 75,
                 ],
             ],

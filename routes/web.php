@@ -14,6 +14,7 @@ use App\Http\Controllers\GradeSubjectController;
 use App\Http\Controllers\GradeSubjectLessonController;
 use App\Http\Controllers\ImportStudentController;
 use App\Http\Controllers\LedgerController;
+use App\Http\Controllers\LectureTimingController;
 use App\Http\Controllers\LessonController;
 use App\Http\Controllers\LessonPlanController;
 use App\Http\Controllers\ReportController;
@@ -145,6 +146,7 @@ Route::group(['middleware' => ['auth']], function () {
 
     // Fee
     Route::resource('fee-vouchers', FeeVoucherController::class);
+    Route::resource('lecture-timings', LectureTimingController::class);
     // salaries
     Route::resource('salaries', SalaryController::class);
 

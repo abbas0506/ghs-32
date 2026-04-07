@@ -41,7 +41,7 @@ class StudentPolicy
     public function update(User $user, Student $student): bool
     {
         //
-        return $user->hasAnyRole(['head']);
+        return $user->hasAnyRole(['head','admin']);
     }
 
     /**

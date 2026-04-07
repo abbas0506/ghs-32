@@ -12,7 +12,8 @@ class LectureTimingController extends Controller
      */
     public function index()
     {
-        //
+        $lectures = LectureTiming::orderBy('lecture_no')->get();
+        return view('lecture-timings.index', compact('lectures'));
     }
 
     /**
@@ -20,7 +21,7 @@ class LectureTimingController extends Controller
      */
     public function create()
     {
-        //
+        return view('lecture-timings.create');
     }
 
     /**
@@ -28,7 +29,15 @@ class LectureTimingController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'lecture_no' => 'required|integer|unique:lecture_timings',
+            'starts_at' => 'required',
+            'duration' => 'required|integer',
+        ]);
+
+        LectureTiming::create($request->all());
+
+        return redirect()->route('lecture-timings.index')->with('success', 'Lecture timing created successfully.');
     }
 
     /**
@@ -44,7 +53,7 @@ class LectureTimingController extends Controller
      */
     public function edit(LectureTiming $lectureTiming)
     {
-        //
+        return view('lecture-timings.edit', compact('lectureTiming'));
     }
 
     /**
@@ -52,7 +61,15 @@ class LectureTimingController extends Controller
      */
     public function update(Request $request, LectureTiming $lectureTiming)
     {
-        //
+        $request->validate([
+            'lecture_no' => 'required|integer|unique:lecture_timings,lecture_no,' . $lectureTiming->id,
+            'starts_at' => 'required',
+            'duration' => 'required|integer',
+        ]);
+
+        $lectureTiming->update($request->all());
+
+        return redirect()->route('lecture-timings.index')->with('success', 'Lecture timing updated successfully.');
     }
 
     /**
@@ -60,6 +77,7 @@ class LectureTimingController extends Controller
      */
     public function destroy(LectureTiming $lectureTiming)
     {
-        //
+        $lectureTiming->delete();
+        return redirect()->route('lecture-timings.index')->with('success', 'Lecture timing deleted successfully.');
     }
 }

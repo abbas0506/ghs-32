@@ -4,18 +4,18 @@
     onclick="closeSidebar()"></div>
 
 <aside aria-label="Sidebar" id='sidebar'
-    class="fixed top-0 inset-y-0 left-0 max-w-xs md:max-w-none md:w-60 bg-white text-slate-100 h-screen flex flex-col shadow-lg border-r border-slate-50 z-50 transform md:transform-none transition-all duration-300 ease-out -translate-x-full md:translate-x-0">
+    class="fixed top-0 inset-y-0 left-0 w-full md:w-60 bg-white text-slate-100 h-screen flex flex-col shadow-lg border-r border-slate-50 z-50 transform md:transform-none transition-all duration-300 ease-out -translate-x-full md:translate-x-0">
 
     <!-- Logo Section with Close Button -->
-    <div class="flex items-center justify-between gap-3 px-6 py-6">
+    <div class="relative flex items-center justify-between gap-3 px-6 py-6">
         <div class="flex items-center gap-3">
             <img src="{{ asset('images/logo/ghs-32.png') }}" alt="logo" class="w-10 h-10">
             <h1 class="text-lg font-bold text-slate-900">GHS 32/2L</h1>
         </div>
         <!-- Close Button for Mobile -->
         <button id="close-sidebar-btn" onclick="closeSidebar()"
-            class="md:hidden p-2 rounded-lg hover:bg-slate-200 transition-colors duration-200 text-slate-600 hover:text-slate-900">
-            <i class="bi bi-x-lg text-xl"></i>
+            class="md:hidden absolute top-0 right-2 p-2 rounded-lg hover:bg-slate-200 transition-colors duration-200 text-slate-600 hover:text-slate-900">
+            <i class="bi bi-x text-gray-600"></i>
         </button>
     </div>
 
@@ -102,22 +102,23 @@
                         <i class="bi-gear text-base"></i>
                         <span class="ml-3">Configuration</span>
                     </a>
+                    
                 @endrole
                 @role('head|admin')
                     <a href="{{ route('syllabi.index') }}"
-                        class="group flex items-center px-4 py-1 rounded-lg font-medium text-sm transition-all duration-300 ease-out relative {{ Route::currentRouteName() === 'bulk-invoices.index' ? 'bg-gradient-to-r from-teal-500 to-green-500 text-white' : 'text-slate-600 hover:text-slate-900' }}">
+                        class="group flex items-center px-4 py-1 rounded-lg font-medium text-sm transition-all duration-300 ease-out relative {{ Route::currentRouteName() === 'syllabi.index' ? 'bg-gradient-to-r from-teal-500 to-green-500 text-white' : 'text-slate-600 hover:text-slate-900' }}">
                         <div
-                            class="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-7 bg-gradient-to-b from-teal-500 to-green-500 rounded-full opacity-0 {{ Route::currentRouteName() === 'bulk-invoices.index' ? 'opacity-100' : '' }} transition-opacity duration-300">
+                            class="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-7 bg-gradient-to-b from-teal-500 to-green-500 rounded-full opacity-0 {{ Route::currentRouteName() === 'syllabi.index' ? 'opacity-100' : '' }} transition-opacity duration-300">
                         </div>
-                        <i class="bi-gear text-base"></i>
+                        <i class="bi-book text-base"></i>
                         <span class="ml-3">Syllabus</span>
                     </a>
                     <a href="{{ route('lessons.index') }}"
-                        class="group flex items-center px-4 py-1 rounded-lg font-medium text-sm transition-all duration-300 ease-out relative {{ Route::currentRouteName() === 'bulk-invoices.index' ? 'bg-gradient-to-r from-teal-500 to-green-500 text-white' : 'text-slate-600 hover:text-slate-900' }}">
+                        class="group flex items-center px-4 py-1 rounded-lg font-medium text-sm transition-all duration-300 ease-out relative {{ Route::currentRouteName() === 'lessons.index' ? 'bg-gradient-to-r from-teal-500 to-green-500 text-white' : 'text-slate-600 hover:text-slate-900' }}">
                         <div
-                            class="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-7 bg-gradient-to-b from-teal-500 to-green-500 rounded-full opacity-0 {{ Route::currentRouteName() === 'bulk-invoices.index' ? 'opacity-100' : '' }} transition-opacity duration-300">
+                            class="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-7 bg-gradient-to-b from-teal-500 to-green-500 rounded-full opacity-0 {{ Route::currentRouteName() === 'lessons.index' ? 'opacity-100' : '' }} transition-opacity duration-300">
                         </div>
-                        <i class="bi-gear text-base"></i>
+                        <i class="bi-journal-text text-base"></i>
                         <span class="ml-3">Lesson Plan</span>
                     </a>
                 @endrole

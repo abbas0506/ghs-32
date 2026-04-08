@@ -67,7 +67,7 @@ class User extends Authenticatable
     }
     public function isIncharge()
     {
-        return $this->allocations->where('lecture_no', 1)->count();
+        return $this->schedules->where('lecture_no', 1)->count();
     }
     public function accessibleSections()
     {

@@ -56,6 +56,18 @@
                     class="bg-orange-100 text-orange-600 font-normal text-[10px] rounded-full px-2 py-[1px]">{{ $tasksDue->count() }}
                     Latest</span></div>
         </a>
+        <a href="{{ route('user-schedule.show') }}" class="statbox blue">
+            <div class="flex justify-between items-center flex-1">
+                <div class="">Allocations</div>
+                <div class="ico">
+                    <i class="bi bi-book text-sm md:text-lg"></i>
+                </div>
+            </div>
+            <div class="mt-[1px] text-lg font-semibold">{{ $myAllocationsCount }}
+                <span class="bg-blue-200 text-blue-800 font-normal text-[10px] rounded-full px-2 py-[1px]">
+                    My Subjects</span>
+            </div>
+        </a>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-3 mt-8 md:gap-x-6 gap-y-4">

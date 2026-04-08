@@ -120,6 +120,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::resource('section.lecture.schedule', ScheduleController::class);
     Route::get('class-schedule', [SectionScheduleController::class, 'index'])->name('class-schedule');
     Route::get('class-schedule/print', [SectionScheduleController::class, 'print'])->name('class-schedule.print');
+    Route::get('class-schedule/print-portrait', [SectionScheduleController::class, 'printPortrait'])->name('class-schedule.print-portrait');
     Route::post('class-schedule/post', [SectionScheduleController::class, 'post'])->name('class-schedule.post');
     Route::post('class-schedule/clear', [SectionScheduleController::class, 'clear']);
     Route::get('user-schedule', [UserScheduleController::class, 'index'])->name('user-schedule');
@@ -193,6 +194,7 @@ Route::group(['middleware' => ['auth']], function () {
 
 
     Route::get('/lesson-plans',      [LessonPlanController::class, 'index'])->name('lesson-plans.index');
+    Route::get('/lesson-plans/grade/{grade}/subject/{subject}', [LessonPlanController::class, 'showFullPlan'])->name('lesson-plans.full-plan');
     Route::get('/lesson-plans/pdf',  [LessonPlanController::class, 'exportPdf'])->name('lesson-plans.pdf');
     Route::get('/lesson-plans/generate',  [LessonPlanController::class, 'generate'])->name('lesson-plans.generate');
 });

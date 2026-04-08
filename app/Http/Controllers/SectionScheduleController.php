@@ -34,6 +34,21 @@ class SectionScheduleController extends Controller
         return $pdf->stream($file);
     }
 
+    public function printPortrait()
+    {
+
+        if (session('section_ids'))
+            $sections = Section::whereIn('id', session('section_ids'))->get();
+        else
+            $sections = Section::all();
+
+        $lectures = LectureTiming::all();
+        $pdf = PDF::loadview('schedule.section-wise.pdf-portrait', compact('sections', 'lectures'))->setPaper('a4', 'portrait');
+        $pdf->set_option("isPhpEnabled", true);
+        $file = "schedule_portrait_" . today()->format('dmy');
+        return $pdf->stream($file);
+    }
+
 
     public function clear(Request $request)
     {
@@ -60,6 +75,11 @@ class SectionScheduleController extends Controller
             session([
                 'section_ids' => $sectionIdsArray,
             ]);
+
+            if ($request->layout == 'portrait') {
+                return redirect()->route('class-schedule.print-portrait');
+            }
+
             return redirect()->route('class-schedule.print');
         } catch (Exception $e) {
             return redirect()->back()->withErrors($e->getMessage());

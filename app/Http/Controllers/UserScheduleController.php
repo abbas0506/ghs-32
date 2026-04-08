@@ -22,7 +22,7 @@ class UserScheduleController extends Controller
 
     public function show()
     {
-        $schedules = Auth::user()->allocations;
+        $schedules = Auth::user()->schedules;
         return view('schedule.show', compact('schedules'));
     }
 

@@ -22,8 +22,9 @@
             <i class="bx bx-search absolute top-2 right-2"></i>
         </div>
         <div class="flex gap-3">
-            <a href="{{ url('user-schedule') }}"><i class="bi-repeat text-green-700"></i></a>
-            <a href="#" onclick="submitForm()"><i class="bi-printer text-cyan-700"></i></a>
+            <a href="{{ url('user-schedule') }}"><i class="bi-repeat text-green-700" title="User Schedule"></i></a>
+            <a href="#" onclick="submitForm('landscape')"><i class="bi-printer text-cyan-700" title="Print Landscape (One Row/Section)"></i></a>
+            <a href="#" onclick="submitForm('portrait')"><i class="bi-file-earmark-pdf text-red-700" title="Print Portrait (2 Sections/Page)"></i></a>
             {{-- data clear form --}}
             <form action="{{ url('class-schedule/clear') }}" method="post" onsubmit="return confirmClear(event)">
                 @csrf
@@ -45,6 +46,7 @@
     </div>
     <form action="{{ route('class-schedule.post') }}" method="post" id='form_sections'>
         @csrf
+        <input type="hidden" name="layout" id="layout" value="landscape">
         <div class="overflow-x-auto bg-white w-full mt-2">
             <table class="table-auto sm w-full">
                 <thead>
@@ -147,7 +149,8 @@
 
         }
 
-        function submitForm() {
+        function submitForm(layout = 'landscape') {
+            document.getElementById("layout").value = layout;
             let form = document.getElementById("form_sections"); // storing the form
             form.submit();
         }

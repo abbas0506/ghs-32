@@ -78,5 +78,31 @@ class LessonPlanController extends Controller
             ->header('Content-Disposition', 'inline; filename="' . $filename . '"');
     }
 
+    public function viewSubject(Request $request)
+    {
+        $gradeId = $request->query('grade_id');
+        $subjectId = $request->query('subject_id');
 
+        $grade = Grade::findOrFail($gradeId);
+        $subject = Subject::findOrFail($subjectId);
+
+        $lessons = Lesson::with(['resources', 'cues'])
+            ->where('grade_id', $gradeId)
+            ->where('subject_id', $subjectId)
+            ->orderBy('lesson_no')
+            ->get();
+
+        return view('lesson-plans.view-subject', compact('grade', 'subject', 'lessons'));
+    }
+
+    public function showFullPlan(Grade $grade, Subject $subject)
+    {
+        $lessons = Lesson::with(['resources', 'cues'])
+            ->where('grade_id', $grade->id)
+            ->where('subject_id', $subject->id)
+            ->orderBy('lesson_no')
+            ->get();
+
+        return view('lesson-plans.view-subject', compact('grade', 'subject', 'lessons'));
+    }
 }

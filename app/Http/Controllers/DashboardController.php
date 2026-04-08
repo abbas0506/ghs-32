@@ -43,8 +43,10 @@ class DashboardController extends Controller
         // get new tests for last 7 days
         $newTests = Test::where('created_at', '>=', now()->subDays(7))->get();
 
+        $myAllocationsCount = Auth::user()->schedules()->count();
 
-        return view('dashboard', compact('students', 'tests', 'attendances', 'newAdmissions', 'maxAttendance', 'highestAttenancePercentage', 'tasksDue', 'pendingTasks'));
+
+        return view('dashboard', compact('students', 'tests', 'attendances', 'newAdmissions', 'maxAttendance', 'highestAttenancePercentage', 'tasksDue', 'pendingTasks', 'myAllocationsCount'));
     }
 
     /**

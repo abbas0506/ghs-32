@@ -37,12 +37,12 @@
             </div>
             <p class="text-xs md:text-sm text-slate-400 mt-1">Create and preview time table</p>
         </a>
-        <a href="{{ route('lecture-timings.index') }}"
-            class="group flex items-center px-4 py-1 rounded-lg font-medium text-sm transition-all duration-300 ease-out relative {{ Route::currentRouteName() === 'lecture-timings.index' ? 'bg-gradient-to-r from-teal-500 to-green-500 text-white' : 'text-slate-600 hover:text-slate-900' }}">
-            <div class="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-7 bg-gradient-to-b from-teal-500 to-green-500 rounded-full opacity-0 {{ Route::currentRouteName() === 'lecture-timings.index' ? 'opacity-100' : '' }} transition-opacity duration-300">
+        <a href="{{ route('lecture-timings.index') }}" class="pallet">
+            <div class="flex items-center space-x-3">
+                <i class="bi-clock text-lg bg-teal-50 p-1 rounded"></i>
+                <p>Lecture Timings </p>
             </div>
-            <i class="bi-clock text-base"></i>
-            <span class="ml-3">Lecture Timings</span>
+            <p class="text-xs md:text-sm text-slate-400 mt-1">Edit lecture timings, add or remove periods</p>
         </a>
         <a href="{{ route('tasks.index') }}" class="pallet">
             <div class="flex items-center space-x-3">

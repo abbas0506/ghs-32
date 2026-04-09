@@ -19,12 +19,7 @@
             <input type="text" id='searchby' placeholder="Search ..." class="custom-search w-full" oninput="search(event)">
             <i class="bx bx-search absolute top-2 right-2"></i>
         </div>
-        <div class="flex gap-3">
-            <a href="{{ url('class-schedule') }}"><i class="bi-repeat text-green-700"></i></a>
-            <a href="#" onclick="setPrintModeAndSubmitForm(0)"><i class="bi-printer text-cyan-700"></i></a>
-            <a href="{{ route('schedule-slips') }}" target="_blank"><i class="bi-grid text-cyan-700"></i></a>
         </div>
-    </div>
 
     <!-- page message -->
     @if ($errors->any())

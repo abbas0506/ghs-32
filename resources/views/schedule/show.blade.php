@@ -12,14 +12,14 @@
         }
     </style>
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8">
+    <div class="max-w-7xl mx-auto">
         <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6 md:mb-8">
             <div>
-                <h1 class="text-2xl md:text-3xl font-bold md:font-extrabold text-slate-900 tracking-tight">My Schedule</h1>
+                <h1 class="text-lg md:text-xl font-bold text-slate-800 tracking-tight">My Schedule</h1>
                 <div class="flex items-center mt-1 md:mt-2 text-xs md:text-sm text-slate-500 font-medium">
-                    <a href="{{ url('/') }}" class="hover:text-blue-600 transition-colors">Dashboard</a>
+                    <a href="{{ url('/') }}" class="link">Dashboard</a>
                     <span class="mx-2 text-slate-300">/</span>
-                    <span class="text-blue-600">Allocations</span>
+                    <span class="text-slate-600">Allocations</span>
                 </div>
             </div>
             <div class="mt-3 md:mt-0 flex items-center bg-white px-3 py-1.5 md:px-4 md:py-2 rounded-lg border border-slate-200 shadow-sm">

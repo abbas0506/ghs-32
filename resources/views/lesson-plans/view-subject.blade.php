@@ -7,11 +7,11 @@
                 <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 uppercase tracking-widest mb-3">
                     Grade {{ $grade->grade_no }} • {{ $subject->name }}
                 </span>
-                <h1 class="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight">Lesson Plan</h1>
-                <p class="text-slate-500 mt-2 font-medium">Chronological roadmap of topics and objectives</p>
+                <h1 class="text-lg md:text-xl font-bold text-slate-800 tracking-tight">Lesson Plan</h1>
+                <p class="text-slate-500 mt-2">Chronological roadmap of topics and objectives</p>
             </div>
             <div class="mt-6 md:mt-0">
-                <a href="{{ route('user-schedule.show') }}" class="inline-flex items-center px-4 py-2 bg-white border border-slate-300 rounded-xl font-bold text-slate-700 hover:bg-slate-50 transition-all shadow-sm">
+                <a href="{{ route('user-schedule.show') }}" class="inline-flex items-center px-4 py-2 bg-white border border-slate-300 rounded-xl text-slate-700 hover:bg-slate-50 transition-all shadow-sm">
                     <i class="bi bi-arrow-left mr-2"></i>
                     Back to Schedule
                 </a>
@@ -51,7 +51,23 @@
                              </div>
                              @endif
 
-                             @if($lesson->homework)
+                             @if ($lesson->cues->count() > 0)
+                                 <details class="group mb-4">
+                                     <summary class="flex items-center justify-between cursor-pointer list-none focus:outline-none">
+                                         <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Lesson Cues ({{ $lesson->cues->count() }})</p>
+                                         <i class="bi bi-chevron-down text-[10px] text-slate-400 group-open:rotate-180 transition-transform"></i>
+                                     </summary>
+                                     <div class="mt-2 p-3 bg-slate-50/50 rounded-xl border border-slate-100">
+                                         <ul class="list-disc list-inside text-sm text-slate-600 space-y-1">
+                                             @foreach ($lesson->cues as $cue)
+                                                 <li>{{ $cue->content }}</li>
+                                             @endforeach
+                                         </ul>
+                                     </div>
+                                 </details>
+                             @endif
+
+                             @if ($lesson->homework)
                              <div class="pt-4 border-t border-slate-50 flex items-start">
                                  <div class="w-8 h-8 rounded-lg bg-orange-50 flex items-center justify-center mr-3 flex-shrink-0">
                                      <i class="bi bi-house-door text-orange-500"></i>
@@ -65,12 +81,12 @@
                         </div>
                     </div>
                 @empty
-                    <div class="text-center py-20 bg-slate-50 rounded-3xl border-2 border-dashed border-slate-200">
+                    <div class="text-center py-20 bg-slate-50 rounded-3xl border-2 border-dashed border-slate-200 px-3">
                         <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm">
                             <i class="bi bi-journal-x text-2xl text-slate-300"></i>
                         </div>
-                        <h3 class="text-lg font-bold text-slate-800">No Lessons Found</h3>
-                        <p class="text-slate-500 text-sm">A lesson plan hasn't been created for this subject yet.</p>
+                        <h3 class="text-lg font-semibold text-slate-800">No Lessons Found</h3>
+                        <p class="text-slate-500 text-xs">A lesson plan hasn't been created for this subject yet.</p>
                     </div>
                 @endforelse
             </div>

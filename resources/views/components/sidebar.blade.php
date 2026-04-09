@@ -7,125 +7,138 @@
     class="fixed top-0 inset-y-0 left-0 w-full md:w-60 bg-white text-slate-100 h-screen flex flex-col shadow-lg border-r border-slate-50 z-50 transform md:transform-none transition-all duration-300 ease-out -translate-x-full md:translate-x-0">
 
     <!-- Logo Section with Close Button -->
-    <div class="relative flex items-center justify-between gap-3 px-6 py-6">
-        <div class="flex items-center gap-3">
-            <img src="{{ asset('images/logo/ghs-32.png') }}" alt="logo" class="w-10 h-10">
-            <h1 class="text-lg font-bold text-slate-900">GHS 32/2L</h1>
-        </div>
+    <div class="fixed right-2 top-2">
         <!-- Close Button for Mobile -->
         <button id="close-sidebar-btn" onclick="closeSidebar()"
-            class="md:hidden absolute top-0 right-2 p-2 rounded-lg hover:bg-slate-200 transition-colors duration-200 text-slate-600 hover:text-slate-900">
-            <i class="bi bi-x text-gray-600"></i>
+            class="md:hidden p-2 rounded-lg hover:bg-slate-100 transition-colors duration-200 text-slate-500">
+            <i class="bi bi-x-lg text-lg"></i>
         </button>
     </div>
 
+    <!-- User Profile Section -->
+    <div class="px-4 py-6">
+        <div class="bg-slate-50 rounded-2xl p-4 border border-slate-100">
+            @php
+                $fullName = Auth::user()->profile->name ?? (Auth::user()->name ?? 'User');
+                $parts = preg_split('/\s+/', trim($fullName));
+                $initials = '';
+                if (!empty($parts)) {
+                    $initials = strtoupper(mb_substr($parts[0], 0, 1));
+                    if (count($parts) > 1) {
+                        $initials .= strtoupper(mb_substr(end($parts), 0, 1));
+                    }
+                }
+                $currentRole = session('role') ?? Auth::user()->roles->first()->name;
+            @endphp
+            
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-bold text-sm shadow-sm">
+                    {{ $initials }}
+                </div>
+                <div class="flex-1 min-w-0">
+                    <p class="text-sm font-bold text-slate-800 truncate">{{ $fullName }}</p>
+                    <p class="text-[10px] uppercase tracking-widest text-slate-500 font-semibold">{{ ucfirst($currentRole) }}</p>
+                </div>
+            </div>
+
+            {{-- Role Switcher --}}
+            @if(Auth::user()->roles->count() > 1)
+            <div class="space-y-1">
+                <p class="text-[9px] uppercase tracking-tighter text-slate-400 font-bold mb-1">Switch Role</p>
+                <div class="flex flex-wrap gap-1">
+                    @foreach (Auth::user()->roles as $role)
+                        @php $isActive = ($role->name == $currentRole); @endphp
+                        <a href="{{ url('switch/as', $role->name) }}" 
+                           class="px-2 py-1 rounded text-[10px] font-bold transition-all {{ $isActive ? 'bg-indigo-600 text-white' : 'bg-white text-slate-600 hover:bg-slate-200 border border-slate-200' }}">
+                            {{ ucfirst($role->name) }}
+                        </a>
+                    @endforeach
+                </div>
+            </div>
+            @endif
+        </div>
+    </div>
+
     <!-- Navigation Section -->
-    <nav class="flex-1 overflow-y-auto px-4 py-6">
+    <nav class="flex-1 overflow-y-auto px-4 py-2">
         <!-- Main Menu Section -->
-        <div class="mb-1">
-            <h2 class="px-4 py-2 text-xs font-bold uppercase tracking-wider text-slate-500 mb-3">Main Menu</h2>
-            <div class="space-y-0">
+        <div>
+            <h2 class="px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">Navigation</h2>
+            <div class="space-y-1">
                 <!-- Home -->
                 <a href="{{ url('/') }}"
-                    class="group flex items-center px-4 py-1 rounded-lg font-medium text-sm transition-all duration-300 ease-out relative {{ request()->path() === 'dashboard' ? 'bg-gradient-to-r from-teal-500 to-green-500 text-white' : 'text-slate-600 hover:text-slate-900' }}">
-                    <div
-                        class="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-7 bg-gradient-to-b from-teal-500 to-green-500 rounded-full opacity-0 {{ request()->path() === 'dashboard' ? 'opacity-100' : '' }} transition-opacity duration-300">
-                    </div>
-                    <i class="bi-house text-base"></i>
-                    <span class="ml-3">Home</span>
+                    class="group flex items-center px-4 py-2 rounded-xl font-semibold text-sm transition-all duration-200 relative {{ request()->is('dashboard') || request()->is('/') ? 'bg-indigo-50 text-indigo-700' : 'text-slate-600 hover:bg-slate-50' }}">
+                    <i class="bi-house-door text-lg mr-3"></i>
+                    <span>Home</span>
                 </a>
 
                 <!-- Attendance -->
                 <a href="{{ route('attendance.summary') }}"
-                    class="group flex items-center px-4 py-1 rounded-lg font-medium text-sm transition-all duration-300 ease-out relative {{ Route::currentRouteName() === 'attendance.summary' ? 'bg-gradient-to-r from-teal-500 to-green-500 text-white' : 'text-slate-600 hover:text-slate-900' }}">
-                    <div
-                        class="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-7 bg-gradient-to-b from-teal-500 to-green-500 rounded-full opacity-0 {{ Route::currentRouteName() === 'attendance.summary' ? 'opacity-100' : '' }} transition-opacity duration-300">
-                    </div>
-                    <i class="bi bi-person-check text-base"></i>
-                    <span class="ml-3">Attendance</span>
+                    class="group flex items-center px-4 py-2 rounded-xl font-semibold text-sm transition-all duration-200 relative {{ request()->routeIs('attendance.*') ? 'bg-indigo-50 text-indigo-700' : 'text-slate-600 hover:bg-slate-50' }}">
+                    <i class="bi-person-check text-lg mr-3"></i>
+                    <span>Attendance</span>
                 </a>
 
                 <!-- Assessment -->
                 <a href="{{ route('tests.index') }}"
-                    class="group flex items-center px-4 py-1 rounded-lg font-medium text-sm transition-all duration-300 ease-out relative {{ Route::currentRouteName() === 'tests.index' ? 'bg-gradient-to-r from-teal-500 to-green-500 text-white' : 'text-slate-600 hover:text-slate-900' }}">
-                    <div
-                        class="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-7 bg-gradient-to-b from-teal-500 to-green-500 rounded-full opacity-0 {{ Route::currentRouteName() === 'tests.index' ? 'opacity-100' : '' }} transition-opacity duration-300">
-                    </div>
-                    <i class="bi-clipboard-check text-base"></i>
-                    <span class="ml-3">Assessment</span>
+                    class="group flex items-center px-4 py-2 rounded-xl font-semibold text-sm transition-all duration-200 relative {{ request()->routeIs('tests.*') ? 'bg-indigo-50 text-indigo-700' : 'text-slate-600 hover:bg-slate-50' }}">
+                    <i class="bi-journal-check text-lg mr-3"></i>
+                    <span>Assessment</span>
                 </a>
 
                 <!-- Fee -->
                 <a href="{{ route('fee-vouchers.index') }}"
-                    class="group flex items-center px-4 py-1 rounded-lg font-medium text-sm transition-all duration-300 ease-out relative {{ Route::currentRouteName() === 'bulk-invoices.index' ? 'bg-gradient-to-r from-teal-500 to-green-500 text-white' : 'text-slate-600 hover:text-slate-900' }}">
-                    <div
-                        class="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-7 bg-gradient-to-b from-teal-500 to-green-500 rounded-full opacity-0 {{ Route::currentRouteName() === 'bulk-invoices.index' ? 'opacity-100' : '' }} transition-opacity duration-300">
-                    </div>
-                    <i class="bi-receipt text-base"></i>
-                    <span class="ml-3">Fee</span>
+                    class="group flex items-center px-4 py-2 rounded-xl font-semibold text-sm transition-all duration-200 relative {{ request()->routeIs('fee-vouchers.*') || request()->routeIs('bulk-invoices.*') ? 'bg-indigo-50 text-indigo-700' : 'text-slate-600 hover:bg-slate-50' }}">
+                    <i class="bi-receipt text-lg mr-3"></i>
+                    <span>Fee</span>
                 </a>
+
                 @role('head')
-                    <!-- Salaries -->
                     <a href="{{ route('salaries.index') }}"
-                        class="group flex items-center px-4 py-1 rounded-lg font-medium text-sm transition-all duration-300 ease-out relative {{ Route::currentRouteName() === 'salaries.index' ? 'bg-gradient-to-r from-teal-500 to-green-500 text-white' : 'text-slate-600 hover:text-slate-900' }}">
-                        <div
-                            class="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-7 bg-gradient-to-b from-teal-500 to-green-500 rounded-full opacity-0 {{ Route::currentRouteName() === 'salaries.index' ? 'opacity-100' : '' }} transition-opacity duration-300">
-                        </div>
-                        <i class="bi-receipt text-base"></i>
-                        <span class="ml-3">Salaries</span>
+                        class="group flex items-center px-4 py-2 rounded-xl font-semibold text-sm transition-all duration-200 relative {{ request()->routeIs('salaries.*') ? 'bg-indigo-50 text-indigo-700' : 'text-slate-600 hover:bg-slate-50' }}">
+                        <i class="bi-cash-stack text-lg mr-3"></i>
+                        <span>Salaries</span>
                     </a>
-
-                    <!-- Expenses -->
                     <a href="{{ route('expenses.index') }}"
-                        class="group flex items-center px-4 py-1 rounded-lg font-medium text-sm transition-all duration-300 ease-out relative {{ Route::currentRouteName() === 'expenses.index' ? 'bg-gradient-to-r from-teal-500 to-green-500 text-white' : 'text-slate-600 hover:text-slate-900' }}">
-                        <div
-                            class="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-7 bg-gradient-to-b from-teal-500 to-green-500 rounded-full opacity-0 {{ Route::currentRouteName() === 'expenses.index' ? 'opacity-100' : '' }} transition-opacity duration-300">
-                        </div>
-                        <i class="bi-coin text-base"></i>
-                        <span class="ml-3">Expenses</span>
+                        class="group flex items-center px-4 py-2 rounded-xl font-semibold text-sm transition-all duration-200 relative {{ request()->routeIs('expenses.*') ? 'bg-indigo-50 text-indigo-700' : 'text-slate-600 hover:bg-slate-50' }}">
+                        <i class="bi-wallet2 text-lg mr-3"></i>
+                        <span>Expenses</span>
                     </a>
-
-                    <!-- Accounts -->
                     <a href="{{ route('ledger.index') }}"
-                        class="group flex items-center px-4 py-1 rounded-lg font-medium text-sm transition-all duration-300 ease-out relative {{ Route::currentRouteName() === 'ledger.index' ? 'bg-gradient-to-r from-teal-500 to-green-500 text-white' : 'text-slate-600 hover:text-slate-900' }}">
-                        <div
-                            class="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-7 bg-gradient-to-b from-teal-500 to-green-500 rounded-full opacity-0 {{ Route::currentRouteName() === 'ledger.index' ? 'opacity-100' : '' }} transition-opacity duration-300">
-                        </div>
-                        <i class="bi-receipt text-base"></i>
-                        <span class="ml-3">Accounts</span>
+                        class="group flex items-center px-4 py-2 rounded-xl font-semibold text-sm transition-all duration-200 relative {{ request()->routeIs('ledger.*') ? 'bg-indigo-50 text-indigo-700' : 'text-slate-600 hover:bg-slate-50' }}">
+                        <i class="bi-journal-album text-lg mr-3"></i>
+                        <span>Accounts</span>
                     </a>
                     <a href="{{ route('config') }}"
-                        class="group flex items-center px-4 py-1 rounded-lg font-medium text-sm transition-all duration-300 ease-out relative {{ Route::currentRouteName() === 'bulk-invoices.index' ? 'bg-gradient-to-r from-teal-500 to-green-500 text-white' : 'text-slate-600 hover:text-slate-900' }}">
-                        <div
-                            class="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-7 bg-gradient-to-b from-teal-500 to-green-500 rounded-full opacity-0 {{ Route::currentRouteName() === 'bulk-invoices.index' ? 'opacity-100' : '' }} transition-opacity duration-300">
-                        </div>
-                        <i class="bi-gear text-base"></i>
-                        <span class="ml-3">Configuration</span>
-                    </a>
-                    
-                @endrole
-                @role('head|admin')
-                    <a href="{{ route('syllabi.index') }}"
-                        class="group flex items-center px-4 py-1 rounded-lg font-medium text-sm transition-all duration-300 ease-out relative {{ Route::currentRouteName() === 'syllabi.index' ? 'bg-gradient-to-r from-teal-500 to-green-500 text-white' : 'text-slate-600 hover:text-slate-900' }}">
-                        <div
-                            class="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-7 bg-gradient-to-b from-teal-500 to-green-500 rounded-full opacity-0 {{ Route::currentRouteName() === 'syllabi.index' ? 'opacity-100' : '' }} transition-opacity duration-300">
-                        </div>
-                        <i class="bi-book text-base"></i>
-                        <span class="ml-3">Syllabus</span>
-                    </a>
-                    <a href="{{ route('lessons.index') }}"
-                        class="group flex items-center px-4 py-1 rounded-lg font-medium text-sm transition-all duration-300 ease-out relative {{ Route::currentRouteName() === 'lessons.index' ? 'bg-gradient-to-r from-teal-500 to-green-500 text-white' : 'text-slate-600 hover:text-slate-900' }}">
-                        <div
-                            class="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-7 bg-gradient-to-b from-teal-500 to-green-500 rounded-full opacity-0 {{ Route::currentRouteName() === 'lessons.index' ? 'opacity-100' : '' }} transition-opacity duration-300">
-                        </div>
-                        <i class="bi-journal-text text-base"></i>
-                        <span class="ml-3">Lesson Plan</span>
+                        class="group flex items-center px-4 py-2 rounded-xl font-semibold text-sm transition-all duration-200 relative {{ request()->is('config') ? 'bg-indigo-50 text-indigo-700' : 'text-slate-600 hover:bg-slate-50' }}">
+                        <i class="bi-gear text-lg mr-3"></i>
+                        <span>Configuration</span>
                     </a>
                 @endrole
 
+                @role('head|admin')
+                    <a href="{{ route('syllabi.index') }}"
+                        class="group flex items-center px-4 py-2 rounded-xl font-semibold text-sm transition-all duration-200 relative {{ request()->routeIs('syllabi.*') ? 'bg-indigo-50 text-indigo-700' : 'text-slate-600 hover:bg-slate-50' }}">
+                        <i class="bi-book text-lg mr-3"></i>
+                        <span>Syllabus</span>
+                    </a>
+                    <a href="{{ route('lessons.index') }}"
+                        class="group flex items-center px-4 py-2 rounded-xl font-semibold text-sm transition-all duration-200 relative {{ request()->routeIs('lessons.*') ? 'bg-indigo-50 text-indigo-700' : 'text-slate-600 hover:bg-slate-50' }}">
+                        <i class="bi-journal-text text-lg mr-3"></i>
+                        <span>Lesson Plan</span>
+                    </a>
+                @endrole
             </div>
         </div>
     </nav>
+
+    {{-- Mobile Signout - Bottom only --}}
+    <div class="md:hidden px-4 py-6 border-t border-slate-50">
+        <a href="{{ route('signout') }}" class="flex items-center justify-center gap-2 p-4 bg-red-50 text-red-600 rounded-2xl font-bold text-sm hover:bg-red-100 transition-colors">
+            <i class="bi bi-box-arrow-right text-xl"></i>
+            <span>Sign out</span>
+        </a>
+    </div>
 
 </aside>
 
@@ -144,11 +157,9 @@
         if (backdrop) backdrop.classList.add('opacity-0', 'invisible');
     }
 
-    // Expose functions to global scope
     window.openSidebar = openSidebar;
     window.closeSidebar = closeSidebar;
 
-    // Close sidebar when clicking on a link (only on mobile)
     document.addEventListener('DOMContentLoaded', function() {
         document.querySelectorAll('#sidebar a').forEach(link => {
             link.addEventListener('click', function() {

@@ -22,9 +22,10 @@
             <i class="bx bx-search absolute top-2 right-2"></i>
         </div>
         <div class="flex gap-3">
-            <a href="{{ url('user-schedule') }}"><i class="bi-repeat text-green-700" title="User Schedule"></i></a>
-            <a href="#" onclick="submitForm('landscape')"><i class="bi-printer text-cyan-700" title="Print Landscape (One Row/Section)"></i></a>
-            <a href="#" onclick="submitForm('portrait')"><i class="bi-file-earmark-pdf text-red-700" title="Print Portrait (2 Sections/Page)"></i></a>
+            <a href="{{ url('user-schedule') }}"><i class="bi-person-badge text-green-700" title="Teacher-wise Timetable"></i></a>
+            <a href="#" onclick="submitForm('landscape')"><i class="bi-view-stacked text-cyan-700" title="All Classes Unified (Landscape)"></i></a>
+            <a href="#" onclick="submitForm('portrait')"><i class="bi-layout-split text-red-700" title="Section-wise (2 per page)"></i></a>
+            <a href="{{ route('schedule-slips') }}" target="_blank"><i class="bi-grid-3x3-gap text-cyan-700" title="Clean Slips View"></i></a>
             {{-- data clear form --}}
             <form action="{{ url('class-schedule/clear') }}" method="post" onsubmit="return confirmClear(event)">
                 @csrf

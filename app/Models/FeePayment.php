@@ -14,6 +14,10 @@ class FeePayment extends Model
         'payment_date',
     ];
 
+    protected $casts = [
+        'payment_date' => 'date',
+    ];
+
     public function feeVoucher()
     {
         return $this->belongsTo(FeeVoucher::class);

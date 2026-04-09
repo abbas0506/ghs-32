@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Fee;
+use App\Models\FeePayment;
 use App\Models\Section;
 use App\Models\Student;
-use App\Models\Voucher;
+use App\Models\FeeVoucher;
 use Exception;
 use Illuminate\Http\Request;
 
@@ -14,11 +14,11 @@ class VoucherPaymentController extends Controller
     public function index($voucherId, $sectionId)
     {
         //
-        $this->authorize('viewAny', Fee::class);
+        // $this->authorize('viewAny', FeePayment::class);
 
-        $voucher = Voucher::find($voucherId);
-        $section = Section::find($sectionId);
-        $fees = Fee::where('voucher_id', $voucherId)
+        $voucher = FeeVoucher::findOrFail($voucherId);
+        $section = Section::findOrFail($sectionId);
+        $fees = FeePayment::where('fee_voucher_id', $voucherId)
             ->whereHas('student', function ($query) use ($sectionId) {
                 $query->where('section_id', $sectionId);
             })
@@ -50,11 +50,11 @@ class VoucherPaymentController extends Controller
     public function show($voucherId, $sectionId, $studentId)
     {
         //
-        $section = Section::find($sectionId);
-        $this->authorize('view', $section);
+        $section = Section::findOrFail($sectionId);
+        // $this->authorize('view', $section);
 
-        $voucher = Voucher::find($voucherId);
-        $student = Student::find($studentId);
+        $voucher = FeeVoucher::findOrFail($voucherId);
+        $student = Student::findOrFail($studentId);
 
         return view('vouchers.payments.show', compact('voucher', 'section', 'student'));
     }
@@ -65,11 +65,11 @@ class VoucherPaymentController extends Controller
     public function edit($voucherId, $sectionId, $feeId)
     {
         //
-        $fee = Fee::find($feeId);
-        $this->authorize('update', $fee);
+        $fee = FeePayment::findOrFail($feeId);
+        // $this->authorize('update', $fee);
 
-        $voucher = Voucher::find($voucherId);
-        $section = Section::find($sectionId);
+        $voucher = FeeVoucher::findOrFail($voucherId);
+        $section = Section::findOrFail($sectionId);
         $student = $fee->student;
 
         return view('vouchers.payments.edit', compact('voucher', 'section', 'student', 'fee'));
@@ -81,30 +81,27 @@ class VoucherPaymentController extends Controller
     public function update(Request $request, $voucherId, $sectionId, $feeId)
     {
         //
-        $fee = Fee::find($feeId);
-        $this->authorize('update', $fee);
+        $fee = FeePayment::findOrFail($feeId);
+        // $this->authorize('update', $fee);
 
         try {
-            $section = Section::find($sectionId);
-            $voucher = Voucher::find($voucherId);
-            if (!$request->amount)
-                $fee->update(
-                    [
-                        'status' => 1,
-                    ]
-                );
-            else {
-                $fee->update(
-                    [
-                        'status' => $request->status,
-                        'amount' => $request->amount
-                    ]
-                );
+            $section = Section::findOrFail($sectionId);
+            $voucher = FeeVoucher::findOrFail($voucherId);
+            
+            // If payment_date is provided, use it. Otherwise if status is 1, set to today.
+            if ($request->has('payment_date')) {
+                $paymentDate = $request->payment_date;
+            } else {
+                $paymentDate = $request->status == 1 ? now()->toDateString() : null;
             }
+
+            $fee->update([
+                'payment_date' => $paymentDate,
+            ]);
+
             return redirect()->route('voucher.section.payments.index', [$voucher, $section])->with('success', 'Successfully updated');
         } catch (Exception $e) {
             return redirect()->back()->withErrors($e->getMessage());
-            // something went wrong
         }
     }
 
@@ -114,67 +111,59 @@ class VoucherPaymentController extends Controller
     public function destroy($voucherId, $sectionId, $id)
     {
         //
-        $fee = Fee::find($id);
-        $this->authorize('delete', $fee);
+        $fee = FeePayment::findOrFail($id);
+        // $this->authorize('delete', $fee);
 
         try {
-
             $fee->delete();
             return redirect()->route('voucher.section.payments.index', [$voucherId, $sectionId])->with('success', 'Successfully deleted');
         } catch (Exception $e) {
             return redirect()->back()->withErrors($e->getMessage());
-            // something went wrong
         }
     }
 
     public function import($voucherId, $sectionId)
     {
-        $voucher = Voucher::findOrFail($voucherId);
+        $voucher = FeeVoucher::findOrFail($voucherId);
         $section = Section::findOrFail($sectionId);
 
         // missing students
         $students = Student::where('section_id', $sectionId)
-            ->whereDoesntHave('fees', function ($query) use ($voucherId) {
-                $query->where('voucher_id', $voucherId);
+            ->whereDoesntHave('feePayments', function ($query) use ($voucherId) {
+                $query->where('fee_voucher_id', $voucherId);
             })
             ->get();
         return view('vouchers.payments.import', compact('voucher', 'section', 'students'));
     }
+
     public function postImport(Request $request, $voucherId, $sectionId)
     {
         $request->validate([
-            'student_ids_array' => 'required',
+            'student_ids_array' => 'required|array',
         ]);
 
-
         try {
-            $voucher = Voucher::findOrFail($voucherId);
+            $voucher = FeeVoucher::findOrFail($voucherId);
             $section = Section::findOrFail($sectionId);
 
-            // Get selected student IDs
-            $studentIdsArray = array();
             $studentIdsArray = $request->student_ids_array;
             $students = Student::whereIn('id', $studentIdsArray)->get();
 
             foreach ($students as $student) {
-                // Bulk update
-                $student->fees()->create([
-                    'voucher_id' => $voucher->id,
-                    'amount' => $student->fee,
-
+                $voucher->feePayments()->create([
+                    'student_id' => $student->id,
                 ]);
             }
             return redirect()->route('voucher.section.payments.index', [$voucherId, $sectionId])->with('success', 'Successfully imported!');
         } catch (Exception $e) {
             return redirect()->back()->withErrors($e->getMessage());
-            // something went wrong
         }
     }
+
     public function postClean($voucherId, $sectionId)
     {
-        //
         try {
-            Fee::where('voucher_id', $voucherId)
+            FeePayment::where('fee_voucher_id', $voucherId)
                 ->whereHas('student', function ($query) use ($sectionId) {
                     $query->where('section_id', $sectionId);
                 })
@@ -182,7 +171,6 @@ class VoucherPaymentController extends Controller
             return redirect()->back()->with('success', 'Successfully cleaned');
         } catch (Exception $e) {
             return redirect()->back()->withErrors($e->getMessage());
-            // something went wrong
         }
     }
 }

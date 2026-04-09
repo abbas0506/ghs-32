@@ -19,9 +19,9 @@ class FeeVoucherController extends Controller
     public function index()
     {
         //get all fee vouchers
-        $sectionId = Auth::user()->accessibleSections()->pluck('id');
-        $feeVouchers = FeeVoucher::whereHas('feePayments.student', function ($query) use ($sectionId) {
-            $query->where('section_id', $sectionId);
+        $sectionIds = Auth::user()->accessibleSections()->pluck('id');
+        $feeVouchers = FeeVoucher::whereHas('feePayments.student', function ($query) use ($sectionIds) {
+            $query->whereIn('section_id', $sectionIds);
         })->get();
 
         return view('fee-vouchers.index', compact('feeVouchers'));
@@ -87,6 +87,10 @@ class FeeVoucherController extends Controller
     public function show(FeeVoucher $feeVoucher)
     {
         //
+        $sectionIds = Auth::user()->accessibleSections()->pluck('id');
+        $sections = Section::whereIn('id', $sectionIds)->get();
+        $students = Student::whereIn('section_id', $sectionIds)->get();
+        return view('fee-vouchers.show', compact('feeVoucher', 'students','sections'));
     }
 
     /**

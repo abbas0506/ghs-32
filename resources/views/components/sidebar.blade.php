@@ -32,8 +32,11 @@
             @endphp
             
             <div class="flex items-center gap-3 mb-4">
-                <div class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-bold text-sm shadow-sm">
+                <!-- <div class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-bold text-sm shadow-sm">
                     {{ $initials }}
+                </div> -->
+                <div class="w-10 h-10" >
+                    <img src="{{ asset('images/logo/ghs-32.png') }}" alt="logo" class="w-full h-full object-cover rounded-xl">
                 </div>
                 <div class="flex-1 min-w-0">
                     <p class="text-sm font-bold text-slate-800 truncate">{{ $fullName }}</p>

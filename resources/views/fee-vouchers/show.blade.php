@@ -120,13 +120,13 @@
             </div>
 
             <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse">
+                <table class="table-fixed w-full text-left border-collapse">
                     <thead>
                         <tr class="bg-slate-50/50 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b border-gray-100">
-                            <th class="px-8 py-4">Section / Class</th>
-                            <th class="px-8 py-4">Status Overview</th>
-                            <th class="px-8 py-4 text-center">Collection %</th>
-                            <th class="px-8 py-4 text-right">Actions</th>
+                            <th class="w-24 px-5 py-2">Class</th>
+                            <th class="w-40 px-5 py-2">Status</th>
+                            <th class="w-40 px-5 py-2">Collection %</th>
+                            <th class="w-40 px-5 py-2">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -138,18 +138,13 @@
                                 $secPercentage = $totalCount > 0 ? round(($paidCount / $totalCount) * 100) : 0;
                             @endphp
                             <tr class="group hover:bg-slate-50 transition-all border-b border-gray-50 last:border-0">
-                                <td class="px-8 py-5">
-                                    <div class="flex items-center gap-3">
-                                        <div class="w-8 h-8 rounded-lg bg-teal-50 text-teal-600 flex items-center justify-center font-black text-xs">
-                                            {{ substr($section->name, 0, 1) }}
-                                        </div>
-                                        <div>
-                                            <p class="text-sm font-bold text-slate-700 leading-none mb-1">{{ $section->name }}</p>
-                                            <p class="text-[10px] text-slate-400 font-medium">Class Section</p>
-                                        </div>
+                                <td class="px-8 py-2">
+                                   <div>
+                                        <p class="text-sm font-bold text-slate-700 leading-none mb-1">{{ $section->name }}</p>
+                                        <p class="text-[10px] text-slate-400 font-medium">Class</p>
                                     </div>
                                 </td>
-                                <td class="px-8 py-5">
+                                <td class="px-8 py-2">
                                     <div class="flex items-center gap-2">
                                         <p class="text-sm font-black text-slate-700">{{ $paidCount }} <span class="text-slate-300 font-medium">/ {{ $totalCount }}</span></p>
                                         @if ($paidToday)
@@ -160,7 +155,7 @@
                                     </div>
                                     <p class="text-[10px] text-slate-400 font-medium">Students Paid</p>
                                 </td>
-                                <td class="px-8 py-5">
+                                <td class="px-8 py-2">
                                     <div class="flex flex-col items-center justify-center w-full">
                                         <div class="w-32 bg-slate-100 h-1 rounded-full overflow-hidden mb-1">
                                             <div class="h-full bg-teal-500 rounded-full transition-all" style="width: {{ $secPercentage }}%"></div>
@@ -168,7 +163,7 @@
                                         <span class="text-[10px] font-black text-slate-500">{{ $secPercentage }}%</span>
                                     </div>
                                 </td>
-                                <td class="px-8 py-5 text-right">
+                                <td class="px-8 py-2 text-right">
                                     <a href="{{ route('voucher.section.payments.index', [$feeVoucher, $section]) }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-800 text-white text-[10px] font-black uppercase tracking-widest hover:bg-teal-600 hover:shadow-lg hover:shadow-teal-100 transition-all">
                                         Manage <i class="bi-arrow-right"></i>
                                     </a>

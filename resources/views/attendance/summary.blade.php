@@ -1,178 +1,148 @@
 @extends('layouts.app')
 @section('page-content')
-    <h2 class=""> <i class="ri-user-6-fill"></i> Attendance Management</h2>
-    <div class="bread-crumb">
-        <a href="{{ url('/') }}">Home</a>
-        <div>/</div>
-        <div>Attendance</div>
-
-    </div>
-    <div class="w-full md:w-4/5 mx-auto bg-white mt-8">
-
-        {{-- Filter Section --}}
-        <div class="">
-            <div class="statbox cyan md:p-8">
-                <div class="flex items-center flex-wrap gap-2 md:gap-8 mb-4">
-                    <div class="flex space-x-3 items-center">
-                        <i class="bi bi-calendar-range text-xl"></i>
-                        <div>
-                            <p class=" text-xs font-semibold uppercase tracking-widest">Select Date</p>
-                            <p class="text-sm font-semibold">Filter attendance by date</p>
-                        </div>
-                    </div>
-                    <form action="{{ route('attendance.filter') }}" method="post" id="form_filter">
-                        @csrf
-                        <input type="hidden" name="date" id="date">
-                        <input type="date" id='filter_date'
-                            class="w-full md:w-64 px-3 py-2 border rounded-lg border-slate-200 text-slate-800 font-medium text-sm focus:ring-2 focus:ring-cyan-400">
-                    </form>
+    <div class="flex flex-col space-y-6">
+        <!-- Header Section -->
+        <div class="flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 rounded-2xl bg-teal-600 flex items-center justify-center text-white shadow-lg shadow-teal-100">
+                    <i class="bi-calendar-check text-xl"></i>
                 </div>
-
+                <div>
+                    <h1 class="text-xl font-bold text-slate-800 leading-tight">Attendance Summary</h1>
+                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ \Carbon\Carbon::parse($date)->format('l, d M Y') }}</p>
+                </div>
             </div>
+
+            <!-- Date Selector -->
+            <form action="{{ route('attendance.filter') }}" method="post" id="form_filter">
+                @csrf
+                <input type="hidden" name="date" id="date" value="{{ $date }}">
+                <input type="date" id='filter_date' value="{{ $date }}"
+                    class="px-4 py-2 bg-white border border-slate-100 rounded-xl text-slate-700 font-bold text-xs focus:ring-4 focus:ring-teal-500/10 cursor-pointer transition-all">
+            </form>
         </div>
 
-        <!-- page message -->
         @if ($errors->any())
             <x-message :errors='$errors'></x-message>
         @else
             <x-message></x-message>
         @endif
 
-        {{-- Overall Stats Header --}}
+        @php
+            $percentage = $overallAttendanceCount > 0 ? round(($overallPresenceCount / $overallAttendanceCount) * 100, 1) : 0;
+            $markedPercentage = $sections->count() > 0 ? round(($sectionsMarked / $sections->count()) * 100) : 0;
+        @endphp
 
-        <div class="border-[0.5px] rounded-lg bg-white mt-6">
-            <div
-                class="grid grid-cols-1 md:grid-cols-2 p-5 md:p-8 gap-4 border-b border-gray-100 bg-gradient-to-r from-slate-50 to-gray-50">
-                <div class="flex items-center gap-3 ">
-                    <div class="ico w-9 h-9 indigo rounded-xl ">
-                        <i class="bi-calendar-check text-lg"></i>
-                    </div>
-                    <div>
-                        <h2 class="font-semibold text-gray-800 text-sm leading-tight">
-                            {{ \Carbon\Carbon::parse($date)->format('d M Y') }}
-                        </h2>
-
-                        <p class="text-xs text-gray-400"> <i class="bi-cloud-check"></i> {{ $sectionsMarked }} out of
-                            {{ $sections->count() }}</p>
-                    </div>
-
+        <!-- Key Metrics Cards (Minimal) -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="bg-teal-600 rounded-3xl p-6 text-white shadow-xl shadow-teal-100 flex items-center justify-between relative overflow-hidden">
+                <div class="absolute -right-4 -bottom-4 w-20 h-20 bg-white/10 rounded-full"></div>
+                <div class="relative z-10">
+                    <p class="text-[10px] font-black text-teal-100 uppercase tracking-widest mb-1">Total Presence</p>
+                    <h2 class="text-3xl font-black text-white">{{ $percentage }}%</h2>
                 </div>
-                @if ($sections->count() > 1 && $overallAttendanceCount > 0)
-                    <div class="flex flex-col items-end w-full">
-                        <h2 class="text-lg md:2xl font-bold">
-                            {{ round(($overallPresenceCount / $overallAttendanceCount) * 100, 1) }}%
-                        </h2>
-                        <p class="text-sm text-gray-700"><i class="ri-user-6-fill mr-1"></i>
-                            {{ $overallPresenceCount }}/{{ $overallAttendanceCount }}</p>
-
-                    </div>
-                @endif
-
+                <div class="text-right relative z-10">
+                    <p class="text-lg font-bold leading-none">{{ number_format($overallPresenceCount) }}</p>
+                    <p class="text-[10px] font-bold text-teal-100 uppercase tracking-tighter">Students</p>
+                </div>
             </div>
 
-            {{-- Section Cards Grid --}}
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 p-5 md:p-8">
-                @foreach ($sections as $section)
-                    @php
+            <div class="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm flex items-center justify-between">
+                <div>
+                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Reporting Status</p>
+                    <h2 class="text-3xl font-black text-slate-800">{{ $sectionsMarked }}<span class="text-slate-200">/{{ $sections->count() }}</span></h2>
+                </div>
+                <div class="w-12 h-12 rounded-full border-4 border-slate-50 flex items-center justify-center">
+                    <span class="text-xs font-black text-slate-400">{{ $markedPercentage }}%</span>
+                </div>
+            </div>
 
-                        $attendancePercentage =
-                            $section->attendanceCount > 0
-                                ? round(($section->presenceCount / $section->attendanceCount) * 100, 1)
-                                : 0;
-
-                        $themeColor =
-                            $section->attendanceCount > 0
-                                ? ($attendancePercentage >= 90
-                                    ? 'green'
-                                    : ($attendancePercentage < 90 && $attendancePercentage >= 75
-                                        ? 'cyan'
-                                        : 'red'))
-                                : 'gray';
-
-                    @endphp
-                    <a href="@if ($section->attendanceCount > 0) {{ route('section.attendance.index', $section) }} @elseif(\Carbon\Carbon::parse($date)->isToday()){{ route('section.attendance.create', $section) }} @else {{ route('section.attendance.index', $section) }} @endif "
-                        class="statbox {{ $themeColor }} transition-all duration-300 transform hover:scale-105">
-                        {{-- <div class="flex items-center"> --}}
-                        <div class="ico {{ $themeColor }}"><i class="ri-user-6-line"></i></div>
-
-                        <div class="leading-none mt-1">
-                            <h3 class="">{{ $section->name }}</h3>
-                            <span class="text-slate-500 text-xs md:text-sm font-normal">Avg:
-                                {{ $section->averageAttendance() ?? 0 }} %</span>
-                        </div>
-
-                        {{-- if attendance marked show progress bar --}}
-                        @if ($section->attendanceCount > 0)
-                            {{-- Progress Bar --}}
-                            <div class="grid grid-cols-2 content-center items-end gap-2 mt-1">
-                                <div class="text-{{ $themeColor }}-600 text-sm">
-                                    {{ $section->presenceCount ?? 0 }} /
-                                    {{ $section->attendanceCount ?? 0 }}
-                                </div>
-                                <div class="w-4/5 text-right">
-                                    <div>
-                                        <span
-                                            class="text-xs font-semibold text-{{ $themeColor }}-600">{{ $attendancePercentage }}%</span>
-
-                                        @if ($attendancePercentage > $section->averageAttendance())
-                                            <i class="bx bx-trending-up"></i>
-                                        @else
-                                            <i class="bx bx-trending-down"></i>
-                                        @endif
-                                    </div>
-                                    <div class="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
-                                        <div class="bg-gradient-to-r {{ $attendancePercentage >= 90 ? 'from-green-200 to-green-500' : ($attendancePercentage >= 75 ? 'from-cyan-200 to-cyan-500' : 'from-red-200 to-red-500') }} h-2 rounded-full transition-all"
-                                            style="width: {{ min($attendancePercentage, 100) }}%"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        @else
-                            <div class="grid grid-cols-2 content-center items-end gap-2 mt-1">
-                                <div class="text-{{ $themeColor }}-600 text-sm">-/-</div>
-                                <div class="w-4/5 text-right">
-                                    <div class="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
-                                        <div class="bg-gradient-to-r {{ $attendancePercentage >= 90 ? 'from-green-200 to-green-500' : ($attendancePercentage >= 75 ? 'from-cyan-200 to-cyan-500' : 'from-red-200 to-red-500') }} h-2 rounded-full transition-all"
-                                            style="width: {{ min($attendancePercentage, 100) }}%"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        @endif
-
-
-
-                    </a>
-                @endforeach
+            <div class="bg-teal-50 rounded-3xl p-6 border border-teal-100 flex items-center gap-4">
+                <div class="w-10 h-10 rounded-xl bg-white text-teal-600 flex items-center justify-center shadow-sm">
+                    <i class="bi-lightning-fill"></i>
+                </div>
+                <div>
+                    <p class="text-[10px] font-black text-teal-700 uppercase tracking-widest mb-0.5">Quick Insight</p>
+                    <p class="text-sm font-bold text-teal-900 leading-tight">
+                        {{ $percentage >= 90 ? 'High stability today' : ($percentage >= 75 ? 'Healthy participation' : 'Noticeable absences today') }}
+                    </p>
+                </div>
             </div>
         </div>
-    @endsection
-    @section('script')
-        <script type="module">
-            $(document).ready(function() {
-                $('#filter_date').on('change', function() {
-                    let selected = $(this).val();
-                    $('#date').val(selected);
-                    $('#form_filter').submit();
-                });
-            });
-        </script>
-        <script type="text/javascript">
-            function confirmClear(event) {
-                event.preventDefault(); // prevent form submit
-                var form = event.target; // storing the form
 
-                Swal.fire({
-                    title: 'Are you sure?',
-                    text: "You won't be able to revert this!",
-                    type: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Yes, delete it!'
-                }).then((result) => {
-                    if (result.value) {
-                        form.submit();
-                    }
-                })
-            }
-        </script>
-    @endsection
+        <!-- Section Grid (Minimal Cards) -->
+        <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            @foreach ($sections as $section)
+                @php
+                    $isMarked = $section->attendanceCount > 0;
+                    $todayPercentage = $section->totalStudents > 0 
+                        ? round(($section->presenceCount / $section->totalStudents) * 100, 1) 
+                        : 0;
+                    
+                    $displayPercentage = $isMarked ? $todayPercentage : ($section->averageAttendance() ?? 0);
+                    
+                    $themeColor = $displayPercentage >= 90 ? 'teal' : 
+                        ($displayPercentage >= 75 ? 'cyan' : 'rose');
+                @endphp
+                
+                <a href="@if ($isMarked) {{ route('section.attendance.index', $section) }} @elseif(\Carbon\Carbon::parse($date)->isToday()){{ route('section.attendance.create', $section) }} @else {{ route('section.attendance.index', $section) }} @endif"
+                   class="group bg-white rounded-2xl border border-slate-100 p-5 hover:border-{{ $themeColor }}-300 hover:shadow-lg hover:shadow-slate-100 transition-all duration-300">
+                    
+                    <div class="flex items-start justify-between mb-4">
+                        <div>
+                            <h3 class="font-bold text-slate-800 group-hover:text-{{ $themeColor }}-700 transition-colors leading-none mb-1">{{ $section->name }}</h3>
+                            <div class="flex items-center gap-1.5">
+                                @if(!$isMarked)
+                                    <span class="text-[9px] font-black text-orange-500 uppercase tracking-tighter">Awaiting</span>
+                                @else
+                                    <span class="text-[9px] font-black text-teal-500 uppercase tracking-tighter">Marked</span>
+                                @endif
+                                <span class="w-0.5 h-0.5 rounded-full bg-slate-300"></span>
+                                <span class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">{{ $isMarked ? 'Today' : 'Avg' }}</span>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                             <span class="text-lg font-black text-slate-800 tracking-tighter">{{ $displayPercentage }}%</span>
+                        </div>
+                    </div>
+
+                    <div class="space-y-3">
+                        <div class="flex items-end justify-between">
+                            <div class="flex flex-col">
+                                <div class="flex items-baseline gap-1 leading-none">
+                                    <span class="text-sm font-black text-slate-700">{{ $isMarked ? $section->presenceCount : '-' }}</span>
+                                    <span class="text-[10px] font-bold text-slate-300">/ {{ $section->totalStudents }}</span>
+                                </div>
+                            </div>
+                            
+                            @if($isMarked)
+                                <div class="flex items-center gap-0.5 {{ $todayPercentage > $section->averageAttendance() ? 'text-teal-600' : 'text-rose-600' }}">
+                                    <i class="bi-{{ $todayPercentage > $section->averageAttendance() ? 'arrow-up-short' : 'arrow-down-short' }} text-base"></i>
+                                    <span class="text-[9px] font-black uppercase tracking-tighter">{{ $todayPercentage > $section->averageAttendance() ? '+' : '-' }}{{ abs($todayPercentage - $section->averageAttendance()) }}%</span>
+                                </div>
+                            @endif
+                        </div>
+
+                        <!-- Minimal Progress Bar -->
+                        <div class="w-full h-1 bg-slate-50 rounded-full overflow-hidden">
+                            <div class="h-full bg-{{ $themeColor }}-500 transition-all duration-700"
+                                style="width: {{ $displayPercentage }}%"></div>
+                        </div>
+                    </div>
+                </a>
+            @endforeach
+        </div>
+    </div>
+@endsection
+
+@section('script')
+    <script type="module">
+        $(document).ready(function() {
+            $('#filter_date').on('change', function() {
+                let selected = $(this).val();
+                $('#date').val(selected);
+                $('#form_filter').submit();
+            });
+        });
+    </script>
+@endsection

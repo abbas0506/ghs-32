@@ -38,6 +38,7 @@ class SectionAttendanceController extends Controller
                         ->where('status', 1); // present
                 });
             },
+            'students as totalStudents'
         ])
             ->has('students')
             ->get();
@@ -47,8 +48,8 @@ class SectionAttendanceController extends Controller
             return $section->attendanceCount > 0;
         })->count();
 
-        $overallPresenceCount = Attendance::whereDate('date', $date)->where('status', 1)->count();
-        $overallAttendanceCount = Attendance::whereDate('date', $date)->count();
+        $overallPresenceCount = $sections->sum('presenceCount');
+        $overallAttendanceCount = Student::whereIn('section_id', $sectionIds)->count();
         return view('attendance.summary', compact('sections', 'date', 'overallPresenceCount', 'overallAttendanceCount', 'sectionsMarked'));
     }
     /**

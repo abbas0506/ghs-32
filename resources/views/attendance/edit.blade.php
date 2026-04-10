@@ -1,93 +1,134 @@
 @extends('layouts.app')
 @section('page-content')
-    <div class="custom-container">
-        <h1>Class: {{ $section->name }}</h1>
-        <div class="bread-crumb">
-            <a href="{{ url('/') }}">Home</a>
-            <div>/</div>
-            <a href="{{ route('attendance.summary') }}">Attendance</a>
-            <div>/</div>
-            <div>{{ $section->name }}</div>
+    <div class="flex flex-col space-y-6">
+        <!-- Header & Breadcrumbs -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 py-2">
+            <div>
+                <div class="flex items-center gap-2 text-slate-400 text-[10px] uppercase tracking-[0.2em] font-black mb-3">
+                    <a href="{{ route('attendance.summary') }}" class="hover:text-teal-600 transition-colors">Attendance</a>
+                    <i class="bi-chevron-right text-[8px]"></i>
+                    <a href="{{ route('section.attendance.index', $section) }}" class="hover:text-teal-600 transition-colors">{{ $section->name }}</a>
+                    <i class="bi-chevron-right text-[8px]"></i>
+                    <span class="text-teal-600 uppercase">Update</span>
+                </div>
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-2xl bg-teal-600 text-white flex items-center justify-center shadow-lg shadow-teal-100">
+                        <i class="bi-calendar-check text-xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-black text-slate-800 leading-none mb-1">{{ $section->name }} — Attendance</h2>
+                        <div class="flex items-center gap-2 mt-1">
+                            <span class="px-2 py-0.5 bg-orange-50 text-orange-600 text-[8px] font-black uppercase tracking-widest rounded-full border border-orange-100 italic">Editing Mode</span>
+                            <span class="w-1 h-1 rounded-full bg-slate-200"></span>
+                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">{{ now()->format('l, d M Y') }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <a href="{{ route('section.attendance.index', $section) }}" 
+                   class="px-6 py-3 bg-white border border-slate-200 text-slate-500 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-slate-50 transition-all">
+                   Cancel
+                </a>
+                <button type="submit" form="attendanceFlow"
+                   class="px-6 py-3 bg-teal-600 text-white rounded-xl text-xs font-black uppercase tracking-widest hover:bg-teal-700 hover:shadow-lg hover:shadow-teal-100 transition-all">
+                   Save
+                </button>
+            </div>
         </div>
 
-        <!-- search -->
-        <!-- <div class="flex justify-between items-center flex-wrap gap-6 mt-12"> -->
-        <div class="flex relative w-full md:w-1/3">
-            <input type="text" id='searchby' placeholder="Search ..." class="custom-search w-full" oninput="search(event)">
-            <i class="bx bx-search absolute top-2 right-2"></i>
-        </div>
-
-        <!-- page message -->
         @if ($errors->any())
             <x-message :errors='$errors'></x-message>
         @else
             <x-message></x-message>
         @endif
 
-        <div class="overflow-x-auto bg-white w-full mt-8">
-            <h2><i class="bi-clock mr-3"></i>{{ now()->format('d-m-Y') }}</h2>
-            <form action="{{ route('section.attendance.update', [$section, 1]) }}" method="post" class="mt-3">
-                @csrf
-                @method('PATCH')
-                <table class="table-auto borderless w-full">
-                    <thead>
-                        <tr>
-                            <th class="w-10">#</th>
-                            <th class="w-48 text-left">Name</th>
-                            <th class="w-6"><input type="checkbox" id='chkAll' class="rounded" onclick="checkAll()">
+        <!-- Attendance Form & Table -->
+        <div class="bg-white rounded-[2rem] border border-slate-100 shadow-sm overflow-hidden">
+            <!-- Table Controls -->
+            <div class="px-4 md:py-2 md:py-6 bg-slate-50/50 border-b border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div class="flex items-center gap-4 w-full md:w-auto">
+                    <div class="relative w-full md:w-80 group">
+                        <input type="text" id='searchby' placeholder="Search student name or roll..." oninput="search(event)"
+                            class="w-full pl-10 pr-4 py-3 bg-white border border-slate-200 rounded-2xl text-xs font-bold text-slate-700 focus:ring-4 focus:ring-teal-500/10 focus:border-teal-500 transition-all">
+                        <i class="bi bi-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-teal-600 transition-colors"></i>
+                    </div>
+                </div>
+                
+                <div class="flex items-center gap-3">
+                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Select All Present</span>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="chkAll" onclick="checkAll()" class="sr-only peer">
+                        <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-teal-600"></div>
+                    </label>
+                </div>
+            </div>
 
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($attendances->sortBy('status') as $attendance)
-                            <tr class="tr">
-                                <td class="hidden"><input type="text" name="attendance_ids[]"
-                                        value="{{ $attendance->id }}"></td>
-                                <td>{{ $attendance->student->rollno }}</td>
-                                <td class="text-left text-xs md:text-sm">{{ $attendance->student->name }} <br> <span
-                                        class="text-slate-400">{{ $attendance->student->father_name }}</span></td>
-                                <td>
-                                    <div class="flex items-center justify-center">
-                                        <input type="checkbox" class="w-4 h-4 rounded" name="attendance_ids_checked[]"
-                                            value="{{ $attendance->id }}" @checked($attendance?->status)>
-                                    </div>
-                                </td>
+            <form action="{{ route('section.attendance.update', [$section, 1]) }}" method="post" id="attendanceFlow">
+                @csrf @method('PATCH')
+                <div class="overflow-x-auto">
+                    <table class="table-fixed w-full border-collapse">
+                        <thead>
+                            <tr class="text-left">
+                                <th class="w-16 py-2 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-50">#</th>
+                                <th class="w-40 py-2 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-50">Student Profile</th>
+                                <th class="w-16 py-2 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-50 text-center">Status</th>
                             </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-                <div class="text-center mt-8">
-                    <a href="{{ route('section.attendance.index', $section) }}"
-                        class="btn-gray rounded py-2 mr-3">Cancel</a>
-                    <button type="submit" class="btn-blue rounded py-2">Update Now</button>
+                        </thead>
+                        <tbody class="divide-y divide-slate-50">
+                            @foreach ($attendances->sortBy('rollno') as $attendance)
+                                <tr class="tr group hover:bg-slate-50/80 transition-all">
+                                    <input type="hidden" name="attendance_ids[]" value="{{ $attendance->id }}">
+                                    <td class="py-2">
+                                        <div class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center mx-auto text-[10px] font-black text-slate-500 group-hover:bg-white group-hover:shadow-sm transition-all border border-transparent group-hover:border-slate-100 uppercase">
+                                            {{ $attendance->student->rollno }}
+                                        </div>
+                                    </td>
+                                    <td class="py-2">
+                                        <div class="flex flex-col">
+                                            <p class="text-xs text-left font-semibold text-slate-800 leading-tight group-hover:text-teal-600 transition-colors">{{ $attendance->student->name }}</p>
+                                            <div class="flex items-center gap-2 mt-1">
+                                                <!-- <i class="bi bi-person text-[10px] text-slate-400"></i> -->
+                                                <span class="text-[10px] text-slate-400 font-bold uppercase tracking-tight">{{ $attendance->student->father_name }}</span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="py-2">
+                                        <div class="flex justify-center">
+                                            <label class="group/check relative flex items-center justify-center w-12 h-12 cursor-pointer">
+                                                <input type="checkbox" name="attendance_ids_checked[]" value="{{ $attendance->id }}" 
+                                                       @checked($attendance->status) 
+                                                       class="peer hidden">
+                                                <div class="w-8 h-8 rounded-xl border-2 border-slate-200 bg-white flex items-center justify-center transition-all peer-checked:bg-teal-600 peer-checked:border-teal-600 peer-checked:shadow-lg peer-checked:shadow-teal-100 group-hover/check:border-teal-300">
+                                                    <i class="bi bi-check-lg text-white opacity-0 peer-checked:opacity-100 scale-50 peer-checked:scale-100 transition-all"></i>
+                                                </div>
+                                            </label>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
                 </div>
             </form>
         </div>
-
     </div>
-    <script>
-        function search(event) {
-            var searchtext = event.target.value.toLowerCase();
-            var str = 0;
-            $('.tr').each(function() {
-                if (!(
-                        $(this).children().eq(0).prop('outerText').toLowerCase().includes(searchtext) ||
-                        $(this).children().eq(1).prop('outerText').toLowerCase().includes(searchtext)
-                    )) {
-                    $(this).addClass('hidden');
-                } else {
-                    $(this).removeClass('hidden');
-                }
-            });
-        }
 
-        function checkAll() {
-
-            $('.tr').each(function() {
-                if (!$(this).hasClass('hidden'))
-                    $(this).children().find('input[type=checkbox]').prop('checked', $('#chkAll').is(':checked'));
-                // updateChkCount()
+    <script type="module">
+        window.search = function(event) {
+            const searchtext = event.target.value.toLowerCase();
+            document.querySelectorAll('.tr').forEach(row => {
+                const text = row.innerText.toLowerCase();
+                row.classList.toggle('hidden', !text.includes(searchtext));
             });
-        }
+        };
+
+        window.checkAll = function() {
+            const isChecked = document.getElementById('chkAll').checked;
+            document.querySelectorAll('.tr:not(.hidden) input[type="checkbox"]').forEach(checkbox => {
+                checkbox.checked = isChecked;
+            });
+        };
     </script>
 @endsection

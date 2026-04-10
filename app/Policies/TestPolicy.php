@@ -32,7 +32,7 @@ class TestPolicy
     public function create(User $user): bool
     {
         //
-        return $user->hasAnyRole(['head']);
+        return $user->hasAnyRole(['head', 'admin', 'teacher']);
     }
 
     /**
@@ -41,7 +41,8 @@ class TestPolicy
     public function update(User $user, Test $test): bool
     {
         //
-        return $user->hasAnyRole(['head']);
+        if ($user->hasAnyRole(['head', 'admin'])) return true;
+        return $user->hasRole('teacher') && $test->user_id === $user->id;
     }
 
     /**
@@ -50,7 +51,8 @@ class TestPolicy
     public function delete(User $user, Test $test): bool
     {
         //
-        return $user->hasAnyRole(['head']);
+        if ($user->hasAnyRole(['head', 'admin'])) return true;
+        return $user->hasRole('teacher') && $test->user_id === $user->id;
     }
 
     /**

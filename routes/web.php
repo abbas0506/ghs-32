@@ -161,6 +161,8 @@ Route::group(['middleware' => ['auth']], function () {
 
     // assessment
     Route::resource('tests', TestController::class);
+    Route::resource('class-tests', \App\Http\Controllers\ClassTestController::class);
+    Route::get('analysis/comparative', [\App\Http\Controllers\ClassTestController::class, 'analysis'])->name('class-tests.analysis');
     Route::resource('test.test-subjects', TestSubjectController::class);
     Route::resource('test-subject.results', TestSubjectResultController::class);
     Route::resource('test-subject.import', ImportStudentController::class);
@@ -187,6 +189,9 @@ Route::group(['middleware' => ['auth']], function () {
     Route::resource('task.task-lines', TaskLineController::class);
 
     // Reports
+    Route::get('reports/tests/combined', [ReportController::class, 'combinedSelector'])->name('reports.combined.selector');
+    Route::post('reports/tests/combined/pdf', [ReportController::class, 'combinedResult'])->name('reports.combined.pdf');
+    Route::post('reports/tests/combined/report-cards/pdf', [ReportController::class, 'combinedReportCards'])->name('reports.combined.report-cards');
     Route::get('reports/test-subjects/{s}/result/pdf', [ReportController::class, 'testSubjectResult'])->name('subject-result');
     Route::get('reports/tests/{t}/sections/{s}/result/pdf', [ReportController::class, 'sectionResult'])->name('section-result');
     Route::get('reports/tests/{t}/sections/{s}/positions/pdf', [ReportController::class, 'sectionPositions'])->name('section-positions');

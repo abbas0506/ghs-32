@@ -32,7 +32,7 @@
             </div>
         </a>
 
-        <a href="{{ route('tests.index') }}" class="statbox teal">
+        <a href="{{ route('tests.index') }}" class="statbox red">
             <div class="flex justify-between items-center">
                 <div>Assessment</div>
                 <div class="ico">
@@ -45,20 +45,9 @@
                     {{ $tests->open()->count() }} Active</span>
             </div>
         </a>
-        <a href="{{ route('tasks.index') }}" class="statbox orange">
+        <a href="{{ route('user-schedule.show') }}" class="statbox cyan">
             <div class="flex justify-between items-center flex-1">
-                <div class="">My Tasks</div>
-                <div class="ico">
-                    <i class="bi bi-calendar-event text-sm md:text-lg"></i>
-                </div>
-            </div>
-            <div class="mt-[1px] text-lg font-semibold">{{ $pendingTasks->count() }} <span
-                    class="bg-orange-100 text-orange-600 font-normal text-[10px] rounded-full px-2 py-[1px]">{{ $tasksDue->count() }}
-                    Latest</span></div>
-        </a>
-        <a href="{{ route('user-schedule.show') }}" class="statbox blue">
-            <div class="flex justify-between items-center flex-1">
-                <div class="">Allocations</div>
+                <div class="">My Subjects</div>
                 <div class="ico">
                     <i class="bi bi-book text-sm md:text-lg"></i>
                 </div>

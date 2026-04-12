@@ -50,7 +50,67 @@ class SectionAttendanceController extends Controller
 
         $overallPresenceCount = $sections->sum('presenceCount');
         $overallAttendanceCount = Student::whereIn('section_id', $sectionIds)->count();
+
         return view('attendance.summary', compact('sections', 'date', 'overallPresenceCount', 'overallAttendanceCount', 'sectionsMarked'));
+    }
+
+    public function analytics(Request $request)
+    {
+        $this->authorize('viewSummary', Attendance::class);
+        $sections = Auth::user()->accessibleSections();
+        
+        $selectedSectionId = $request->get('class_id', $sections->first()->id ?? null);
+        
+        $weeklyData = [];
+        $monthlyData = [];
+        $selectedSection = null;
+        
+        if ($selectedSectionId) {
+            $selectedSection = Section::find($selectedSectionId);
+            
+            // Weekly Data
+            $weeklyDates = collect();
+            for ($i = 6; $i >= 0; $i--) {
+                $weeklyDates->push(now()->subDays($i)->toDateString());
+            }
+
+            foreach ($weeklyDates as $d) {
+                $att = Attendance::whereHas('student', function($q) use ($selectedSectionId) {
+                    $q->where('section_id', $selectedSectionId);
+                })->whereDate('date', $d)->get();
+                
+                $total = $att->count();
+                $present = $att->where('status', 1)->count();
+                $weeklyData[] = [
+                    'date' => \Carbon\Carbon::parse($d)->format('l, M d'),
+                    'percentage' => $total > 0 ? round(($present / $total) * 100, 1) : 0
+                ];
+            }
+
+            // Monthly Data (Session Averages from April to March)
+            $currentDate = \Carbon\Carbon::now();
+            $sessionYearStart = $currentDate->month >= 4 ? $currentDate->year : $currentDate->year - 1;
+
+            for ($m = 0; $m < 12; $m++) {
+                $monthCursor = \Carbon\Carbon::create($sessionYearStart, 4, 1)->addMonths($m);
+                $monthStart = $monthCursor->copy()->startOfMonth();
+                $monthEnd   = $monthCursor->copy()->endOfMonth();
+
+                $att = Attendance::whereHas('student', function($q) use ($selectedSectionId) {
+                    $q->where('section_id', $selectedSectionId);
+                })->whereDate('date', '>=', $monthStart)->whereDate('date', '<=', $monthEnd)->get();
+                
+                $total = $att->count();
+                $present = $att->where('status', 1)->count();
+                
+                $monthlyData[] = [
+                    'date' => $monthCursor->format('M'),
+                    'percentage' => $total > 0 ? round(($present / $total) * 100, 1) : 0
+                ];
+            }
+        }
+
+        return view('attendance.analytics', compact('sections', 'selectedSectionId', 'selectedSection', 'weeklyData', 'monthlyData'));
     }
     /**
      * Display a listing of the resource.
@@ -167,8 +227,56 @@ class SectionAttendanceController extends Controller
             'sessionAttendancePercentage',
             'sessionAbsences',
             'sessionStart',
-            'currentDate'
+            'currentDate',
+            'attendance'
         ));
+    }
+
+    public function studentAnalytics($id, $attendanceId)
+    {
+        $attendance = Attendance::find($attendanceId);
+        $this->authorize('view', $attendance);
+
+        $section = Section::find($id);
+        $student = $attendance->student;
+
+        // Weekly Data
+        $weeklyData = [];
+        $weeklyDates = collect();
+        for ($i = 6; $i >= 0; $i--) {
+            $weeklyDates->push(now()->subDays($i)->toDateString());
+        }
+
+        foreach ($weeklyDates as $d) {
+            $att = $student->attendances()->whereDate('date', $d)->first();
+            $weeklyData[] = [
+                'date' => \Carbon\Carbon::parse($d)->format('l, M d'),
+                'status' => $att ? $att->status : -1 // -1 means unmarked
+            ];
+        }
+
+        // Monthly Data (Session Averages)
+        $monthlyData = [];
+        $currentDate = \Carbon\Carbon::now();
+        $sessionYearStart = $currentDate->month >= 4 ? $currentDate->year : $currentDate->year - 1;
+
+        for ($m = 0; $m < 12; $m++) {
+            $monthCursor = \Carbon\Carbon::create($sessionYearStart, 4, 1)->addMonths($m);
+            $monthStart = $monthCursor->copy()->startOfMonth();
+            $monthEnd   = $monthCursor->copy()->endOfMonth();
+
+            $att = $student->attendances()->whereDate('date', '>=', $monthStart)->whereDate('date', '<=', $monthEnd)->get();
+            
+            $total = $att->count();
+            $present = $att->where('status', 1)->count();
+            
+            $monthlyData[] = [
+                'date' => $monthCursor->format('M'),
+                'percentage' => $total > 0 ? round(($present / $total) * 100, 1) : 0
+            ];
+        }
+
+        return view('attendance.student_analytics', compact('section', 'student', 'attendance', 'weeklyData', 'monthlyData'));
     }
     /**
      * Display the specified resource.

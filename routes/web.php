@@ -132,8 +132,10 @@ Route::group(['middleware' => ['auth']], function () {
 
     // attendance
     Route::get('attendance/summary', [SectionAttendanceController::class, 'summary'])->name('attendance.summary');
+    Route::get('attendance/analytics', [SectionAttendanceController::class, 'analytics'])->name('attendance.analytics');
     Route::get('attendance/filter', [SectionAttendanceController::class, 'filter'])->name('attendance.filter');
     Route::post('attendances/filter', [SectionAttendanceController::class, 'filter'])->name('attendance.filter');
+    Route::get('section/{section}/attendance/{attendance}/analytics', [SectionAttendanceController::class, 'studentAnalytics'])->name('attendance.student.analytics');
     Route::resource('section.attendance', SectionAttendanceController::class);
 
     // Fee

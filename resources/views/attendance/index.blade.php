@@ -56,24 +56,28 @@
                 </div>
             </div>
 
-            <div class="bg-white rounded-2xl md:rounded-3xl p-4 md:p-6 border border-slate-100 shadow-sm flex flex-col justify-center">
-                <div class="flex items-center justify-between mb-1">
-                    <p class="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest">Present</p>
-                    <i class="bi-person-check-fill text-teal-600 opacity-60"></i>
+            <div class="bg-white rounded-2xl md:rounded-3xl p-4 md:p-6 border border-slate-100 shadow-sm flex items-center justify-between">
+                <div>
+                    <p class="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Present</p>
+                    <h2 class="text-2xl md:text-3xl font-black text-slate-800 leading-none">
+                        {{ $presentCount }}
+                    </h2>
                 </div>
-                <h2 class="text-xl md:text-2xl font-black text-slate-800">
-                    {{ $presentCount }}
-                </h2>
+                <div class="w-12 h-12 rounded-2xl bg-teal-50 text-teal-600 flex items-center justify-center">
+                    <i class="bi-person-check text-2xl"></i>
+                </div>
             </div>
 
-            <div class="bg-white rounded-2xl md:rounded-3xl p-4 md:p-6 border border-slate-100 shadow-sm flex flex-col justify-center">
-                <div class="flex items-center justify-between mb-1">
-                    <p class="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest">Absent</p>
-                    <i class="bi-person-x-fill text-rose-600 opacity-60"></i>
+            <div class="bg-white rounded-2xl md:rounded-3xl p-4 md:p-6 border border-slate-100 shadow-sm flex items-center justify-between">
+                <div>
+                    <p class="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Absent</p>
+                    <h2 class="text-2xl md:text-3xl font-black text-rose-600 leading-none">
+                        {{ $absentCount }}
+                    </h2>
                 </div>
-                <h2 class="text-xl md:text-2xl font-black text-rose-600">
-                    {{ $absentCount }}
-                </h2>
+                <div class="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center">
+                    <i class="bi-person-x text-2xl"></i>
+                </div>
             </div>
         </div>
 
@@ -88,9 +92,9 @@
             <!-- Table Controls -->
             <div class="px-4 md:px-8 py-4 md:py-6 bg-slate-50/50 border-b border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div class="flex items-center flex-wrap gap-1 bg-white p-1 rounded-xl shadow-sm border border-slate-100 w-full md:w-auto">
-                    <button onclick="filterBy('all')" class="flex-1 md:flex-none px-3 md:px-5 py-2 rounded-lg text-[10px] md:text-xs font-black uppercase tracking-widest cursor-pointer hover:bg-slate-50 transition-all text-slate-600">All</button>
-                    <button onclick="filterBy('present')" class="flex-1 md:flex-none px-3 md:px-5 py-2 rounded-lg text-[10px] md:text-xs font-black uppercase tracking-widest cursor-pointer bg-teal-50 text-teal-700 hover:bg-teal-100 transition-all">Present</button>
-                    <button onclick="filterBy('absent')" class="flex-1 md:flex-none px-3 md:px-5 py-2 rounded-lg text-[10px] md:text-xs font-black uppercase tracking-widest cursor-pointer bg-rose-50 text-rose-700 hover:bg-rose-100 transition-all">Absent</button>
+                    <button onclick="filterBy('all')" class="flex-1 md:flex-none px-3 md:px-5 py-2 rounded-lg text-[10px] md:text-xs font-black uppercase tracking-widest cursor-pointer hover:bg-slate-50 transition-all text-slate-600 flex items-center justify-center gap-1.5"><i class="bi-layers text-sm"></i> All</button>
+                    <button onclick="filterBy('present')" class="flex-1 md:flex-none px-3 md:px-5 py-2 rounded-lg text-[10px] md:text-xs font-black uppercase tracking-widest cursor-pointer bg-teal-50 text-teal-700 hover:bg-teal-100 transition-all flex items-center justify-center gap-1.5"><i class="bi-person-check text-sm block -mt-0.5"></i> Present</button>
+                    <button onclick="filterBy('absent')" class="flex-1 md:flex-none px-3 md:px-5 py-2 rounded-lg text-[10px] md:text-xs font-black uppercase tracking-widest cursor-pointer bg-rose-50 text-rose-700 hover:bg-rose-100 transition-all flex items-center justify-center gap-1.5"><i class="bi-person-x text-sm block -mt-0.5"></i> Absent</button>
                 </div>
                 <div class="relative w-full md:w-80 group">
                     <input type="text" id='searchby' placeholder="Search by name or roll..." oninput="search(event)"
@@ -107,7 +111,6 @@
                             <th class="w-16 px-5 py-2 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-50">Roll #</th>
                             <th class="w-48 px-5 py-2 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-50">Student Profile</th>
                             <th class="w-32 px-5 py-2 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-50">Status</th>
-                            <th class="w-16 px-5 py-2 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-50">Actions</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-50">
@@ -115,22 +118,21 @@
                             @php $isStudentPresent = $attendance->status == 1; @endphp
                             <tr class="tr group hover:bg-slate-50/80 transition-all {{ $isStudentPresent ? 'present' : 'absent' }}">
                                 <td class="py-2">
-                                    <div class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-xs font-black text-slate-600 group-hover:bg-white group-hover:shadow-sm transition-all border border-transparent group-hover:border-slate-100 uppercase">
+                                    <div class="w-10 h-10 rounded-full flex items-center mx-auto justify-center text-xs font-black uppercase transition-all shadow-sm border {{ $isStudentPresent ? 'bg-teal-50 text-teal-700 border-teal-100 group-hover:bg-teal-100' : 'bg-rose-50 text-rose-700 border-rose-100 group-hover:bg-rose-100' }}">
                                         {{ $attendance->student->rollno }}
                                     </div>
                                 </td>
-                                <td class="px-4 py-2">
-                                    <div class="flex flex-col">
-                                        <p class="text-xs font-semibold text-left text-slate-800 leading-tight group-hover:text-teal-600 transition-colors">{{ $attendance->student->name }}</p>
-                                        <div class="flex items-center gap-3 mt-1.5 font-medium">
-                                            <span class="text-[10px] text-slate-400 uppercase flex items-center gap-1">
-                                                <i class="bi bi-person text-xs"></i> {{ $attendance->student->father_name }}
+                                <td class="px-4 py-3">
+                                    <div class="flex flex-col items-start hover:cursor-pointer" onclick="window.location.href='{{ route('section.attendance.show', [$section, $attendance]) }}'">
+                                        <a href="{{ route('section.attendance.show', [$section, $attendance]) }}" class="text-xs font-black text-left text-teal-600 underline decoration-teal-600/30 underline-offset-4 hover:text-teal-700 hover:decoration-teal-600 transition-all leading-tight pb-0.5">
+                                            {{ $attendance->student->name }}
+                                        </a>
+                                        <div class="flex flex-col gap-1 mt-1 font-medium pointer-events-none">
+                                            <span class="text-[10px] text-slate-400 uppercase tracking-wider block">
+                                                {{ $attendance->student->father_name }}
                                             </span>
-                                            </div>
-                                            <div>
-                                            <span class="w-1 h-1 rounded-full bg-slate-200"></span>
-                                            <span class="text-[10px] text-slate-400 flex items-center gap-1">
-                                                <i class="bi bi-telephone text-[10px]"></i> {{ $attendance->student->phone }}
+                                            <span class="text-[10px] text-slate-400 uppercase flex items-center gap-1.5 tracking-wider">
+                                                <i class="bi bi-telephone text-[10px] text-slate-400 bg-slate-50 px-1 "></i> {{ $attendance->student->phone ?? 'N/A' }}
                                             </span>
                                         </div>
                                     </div>
@@ -144,12 +146,7 @@
                                         @endif
                                     </div>
                                 </td>
-                                <td class="py-2 text-center">
-                                    <a href="{{ route('section.attendance.show', [$section, $attendance]) }}" 
-                                       class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-white border border-slate-200 text-slate-400 hover:text-teal-600 hover:border-teal-200 hover:shadow-sm transition-all">
-                                        <i class="bi-eye text-sm"></i>
-                                    </a>
-                                </td>
+
                             </tr>
                         @endforeach
                     </tbody>

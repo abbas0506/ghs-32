@@ -2,24 +2,29 @@
 @section('page-content')
     <div class="flex flex-col space-y-6">
         <!-- Header Section -->
-        <div class="flex items-center justify-between">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div class="flex items-center gap-4">
-                <div class="w-12 h-12 rounded-2xl bg-teal-600 flex items-center justify-center text-white shadow-lg shadow-teal-100">
+                <div class="w-12 h-12 rounded-2xl bg-teal-600 flex items-center justify-center text-white shadow-lg shadow-teal-100 shrink-0">
                     <i class="bi-calendar-check text-xl"></i>
                 </div>
-                <div>
-                    <h1 class="text-xl font-bold text-slate-800 leading-tight">Attendance Summary</h1>
-                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ \Carbon\Carbon::parse($date)->format('l, d M Y') }}</p>
+                <div class="overflow-hidden">
+                    <h1 class="text-xl font-bold text-slate-800 leading-tight truncate">Attendance Summary</h1>
+                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest truncate">{{ \Carbon\Carbon::parse($date)->format('l, d M Y') }}</p>
                 </div>
             </div>
 
-            <!-- Date Selector -->
-            <form action="{{ route('attendance.filter') }}" method="post" id="form_filter">
-                @csrf
+            <!-- Actions -->
+            <div class="flex flex-col md:flex-row items-center gap-3 w-full md:w-auto shrink-0">
+                <a href="{{ route('attendance.analytics') }}" class="w-full md:w-auto px-5 py-2.5 bg-teal-50 text-teal-600 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-teal-100 hover:text-teal-700 transition-all shadow-sm flex items-center justify-center gap-2 border border-teal-100">
+                    <i class="bi-bar-chart-fill text-sm"></i> Analytics View
+                </a>
+                <form action="{{ route('attendance.filter') }}" method="post" id="form_filter" class="w-full md:w-auto shrink-0">
+                    @csrf
                 <input type="hidden" name="date" id="date" value="{{ $date }}">
                 <input type="date" id='filter_date' value="{{ $date }}"
-                    class="px-4 py-2 bg-white border border-slate-100 rounded-xl text-slate-700 font-bold text-xs focus:ring-4 focus:ring-teal-500/10 cursor-pointer transition-all">
+                    class="w-full md:w-auto px-4 py-2.5 bg-white border border-slate-100 rounded-xl text-slate-700 font-bold text-xs focus:outline-none focus:ring-4 focus:ring-teal-500/10 focus:border-teal-300 cursor-pointer transition-all shadow-sm">
             </form>
+            </div>
         </div>
 
         @if ($errors->any())
@@ -70,6 +75,8 @@
             </div>
         </div>
 
+
+
         <!-- Section Grid (Minimal Cards) -->
         <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
             @foreach ($sections as $section)
@@ -79,18 +86,34 @@
                         ? round(($section->presenceCount / $section->totalStudents) * 100, 1) 
                         : 0;
                     
-                    $displayPercentage = $isMarked ? $todayPercentage : ($section->averageAttendance() ?? 0);
+                    $displayPercentage = $todayPercentage;
+                    $avgPercentage = round($section->averageAttendance() ?? 0, 1);
                     
-                    $themeColor = $displayPercentage >= 90 ? 'teal' : 
-                        ($displayPercentage >= 75 ? 'cyan' : 'rose');
+                    if (!$isMarked) {
+                        $borderClass = 'hover:border-slate-300';
+                        $textClass = 'group-hover:text-slate-700';
+                        $bgClass = 'bg-slate-500';
+                    } elseif ($displayPercentage >= 90) {
+                        $borderClass = 'hover:border-teal-300';
+                        $textClass = 'group-hover:text-teal-700';
+                        $bgClass = 'bg-teal-500';
+                    } elseif ($displayPercentage >= 75) {
+                        $borderClass = 'hover:border-cyan-300';
+                        $textClass = 'group-hover:text-cyan-700';
+                        $bgClass = 'bg-cyan-500';
+                    } else {
+                        $borderClass = 'hover:border-rose-300';
+                        $textClass = 'group-hover:text-rose-700';
+                        $bgClass = 'bg-rose-500';
+                    }
                 @endphp
                 
                 <a href="@if ($isMarked) {{ route('section.attendance.index', $section) }} @elseif(\Carbon\Carbon::parse($date)->isToday()){{ route('section.attendance.create', $section) }} @else {{ route('section.attendance.index', $section) }} @endif"
-                   class="group bg-white rounded-2xl border border-slate-100 p-5 hover:border-{{ $themeColor }}-300 hover:shadow-lg hover:shadow-slate-100 transition-all duration-300">
+                   class="group bg-white rounded-2xl border border-slate-100 p-5 {{ $borderClass }} hover:shadow-lg hover:shadow-slate-100 transition-all duration-300">
                     
                     <div class="flex items-start justify-between mb-4">
                         <div>
-                            <h3 class="font-bold text-slate-800 group-hover:text-{{ $themeColor }}-700 transition-colors leading-none mb-1">{{ $section->name }}</h3>
+                            <h3 class="font-bold text-slate-800 {{ $textClass }} transition-colors leading-none mb-1">{{ $section->name }}</h3>
                             <div class="flex items-center gap-1.5">
                                 @if(!$isMarked)
                                     <span class="text-[9px] font-black text-orange-500 uppercase tracking-tighter">Awaiting</span>
@@ -98,7 +121,7 @@
                                     <span class="text-[9px] font-black text-teal-500 uppercase tracking-tighter">Marked</span>
                                 @endif
                                 <span class="w-0.5 h-0.5 rounded-full bg-slate-300"></span>
-                                <span class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">{{ $isMarked ? 'Today' : 'Avg' }}</span>
+                                <span class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">Avg {{ $avgPercentage }}%</span>
                             </div>
                         </div>
                         <div class="text-right">
@@ -125,7 +148,7 @@
 
                         <!-- Minimal Progress Bar -->
                         <div class="w-full h-1 bg-slate-50 rounded-full overflow-hidden">
-                            <div class="h-full bg-{{ $themeColor }}-500 transition-all duration-700"
+                            <div class="h-full {{ $bgClass }} transition-all duration-700"
                                 style="width: {{ $displayPercentage }}%"></div>
                         </div>
                     </div>

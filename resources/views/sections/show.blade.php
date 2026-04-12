@@ -1,132 +1,255 @@
 @extends('layouts.app')
-@section('page-content')
-    <div class="custom-container">
-        <h2>View Class</h2>
-        <div class="bread-crumb">
-            <a href="{{ url('/') }}">Home</a>
-            <div>/</div>
-            <a href="{{ route('sections.index') }}">Sections</a>
-            <div>/</div>
-            <div>{{ $section->name }}</div>
-        </div>
 
-        <div class="flex statbox cyan p-5 justify-between items-center border rounded md:w-4/5 mt-8 mx-auto">
+@section('page-content')
+    <div class="space-y-6 pb-12">
+        <!-- Header & Breadcrumbs -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 py-2">
             <div>
-                <h2> <i class="ri-group-line"></i> {{ $section->name }} </h2>
-                <div class="text-slate-600 text-xs md:text-sm">{{ $section->students->count() }} Students
-                    found
+                <div class="flex items-center gap-2 text-slate-400 text-[10px] uppercase tracking-[0.2em] font-black mb-3">
+                    <a href="{{ url('/') }}" class="hover:text-teal-600 transition-colors">School</a>
+                    <i class="bi-chevron-right text-[8px]"></i>
+                    <a href="{{ route('sections.index') }}" class="hover:text-teal-600 transition-colors">Classes</a>
+                    <i class="bi-chevron-right text-[8px]"></i>
+                    <span class="text-teal-600">Profile</span>
+                </div>
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-2xl bg-teal-50 text-teal-600 flex items-center justify-center shadow-sm">
+                        <span class="text-2xl font-black">{{ substr($section->name, 0, 1) }}</span>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-black text-slate-800 leading-none mb-1">Class {{ $section->name }}</h1>
+                        <p class="text-slate-400 text-xs font-medium italic">Monitor academic class records and enrollment</p>
+                    </div>
                 </div>
             </div>
-            <div class="flex space-x-2 items-center">
+
+            <div class="flex flex-wrap items-center gap-3">
                 @can('update', $section)
-                    <a href="{{ route('sections.edit', $section) }}"><i class="bx bx-pencil text-green-600"></i></a>
+                    <a href="{{ route('sections.edit', $section) }}" 
+                       class="flex items-center gap-2 px-6 py-3 bg-white border border-slate-200 text-slate-500 rounded-xl text-xs font-black uppercase tracking-widest hover:text-teal-600 hover:border-teal-200 transition-all">
+                       <i class="bi-pencil-square"></i> Edit
+                    </a>
                 @endcan
                 @can('delete', $section)
-                    <form action="{{ route('sections.destroy', $section) }}" method="POST" onsubmit="return confirmDel(event)">
+                    <form action="{{ route('sections.destroy', $section) }}" method="POST" onsubmit="return confirmDel(event)" class="inline">
                         @csrf @method('DELETE')
-                        <button type="submit"><i class="bx bx-trash text-red-600"></i></button>
+                        <button type="submit" 
+                           class="flex items-center gap-2 px-6 py-3 bg-white border border-slate-200 text-slate-500 rounded-xl text-xs font-black uppercase tracking-widest hover:text-rose-600 hover:border-rose-200 hover:bg-rose-50 transition-all">
+                           <i class="bi-trash3"></i> Delete
+                        </button>
                     </form>
                 @endcan
             </div>
         </div>
-        <!-- search -->
 
-        <div class="md:w-4/5 mx-auto p-5 md:p-8 rounded text-sm border mt-5">
-            <div class="flex justify-center items-center gap-3 flex-wrap">
-                <a href="{{ route('section.students.create', $section) }}"><i
-                        class="bi bi-person-add text-teal-600"></i></a>
-                <a href="{{ route('sections.export', $section) }}" class=""><i
-                        class="bi bi-arrow-right-square text-teal-600"></i></a>
-                <a href="{{ route('sections.reset', $section) }}" class=""><i
-                        class="bi-repeat-1 text-orange-600"></i></a>
-                <a href="{{ route('section.cards.index', $section) }}" class=""><i
-                        class="bi-person-badge text-indigo-600"></i></a>
-
-                @can('clean', $section)
-                    <a href="{{ route('sections.clean', $section) }}" class=""><i
-                            class="bx bx-recycle text-orange-600"></i></a>
-                @endcan
-                <a href="{{ route('sections.list.print', $section) }}" class=""><i
-                        class="bi-printer text-teal-600"></i></a>
+        <!-- Quick Summary Metrics (Tests Card Style) -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <!-- Metric 1: Total Enrolled -->
+            <div class="bg-teal-600 rounded-3xl p-6 text-white shadow-xl shadow-teal-100 flex flex-col justify-center relative overflow-hidden hover:-translate-y-1 transition-transform">
+                <div class="absolute -right-4 -bottom-4 w-16 h-16 bg-white/10 rounded-full"></div>
+                <div class="absolute top-4 right-4 w-6 h-6 bg-white/10 rounded-full"></div>
+                <div class="flex items-center justify-between mb-1 relative z-10">
+                    <p class="text-[9px] md:text-[10px] font-black text-teal-100 uppercase tracking-widest">Enrolled Students</p>
+                    <i class="bi bi-people text-white opacity-60"></i>
+                </div>
+                <div class="flex items-baseline gap-2 relative z-10">
+                    <h2 class="text-xl md:text-2xl font-black text-white">{{ $section->students->count() }}</h2>
+                    @php $newAdmissions = $section->newAdmissions()->count(); @endphp
+                    @if($newAdmissions > 0)
+                        <span class="text-[9px] font-black text-white uppercase opacity-80">+{{ $newAdmissions }} new</span>
+                    @endif
+                </div>
             </div>
 
-            <!-- page message -->
-            @if ($errors->any())
-                <x-message :errors='$errors'></x-message>
-            @else
-                <x-message></x-message>
-            @endif
-
-            <div class="flex relative w-full md:w-1/3 mt-3">
-                <input type="text" id='searchby' placeholder="Search ..." class="custom-search w-full"
-                    oninput="search(event)">
-                <i class="bx bx-search absolute top-2 right-2"></i>
+            <!-- Metric 2: Market Today -->
+            <div class="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm flex flex-col justify-center hover:-translate-y-1 transition-transform">
+                <div class="flex items-center justify-between mb-1">
+                    <p class="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest">Marked Today</p>
+                    <i class="bi bi-calendar-check text-teal-600 opacity-60"></i>
+                </div>
+                <div class="flex items-baseline gap-1">
+                    <h2 class="text-xl md:text-2xl font-black text-slate-800">{{ $section->attendanceMarked() }}</h2>
+                    <span class="text-[9px] font-black text-slate-400 uppercase tracking-tighter">Students</span>
+                </div>
             </div>
 
-            <div class="overflow-x-auto bg-white w-full mt-8">
-
+            <!-- Metric 3: Avg Attendance -->
+            <div class="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm flex flex-col justify-center hover:-translate-y-1 transition-transform">
+                <div class="flex items-center justify-between mb-1">
+                    <p class="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest">Avg Attendance</p>
+                    <i class="bi bi-graph-up text-emerald-500 opacity-60"></i>
+                </div>
+                <div class="flex items-baseline gap-1">
+                    <h2 class="text-xl md:text-2xl font-black text-slate-800">{{ $section->averageAttendance() }}%</h2>
+                    <span class="text-[9px] font-black text-slate-400 uppercase tracking-tighter">Rate</span>
+                </div>
             </div>
-            <table class="table-auto borderless w-full mt-1">
-                <thead>
-                    <tr>
-                        <th class="w-10">#</th>
-                        <th class="w-48 text-left">Name</th>
-                        {{-- <th class="w-16">Photo</th> --}}
-
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($section->students->sortBy('rollno') as $student)
-                        <tr class="tr">
-                            <td>
-                                <a href="{{ route('section.students.show', [$section, $student]) }}"
-                                    class="link text-sm ico teal mx-auto">{{ $student->rollno }}</a>
-                            </td>
-                            <td class="text-left  text-xs md:text-sm">
-                                {{ $student->name }} @if ($student->hasBeenCreatedThisWeek())
-                                    <i class="ri-user-received-line ml-3"></i>
-                                @endif
-                                </a>
-                                <br><span class="text-slate-400">{{ $student->father_name }}</span>
-                            </td>
-                            {{-- <td><img src="{{ asset('storage/' . $student->photo) }}" alt="photo"
-                                        class="rounded mx-auto w-8 h-8"></td> --}}
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
+            
+            <!-- Metric 4: Class ID -->
+            <div class="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm flex flex-col justify-center hover:-translate-y-1 transition-transform">
+                <div class="flex items-center justify-between mb-1">
+                    <p class="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest">System Record</p>
+                    <i class="bi bi-database text-slate-400 opacity-60"></i>
+                </div>
+                <div class="flex items-baseline gap-2">
+                    <span class="text-[9px] font-black text-slate-400 uppercase tracking-tighter">ID</span>
+                    <h2 class="text-xl md:text-2xl font-black text-slate-800">#{{ $section->id }}</h2>
+                </div>
+            </div>
         </div>
 
+        <!-- Quick Action Menu -->
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            <a href="{{ route('section.students.create', $section) }}" class="group bg-white p-4 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md hover:border-teal-100 transition-all text-center">
+                <div class="w-10 h-10 bg-teal-50 text-teal-600 rounded-xl flex items-center justify-center mx-auto mb-3 group-hover:bg-teal-600 group-hover:text-white transition-all">
+                    <i class="bi bi-person-plus text-lg"></i>
+                </div>
+                <span class="text-xs font-black uppercase tracking-widest text-slate-500 group-hover:text-teal-700 transition-colors">Add Student</span>
+            </a>
+
+            <a href="{{ route('sections.export', $section) }}" class="group bg-white p-4 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md hover:border-teal-100 transition-all text-center">
+                <div class="w-10 h-10 bg-teal-50 text-teal-600 rounded-xl flex items-center justify-center mx-auto mb-3 group-hover:bg-teal-600 group-hover:text-white transition-all">
+                    <i class="bi bi-cloud-arrow-down text-lg"></i>
+                </div>
+                <span class="text-xs font-black uppercase tracking-widest text-slate-500 group-hover:text-teal-700 transition-colors">Export Data</span>
+            </a>
+
+            <a href="{{ route('section.cards.index', $section) }}" class="group bg-white p-4 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md hover:border-teal-100 transition-all text-center">
+                <div class="w-10 h-10 bg-teal-50 text-teal-600 rounded-xl flex items-center justify-center mx-auto mb-3 group-hover:bg-teal-600 group-hover:text-white transition-all">
+                    <i class="bi bi-person-badge text-lg"></i>
+                </div>
+                <span class="text-xs font-black uppercase tracking-widest text-slate-500 group-hover:text-teal-700 transition-colors">ID Cards</span>
+            </a>
+
+            <a href="{{ route('sections.list.print', $section) }}" class="group bg-white p-4 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md hover:border-teal-100 transition-all text-center">
+                <div class="w-10 h-10 bg-teal-50 text-teal-600 rounded-xl flex items-center justify-center mx-auto mb-3 group-hover:bg-teal-600 group-hover:text-white transition-all">
+                    <i class="bi bi-printer text-lg"></i>
+                </div>
+                <span class="text-xs font-black uppercase tracking-widest text-slate-500 group-hover:text-teal-700 transition-colors">Attendance</span>
+            </a>
+
+            @can('clean', $section)
+                <a href="{{ route('sections.clean', $section) }}" class="group bg-white p-4 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md hover:border-amber-100 transition-all text-center">
+                    <div class="w-10 h-10 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center mx-auto mb-3 group-hover:bg-amber-600 group-hover:text-white transition-all">
+                        <i class="bi bi-stars text-lg"></i>
+                    </div>
+                    <span class="text-xs font-black uppercase tracking-widest text-slate-500 group-hover:text-amber-700 transition-colors">Clean Data</span>
+                </a>
+            @endcan
+
+            <a href="{{ route('sections.reset', $section) }}" class="group bg-white p-4 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md hover:border-rose-100 transition-all text-center">
+                <div class="w-10 h-10 bg-rose-50 text-rose-600 rounded-xl flex items-center justify-center mx-auto mb-3 group-hover:bg-rose-600 group-hover:text-white transition-all">
+                    <i class="bi bi-arrow-counterclockwise text-lg"></i>
+                </div>
+                <span class="text-xs font-black uppercase tracking-widest text-slate-500 group-hover:text-rose-700 transition-colors">Reset Class</span>
+            </a>
+        </div>
+
+        <!-- Student List Table -->
+        <div class="bg-white rounded-[2.5rem] shadow-sm border border-slate-100 overflow-hidden">
+            <div class="p-8 border-b border-slate-50 flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <div>
+                    <h2 class="text-xl font-bold text-slate-800">Student Directory</h2>
+                    <p class="text-slate-400 text-sm">Managing records for {{ $section->students->count() }} enrolled students</p>
+                </div>
+
+                <div class="relative w-full md:w-80 group">
+                    <i class="bi bi-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-teal-500 transition-colors"></i>
+                    <input type="text" 
+                        id="studentSearch" 
+                        placeholder="Search name or roll no..." 
+                        class="w-full pl-11 pr-4 py-3 bg-slate-50 border-none rounded-2xl text-sm font-medium focus:ring-4 focus:ring-teal-500/10 focus:bg-white transition-all outline-none"
+                        oninput="searchStudents(event)"
+                    >
+                </div>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-50/50">
+                            <th class="px-8 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">Roll No</th>
+                            <th class="px-8 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">Student Information</th>
+                            <th class="px-8 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">Status</th>
+                            <th class="px-8 py-4 text-right overflow-hidden"></th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-50" id="studentsTableBody">
+                        @forelse ($section->students->sortBy('rollno') as $student)
+                            <tr class="student-row group hover:bg-teal-50/30 transition-colors">
+                                <td class="px-8 py-5">
+                                    <span class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-teal-50 text-teal-700 text-xs font-bold ring-4 ring-teal-50/50">
+                                        {{ $student->rollno }}
+                                    </span>
+                                </td>
+                                <td class="px-8 py-5">
+                                    <div class="flex flex-col">
+                                        <span class="text-sm font-bold text-slate-700 group-hover:text-teal-900 transition-colors">{{ $student->name }}</span>
+                                        <span class="text-xs text-slate-400 mt-0.5">S/O-D/O: {{ $student->father_name }}</span>
+                                    </div>
+                                </td>
+                                <td class="px-8 py-5">
+                                    @if ($student->hasBeenCreatedThisWeek())
+                                        <span class="bg-emerald-50 text-emerald-600 text-[10px] font-black uppercase tracking-wider px-2 py-1 rounded-md">New Admission</span>
+                                    @else
+                                        <span class="text-slate-300 text-[10px] font-bold uppercase tracking-widest">Enrolled</span>
+                                    @endif
+                                </td>
+                                <td class="px-8 py-5 text-right">
+                                    <a href="{{ route('section.students.show', [$section, $student]) }}" class="inline-flex items-center gap-2 text-xs font-black uppercase tracking-widest text-slate-400 hover:text-teal-600 transition-colors">
+                                        View Profile <i class="bi bi-chevron-right text-[10px]"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="4" class="px-8 py-20 text-center">
+                                    <div class="w-16 h-16 bg-slate-50 text-slate-300 rounded-full flex items-center justify-center mx-auto mb-4">
+                                        <i class="bi bi-people text-3xl"></i>
+                                    </div>
+                                    <p class="text-slate-400 font-medium">No students enrolled in this section yet.</p>
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
-    </div>
+
     <script>
-        function search(event) {
-            var searchtext = event.target.value.toLowerCase();
-            var str = 0;
-            $('.tr').each(function() {
-                if (!(
-                        $(this).children().eq(0).prop('outerText').toLowerCase().includes(searchtext) ||
-                        $(this).children().eq(1).prop('outerText').toLowerCase().includes(searchtext)
-                    )) {
-                    $(this).addClass('hidden');
+        function searchStudents(event) {
+            const query = event.target.value.toLowerCase();
+            const rows = document.querySelectorAll('.student-row');
+            
+            rows.forEach(row => {
+                const text = row.innerText.toLowerCase();
+                if (text.includes(query)) {
+                    row.classList.remove('hidden');
                 } else {
-                    $(this).removeClass('hidden');
+                    row.classList.add('hidden');
                 }
             });
         }
 
         function confirmDel(event) {
-            event.preventDefault(); // prevent form submit
-            var form = event.target; // storing the form
+            event.preventDefault();
+            const form = event.target;
 
             Swal.fire({
                 title: 'Are you sure?',
-                text: "You won't be able to revert this!",
-                type: 'warning',
+                text: "Deleting this section will affect all associated records. This action cannot be undone!",
+                icon: 'warning',
                 showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, delete it!',
+                confirmButtonColor: '#0d9488', // teal-600
+                cancelButtonColor: '#f43f5e', // rose-500
+                confirmButtonText: 'Yes, delete class',
+                cancelButtonText: 'Cancel',
+                background: '#ffffff',
+                customClass: {
+                    title: 'text-xl font-bold text-slate-800',
+                    popup: 'rounded-[1.5rem] shadow-2xl border-none'
+                }
             }).then((result) => {
                 if (result.value) {
                     form.submit();

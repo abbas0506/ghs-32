@@ -17,36 +17,47 @@ class DashboardController extends Controller
      */
     public function index()
     {
-        //
         $students = Student::all();
         $tests = Test::mine();
-        // get attendances for today with status 1
         $attendances = Attendance::where('date', today())->where('status', 1)->get();
-        $maxAttendance = $students->count() > 0 ? $students->count() : 1; // to avoid division by zero
-        //get new admission during last 7 days
         $newAdmissions = Student::where('created_at', '>=', now()->subDays(7))->get();
-
-        // maximum attendace during last week
+        
+        // Latest 7 days attendance summary
         $maxAttendance = Attendance::where('date', '>=', now()->subDays(7))->where('status', 1)->count();
-        //maximum attendanec percentage during last week
-        $highestAttenancePercentage = $maxAttendance > 0 ? round(($maxAttendance / $maxAttendance) * 100, 1) : 0;
+        $highestAttenancePercentage = $students->count() > 0 ? round(($maxAttendance / ($students->count() * 7)) * 100, 1) : 0;
 
         $tasksDue = collect();
-        // go through assignments and find current user's assignments that have not been yet completed
         $pendingTasks = Auth::user()->taskLines()->where('status', 0)->with('task')->get();
-        // find the tasks for the above pending assignments whose last date is within next 7 days and add to tasksDue collection
         foreach ($pendingTasks as $taskLine) {
             if ($taskLine->task->due_date >= now() && $taskLine->task->due_date <= now()->addDays(7) && !$tasksDue->contains($taskLine->task)) {
                 $tasksDue->push($taskLine->task);
             }
         }
-        // get new tests for last 7 days
-        $newTests = Test::where('created_at', '>=', now()->subDays(7))->get();
-
         $myAllocationsCount = Auth::user()->schedules()->count();
 
+        // Attendance trends for the last 7 days
+        $attendanceTrends = [];
+        for ($i = 6; $i >= 0; $i--) {
+            $date = now()->subDays($i)->format('Y-m-d');
+            $count = Attendance::where('date', $date)->where('status', 1)->count();
+            $attendanceTrends[] = [
+                'date' => now()->subDays($i)->format('D'),
+                'count' => $count
+            ];
+        }
 
-        return view('dashboard', compact('students', 'tests', 'attendances', 'newAdmissions', 'maxAttendance', 'highestAttenancePercentage', 'tasksDue', 'pendingTasks', 'myAllocationsCount'));
+        return view('dashboard', compact(
+            'students', 
+            'tests', 
+            'attendances', 
+            'newAdmissions', 
+            'maxAttendance', 
+            'highestAttenancePercentage', 
+            'tasksDue', 
+            'pendingTasks', 
+            'myAllocationsCount',
+            'attendanceTrends'
+        ));
     }
 
     /**

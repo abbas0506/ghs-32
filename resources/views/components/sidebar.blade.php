@@ -84,16 +84,9 @@
 
                 <!-- Assessment -->
                 <a href="{{ route('tests.index') }}"
-                    class="group flex items-center px-4 py-2 rounded-xl font-semibold text-sm transition-all duration-200 relative {{ request()->routeIs('tests.*') ? 'bg-indigo-50 text-indigo-700' : 'text-slate-600 hover:bg-slate-50' }}">
+                    class="group flex items-center px-4 py-2 rounded-xl font-semibold text-sm transition-all duration-200 relative {{ request()->routeIs('tests.*') || request()->routeIs('class-tests.*') ? 'bg-indigo-50 text-indigo-700' : 'text-slate-600 hover:bg-slate-50' }}">
                     <i class="bi-journal-check text-lg mr-3"></i>
                     <span>Assessment</span>
-                </a>
-
-                <!-- Class Tests -->
-                <a href="{{ route('class-tests.index') }}"
-                    class="group flex items-center px-4 py-2 rounded-xl font-semibold text-sm transition-all duration-200 relative {{ request()->routeIs('class-tests.*') ? 'bg-indigo-50 text-indigo-700' : 'text-slate-600 hover:bg-slate-50' }}">
-                    <i class="bi-mortarboard text-lg mr-3"></i>
-                    <span>Class Tests</span>
                 </a>
 
                 <!-- Fee -->

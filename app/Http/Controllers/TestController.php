@@ -40,10 +40,19 @@ class TestController extends Controller
      */
     public function create()
     {
-        //
         $this->authorize('create', Test::class);
         $sections = Section::whereHas('students')->get();
-        return view('tests.create', compact('sections'));
+        
+        $u = Auth::user();
+        if($u->hasAnyRole(['admin', 'head'])) {
+            $allocations = \App\Models\Schedule::with(['section', 'subject', 'user.profile'])->get();
+        } else {
+            $allocations = \App\Models\Schedule::with(['section', 'subject'])
+                ->where('user_id', $u->id)
+                ->get();
+        }
+
+        return view('tests.create', compact('sections', 'allocations'));
     }
 
     /**
@@ -51,45 +60,78 @@ class TestController extends Controller
      */
     public function store(Request $request)
     {
-        //
         $this->authorize('create', Test::class);
-        $request->validate([
-            'title' => 'required',
-            'max_marks' => 'required|numeric',
-            'sections_array' => 'required',
-        ]);
 
-        $sectionIdsArray = array();
-        $sectionIdsArray = $request->sections_array;
-
-        // $grades = Grade::whereIn('id', $gradeIdsArray)->get();
-
-        DB::beginTransaction();
-        try {
-            $test = Test::create([
-                'title' => $request->title,
-                'max_marks' => $request->max_marks,
+        if ($request->has('allocation_id')) {
+            // Individual Subject Test flow
+            $request->validate([
+                'title' => 'required|string|max:255',
+                'max_marks' => 'required|numeric|min:1',
+                'allocation_id' => 'required|exists:schedules,id',
+                'test_date' => 'required|date',
             ]);
-            $sections = Section::whereIn('id', $sectionIdsArray)->get();
-            foreach ($sections as $section) {
-                foreach ($section->schedules as $allocation) {
-                    $testSubject = $test->testSubjects()->create([
-                        'section_id' => $allocation->section_id,
-                        'lecture_no' => $allocation->lecture_no,
-                        'subject_id' => $allocation->subject_id,
-                        'user_id' => $allocation->user_id,
-                        'max_marks' => $request->max_marks,
-                        'test_date' => now(),
-                    ]);
-                }
+
+            $allocation = \App\Models\Schedule::findOrFail($request->allocation_id);
+
+            DB::beginTransaction();
+            try {
+                $test = Test::create([
+                    'title' => $request->title,
+                    'max_marks' => $request->max_marks,
+                    'user_id' => Auth::id(), // Marks as individual test
+                ]);
+
+                $test->testSubjects()->create([
+                    'section_id' => $allocation->section_id,
+                    'lecture_no' => $allocation->lecture_no,
+                    'subject_id' => $allocation->subject_id,
+                    'user_id' => $allocation->user_id,
+                    'max_marks' => $request->max_marks,
+                    'test_date' => $request->test_date,
+                ]);
+
+                DB::commit();
+                return redirect()->route('tests.index')->with('success', 'Individual assessment created successfully.');
+            } catch (Exception $e) {
+                DB::rollBack();
+                return redirect()->back()->withErrors($e->getMessage());
             }
 
-            DB::commit();
-            return redirect()->route('tests.index')->with('success', 'Successfully created');
-        } catch (Exception $e) {
-            DB::rollBack();
-            return redirect()->back()->withErrors($e->getMessage());
-            // something went wrong
+        } else {
+            // Combined Test flow
+            $request->validate([
+                'title' => 'required|string|max:255',
+                'max_marks' => 'required|numeric|min:1',
+                'sections_array' => 'required|array',
+            ]);
+
+            DB::beginTransaction();
+            try {
+                $test = Test::create([
+                    'title' => $request->title,
+                    'max_marks' => $request->max_marks,
+                ]);
+
+                $sections = \App\Models\Section::whereIn('id', $request->sections_array)->get();
+                foreach ($sections as $section) {
+                    foreach ($section->schedules as $allocation) {
+                        $test->testSubjects()->create([
+                            'section_id' => $allocation->section_id,
+                            'lecture_no' => $allocation->lecture_no,
+                            'subject_id' => $allocation->subject_id,
+                            'user_id' => $allocation->user_id,
+                            'max_marks' => $request->max_marks,
+                            'test_date' => now(),
+                        ]);
+                    }
+                }
+
+                DB::commit();
+                return redirect()->route('tests.index')->with('success', 'Combined assessment created successfully.');
+            } catch (Exception $e) {
+                DB::rollBack();
+                return redirect()->back()->withErrors($e->getMessage());
+            }
         }
     }
 

@@ -63,8 +63,13 @@ class Test extends Model
         if (session('role') == 'head' || session('role') == 'admin') {
             return $query;
         }
-        return $query->open()->whereHas('testSubjects', function ($q) {
-            $q->where('user_id', Auth::user()->id);
+        return $query->where(function ($q) {
+            $q->where('user_id', Auth::id())
+              ->orWhere(function ($q2) {
+                  $q2->open()->whereHas('testSubjects', function ($q3) {
+                      $q3->where('user_id', Auth::id());
+                  });
+              });
         });
     }
 }

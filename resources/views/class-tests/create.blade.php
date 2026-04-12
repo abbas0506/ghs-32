@@ -5,7 +5,7 @@
         <div class="flex items-center gap-4 py-2">
             <div>
                 <div class="flex items-center gap-2 text-slate-400 text-[10px] uppercase tracking-[0.2em] font-black mb-3">
-                    <a href="{{ route('class-tests.index') }}" class="hover:text-teal-600 transition-colors">Class Tests</a>
+                    <a href="{{ route('tests.index') }}" class="hover:text-teal-600 transition-colors">Assessment</a>
                     <i class="bi-chevron-right text-[8px]"></i>
                     <span class="text-teal-600 uppercase">Create Assessment</span>
                 </div>

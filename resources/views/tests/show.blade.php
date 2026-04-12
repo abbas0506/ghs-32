@@ -1,49 +1,70 @@
 @extends('layouts.app')
 @section('page-content')
     <div class="flex flex-col space-y-6">
-        <!-- Header & Breadcrumbs -->
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 py-2">
+
+        @php
+            $submitted  = $test->testSubjects()->mine()->resultSubmitted()->count();
+            $total      = $test->testSubjects()->mine()->count();
+            $percent    = $total > 0 ? round(($submitted / $total) * 100, 0) : 0;
+            $todaySubmitted = $test->testSubjects()->resultSubmitted()->today()->count();
+            $pending    = $total - $submitted;
+        @endphp
+
+        {{-- ── Header ── --}}
+        <div class="flex flex-col md:flex-row md:items-start justify-between gap-4 py-2">
             <div>
                 <div class="flex items-center gap-2 text-slate-400 text-[10px] uppercase tracking-[0.2em] font-black mb-3">
                     <a href="{{ route('tests.index') }}" class="hover:text-teal-600 transition-colors">Assessment</a>
                     <i class="bi-chevron-right text-[8px]"></i>
-                    <span class="text-teal-600">Test Details</span>
+                    <span class="text-teal-600">Details</span>
                 </div>
                 <div class="flex items-center gap-4">
-                    <div class="w-12 h-12 rounded-2xl bg-teal-50 text-teal-600 flex items-center justify-center shadow-sm">
-                        <i class="bi-journal-check text-xl"></i>
+                    <div class="w-14 h-14 rounded-2xl bg-teal-600 text-white flex items-center justify-center shadow-lg shadow-teal-100 shrink-0">
+                        <i class="bi-journal-check text-2xl"></i>
                     </div>
                     <div>
-                        <h2 class="text-xl font-black text-slate-800 leading-none mb-1">{{ $test->title }}</h2>
-                        <div class="flex items-center gap-2 mt-1">
+                        <h1 class="text-2xl font-black text-slate-800 leading-none mb-2">{{ $test->title }}</h1>
+                        <div class="flex items-center gap-2 flex-wrap">
                             @if($test->is_open)
-                                <span class="px-2 py-0.5 bg-teal-50 text-teal-600 text-[8px] font-black uppercase tracking-widest rounded-full border border-teal-100">Live Assessment</span>
+                                <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-teal-50 text-teal-700 text-[9px] font-black uppercase tracking-widest rounded-full border border-teal-100">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-teal-500 animate-pulse"></span> Live
+                                </span>
                             @else
-                                <span class="px-2 py-0.5 bg-slate-100 text-slate-500 text-[8px] font-black uppercase tracking-widest rounded-full border border-slate-200">Archive Only</span>
+                                <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-slate-100 text-slate-500 text-[9px] font-black uppercase tracking-widest rounded-full border border-slate-200">
+                                    <i class="bi-lock-fill text-[8px]"></i> Locked
+                                </span>
                             @endif
-                            <span class="w-1 h-1 rounded-full bg-slate-200"></span>
-                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">{{ \Carbon\Carbon::parse($test->created_at)->format('d M Y') }}</span>
+                            <span class="text-[10px] font-bold text-slate-400">
+                                <i class="bi-calendar3 mr-1"></i>{{ \Carbon\Carbon::parse($test->created_at)->format('d M Y') }}
+                            </span>
+                            <span class="text-[10px] font-bold text-slate-400">
+                                <i class="bi-award mr-1"></i>Max {{ $test->max_marks }} marks
+                            </span>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Action Bar -->
-            <div class="flex items-center gap-2">
+            {{-- Action Bar --}}
+            <div class="flex items-center gap-2 shrink-0">
                 @role('admin|head')
                     @if ($test->is_open)
-                        <a href="{{ route('test.test-subjects.create', $test) }}" 
-                           class="w-10 h-10 flex items-center justify-center bg-teal-600 text-white rounded-xl hover:bg-teal-700 hover:shadow-lg transition-all" title="Add Subject">
-                           <i class="bi-plus-lg text-lg"></i>
+                        <a href="{{ route('test.test-subjects.create', $test) }}"
+                           class="flex items-center gap-2 px-4 py-2.5 bg-teal-600 text-white rounded-xl text-xs font-black uppercase tracking-widest hover:bg-teal-700 hover:shadow-lg hover:shadow-teal-100 transition-all"
+                           title="Add Subject">
+                            <i class="bi-plus-lg"></i> Add Subject
                         </a>
-                        <a href="{{ route('tests.edit', $test) }}" 
-                           class="w-10 h-10 flex items-center justify-center bg-white border border-slate-200 text-slate-500 rounded-xl hover:text-teal-600 hover:border-teal-200 transition-all" title="Edit Test">
-                           <i class="bi-pencil-square"></i>
+                        <a href="{{ route('tests.edit', $test) }}"
+                           class="w-10 h-10 flex items-center justify-center bg-white border border-slate-200 text-slate-500 rounded-xl hover:text-teal-600 hover:border-teal-200 transition-all"
+                           title="Edit Test">
+                            <i class="bi-pencil-square"></i>
                         </a>
                         @can('lock', $test)
-                            <form action="{{ route('test.lock', $test) }}" method='post'>
+                            <form action="{{ route('test.lock', $test) }}" method="post">
                                 @csrf @method('patch')
-                                <button type="submit" class="w-10 h-10 flex items-center justify-center bg-white border border-slate-200 text-orange-500 rounded-xl hover:bg-orange-50 hover:border-orange-200 transition-all" title="Lock results">
+                                <button type="submit"
+                                    class="w-10 h-10 flex items-center justify-center bg-white border border-slate-200 text-amber-500 rounded-xl hover:bg-amber-50 hover:border-amber-200 transition-all"
+                                    title="Lock Assessment">
                                     <i class="bi-unlock font-black"></i>
                                 </button>
                             </form>
@@ -51,63 +72,25 @@
                         @can('delete', $test)
                             <form action="{{ route('tests.destroy', $test) }}" method="POST" onsubmit="confirmDel(event)">
                                 @csrf @method('DELETE')
-                                <button type="submit" class="w-10 h-10 flex items-center justify-center bg-white border border-slate-200 text-rose-500 rounded-xl hover:bg-rose-50 hover:border-rose-200 transition-all" title="Delete">
+                                <button type="submit"
+                                    class="w-10 h-10 flex items-center justify-center bg-white border border-slate-200 text-rose-500 rounded-xl hover:bg-rose-50 hover:border-rose-200 transition-all"
+                                    title="Delete">
                                     <i class="bi-trash3"></i>
                                 </button>
                             </form>
                         @endcan
                     @else
                         @can('unlock', $test)
-                            <form action="{{ route('test.unlock', $test) }}" method='post'>
+                            <form action="{{ route('test.unlock', $test) }}" method="post">
                                 @csrf @method('patch')
-                                <button type="submit" class="flex items-center gap-2 px-6 py-3 bg-rose-600 text-white rounded-xl text-xs font-black uppercase tracking-widest hover:bg-rose-700 transition-all">
-                                    <i class="bi-lock-fill"></i> Unlock Assessment
+                                <button type="submit"
+                                    class="flex items-center gap-2 px-5 py-2.5 bg-amber-500 text-white rounded-xl text-xs font-black uppercase tracking-widest hover:bg-amber-600 transition-all">
+                                    <i class="bi-unlock-fill"></i> Reopen Assessment
                                 </button>
                             </form>
                         @endcan
                     @endif
                 @endrole
-            </div>
-        </div>
-
-        @php
-            $submitted = $test->testSubjects()->mine()->resultSubmitted()->count();
-            $total = $test->testSubjects()->mine()->count();
-            $percent = $total > 0 ? round(($submitted / $total) * 100, 0) : 0;
-            $todaySubmitted = $test->testSubjects()->resultSubmitted()->today()->count();
-        @endphp
-
-        <!-- Overview Card -->
-        <div class="bg-teal-600 rounded-[2rem] p-8 text-white relative overflow-hidden shadow-xl shadow-teal-100">
-            <div class="absolute -right-16 -top-16 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
-            <div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
-                <div class="flex-1">
-                    <p class="text-teal-100 text-[10px] font-black uppercase tracking-[0.2em] mb-3">Submission Summary</p>
-                    <h4 class="text-2xl font-black mb-2">{{ $percent }}% <span class="text-teal-200/60 font-normal italic">Progress</span></h4>
-                    <div class="flex items-center gap-4 mt-4">
-                        <div class="flex flex-col">
-                            <span class="text-[10px] font-black text-teal-100/60 uppercase">Subjects</span>
-                            <span class="text-lg font-bold">{{ $submitted }} <span class="text-teal-200/50 text-xs">/ {{ $total }}</span></span>
-                        </div>
-                        <div class="w-px h-8 bg-white/10"></div>
-                        <div class="flex flex-col">
-                            <span class="text-[10px] font-black text-teal-100/60 uppercase">Today</span>
-                            <span class="text-lg font-bold text-white">+{{ $todaySubmitted }}</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="relative flex items-center justify-center w-32 h-32">
-                    <svg class="w-full h-full transform -rotate-90">
-                        <circle cx="64" cy="64" r="54" stroke="currentColor" stroke-width="8" fill="transparent" class="text-white/10" />
-                        <circle cx="64" cy="64" r="54" stroke="currentColor" stroke-width="8" fill="transparent" class="text-white" 
-                            stroke-dasharray="339.29" stroke-dashoffset="{{ 339.29 - (339.29 * $percent / 100) }}"
-                            stroke-linecap="round" />
-                    </svg>
-                    <div class="absolute flex flex-col items-center justify-center">
-                        <span class="text-2xl font-black text-white">{{ $percent }}%</span>
-                    </div>
-                </div>
             </div>
         </div>
 
@@ -117,115 +100,217 @@
             <x-message></x-message>
         @endif
 
-        <!-- Content Area -->
+        {{-- ── Stat Strip ── --}}
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {{-- Completion % --}}
+            <div class="col-span-2 md:col-span-1 bg-teal-600 rounded-3xl p-6 text-white shadow-xl shadow-teal-100 relative overflow-hidden flex items-center gap-5">
+                <div class="absolute -right-6 -bottom-6 w-24 h-24 bg-white/10 rounded-full"></div>
+                <div class="relative flex items-center justify-center w-16 h-16 shrink-0">
+                    <svg class="w-full h-full -rotate-90">
+                        <circle cx="32" cy="32" r="26" stroke="currentColor" stroke-width="5" fill="transparent" class="text-white/20"/>
+                        <circle cx="32" cy="32" r="26" stroke="currentColor" stroke-width="5" fill="transparent" class="text-white"
+                            stroke-dasharray="163.36"
+                            stroke-dashoffset="{{ 163.36 - (163.36 * $percent / 100) }}"
+                            stroke-linecap="round"/>
+                    </svg>
+                    <span class="absolute text-[11px] font-black text-white">{{ $percent }}%</span>
+                </div>
+                <div>
+                    <p class="text-[9px] font-black text-teal-200 uppercase tracking-widest mb-1">Completion</p>
+                    <p class="text-2xl font-black leading-none">{{ $submitted }}<span class="text-teal-300/60 text-sm font-bold"> / {{ $total }}</span></p>
+                    <p class="text-[9px] text-teal-100/70 font-bold mt-1">subjects submitted</p>
+                </div>
+            </div>
+
+            {{-- Pending --}}
+            <div class="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm flex flex-col justify-between">
+                <div class="flex items-center justify-between mb-3">
+                    <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Pending</p>
+                    <div class="w-8 h-8 rounded-xl bg-rose-50 flex items-center justify-center">
+                        <i class="bi-hourglass-split text-rose-500 text-sm"></i>
+                    </div>
+                </div>
+                <div class="flex items-baseline gap-1">
+                    <span class="text-3xl font-black text-slate-800 leading-none">{{ $pending }}</span>
+                    <span class="text-[9px] font-black text-slate-400 uppercase">subjects</span>
+                </div>
+            </div>
+
+            {{-- Today --}}
+            <div class="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm flex flex-col justify-between">
+                <div class="flex items-center justify-between mb-3">
+                    <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Today</p>
+                    <div class="w-8 h-8 rounded-xl bg-indigo-50 flex items-center justify-center">
+                        <i class="bi-lightning-charge-fill text-indigo-500 text-sm"></i>
+                    </div>
+                </div>
+                <div class="flex items-baseline gap-1">
+                    <span class="text-3xl font-black text-slate-800 leading-none">+{{ $todaySubmitted }}</span>
+                    <span class="text-[9px] font-black text-slate-400 uppercase">new</span>
+                </div>
+            </div>
+
+            {{-- Max Marks --}}
+            <div class="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm flex flex-col justify-between">
+                <div class="flex items-center justify-between mb-3">
+                    <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Max Marks</p>
+                    <div class="w-8 h-8 rounded-xl bg-teal-50 flex items-center justify-center">
+                        <i class="bi-award-fill text-teal-500 text-sm"></i>
+                    </div>
+                </div>
+                <div class="flex items-baseline gap-1">
+                    <span class="text-3xl font-black text-slate-800 leading-none">{{ $test->max_marks }}</span>
+                    <span class="text-[9px] font-black text-slate-400 uppercase">pts</span>
+                </div>
+            </div>
+        </div>
+
+        {{-- ── Main Content Panel ── --}}
         <div class="bg-white rounded-[2rem] border border-slate-100 shadow-sm overflow-hidden">
+
             @if ($test->is_open)
-                <!-- Filters & Search -->
-                <div class="px-8 py-6 bg-slate-50/50 border-b border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-6">
-                    <div class="flex items-center flex-wrap gap-1 bg-white p-1 rounded-xl shadow-sm border border-slate-100 w-full md:w-auto">
-                        <button onclick="filterBy('all')" class="flex-1 md:flex-none flex items-center justify-center gap-2 px-5 py-2 rounded-lg text-xs font-black uppercase tracking-widest cursor-pointer hover:bg-white transition-all text-slate-600">
+                {{-- Filter & Search toolbar --}}
+                <div class="px-6 md:px-8 py-5 border-b border-slate-50 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-50/40">
+                    <div class="flex items-center gap-1 bg-white p-1 rounded-xl border border-slate-100 shadow-sm w-full sm:w-auto">
+                        <button id="filter-all"
+                            onclick="filterBy('all', this)"
+                            class="filter-btn active-filter flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all bg-teal-600 text-white">
                             <i class="bi-grid-fill"></i> All
                         </button>
-                        <button onclick="filterBy('submitted')" class="flex-1 md:flex-none flex items-center justify-center gap-2 px-5 py-2 rounded-lg text-xs font-black uppercase tracking-widest cursor-pointer bg-teal-50 text-teal-700 hover:bg-teal-100 transition-all">
-                            <i class="bi-check-circle-fill"></i> Submitted
+                        <button id="filter-submitted"
+                            onclick="filterBy('submitted', this)"
+                            class="filter-btn flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest text-slate-500 hover:bg-slate-50 transition-all">
+                            <i class="bi-check-circle-fill text-teal-500"></i> Done
                         </button>
-                        <button onclick="filterBy('pending')" class="flex-1 md:flex-none flex items-center justify-center gap-2 px-5 py-2 rounded-lg text-xs font-black uppercase tracking-widest cursor-pointer bg-rose-50 text-rose-700 hover:bg-rose-100 transition-all">
-                            <i class="bi-hourglass-split"></i> Pending
+                        <button id="filter-pending"
+                            onclick="filterBy('pending', this)"
+                            class="filter-btn flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest text-slate-500 hover:bg-slate-50 transition-all">
+                            <i class="bi-hourglass-split text-rose-500"></i> Pending
                         </button>
                     </div>
-                    <div class="relative w-full md:w-80 group">
-                        <input type="text" id='searchby' placeholder="Search subjects or teachers..." oninput="search(event)"
-                            class="w-full pl-10 pr-4 py-3 bg-white border border-slate-200 rounded-2xl text-xs font-bold text-slate-700 focus:ring-4 focus:ring-teal-500/10 focus:border-teal-500 transition-all">
-                        <i class="bi bi-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-teal-600 transition-colors"></i>
+                    <div class="relative w-full sm:w-72 group">
+                        <input type="text" id="searchby" placeholder="Search subject or teacher…"
+                               oninput="search(event)"
+                               class="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-700 placeholder:text-slate-300 focus:ring-4 focus:ring-teal-500/10 focus:border-teal-400 transition-all outline-none">
+                        <i class="bi bi-search absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-teal-500 transition-colors text-xs"></i>
                     </div>
                 </div>
 
-                <!-- Subjects Table -->
-                <div class="overflow-x-auto">
-                    <table class="table-fixed w-full border-collapse">
-                        <thead>
-                            <tr class="text-left">
-                                <th class="w-16 py-2 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-50">#</th>
-                                <th class="w-40 py-2 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-50">Subject & Instructor</th>
-                                <th class="w-24 py-2 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-50 text-center">Status</th>
-                                <th class="w-16"></th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-slate-50">
-                            @foreach ($test->testSubjects()->mine()->get()->sortBy(['section_id', 'lecture_no']) as $testSubject)
-                                @php $isSubmitted = $testSubject->result_date; @endphp
-                                <tr class="tr group hover:bg-slate-50/80 transition-all {{ $isSubmitted ? 'submitted' : 'pending' }}">
-                                    <td class="p-3">
-                                        <div class="w-8 h-8 rounded-full flex items-center justify-center mx-auto text-[10px] font-black {{ $isSubmitted ? 'bg-teal-50 text-teal-600' : 'bg-slate-50 text-slate-400' }} transition-colors border {{ $isSubmitted ? 'border-teal-100' : 'border-slate-100' }}">
-                                            {{ $loop->iteration }}
-                                        </div>
-                                    </td>
-                                    <td class="p-3">
-                                        <div class="flex flex-col">
-                                            <a href="{{ route('test.test-subjects.show', [$test, $testSubject]) }}" class="text-sm font-semibold text-slate-800 hover:text-teal-600 transition-colors leading-tight text-left">
-                                                {{ $testSubject->subject->short_name }} — {{ $testSubject->section->name }}
-                                                @if($testSubject->hasBeenSubmittedToday())
-                                                    <span class="ml-1 text-teal-500 text-[8px] animate-pulse">● NEW</span>
-                                                @endif
-                                            </a>
-                                            <div class="flex items-center gap-1.5 mt-1">
-                                                <i class="bi bi-person text-[10px] text-teal-600/50"></i>
-                                                <span class="text-[10px] text-teal-600 font-semibold uppercase tracking-tight">{{ $testSubject->user?->profile->short_name }}</span>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="p-3">
-                                        <div class="flex justify-center">
-                                            @if ($isSubmitted)
-                                                <span class="px-3 py-1 bg-teal-50 text-teal-700 text-[9px] font-black uppercase tracking-widest rounded-full border border-teal-100">Submitted</span>
-                                            @else
-                                                <span class="px-3 py-1 bg-rose-50 text-rose-700 text-[9px] font-black uppercase tracking-widest rounded-full border border-rose-100">Pending</span>
-                                            @endif
-                                        </div>
-                                    </td>
-                                    <td class="py-3">
-                                        <a href="{{ route('test.test-subjects.show', [$test, $testSubject]) }}" 
-                                           class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-white border border-slate-200 text-slate-400 hover:text-teal-600 hover:border-teal-200 transition-all">
-                                            <i class="bi-chevron-right text-xs"></i>
-                                        </a>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-            @else
-                <!-- Archived View (Test Closed) -->
-                <div class="p-8">
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        @foreach ($sections as $section)
-                            <div class="group bg-slate-50 rounded-3xl p-6 border border-slate-100 hover:border-teal-200 hover:bg-teal-50/20 transition-all">
-                                <div class="flex items-center justify-between mb-6">
-                                    <div class="flex items-center gap-3">
-                                        <div class="w-10 h-10 rounded-xl bg-white text-teal-600 flex items-center justify-center shadow-sm">
-                                            <i class="bi-collection-play text-lg"></i>
-                                        </div>
-                                        <h3 class="font-black text-slate-800 leading-tight">{{ $section->name }}</h3>
-                                    </div>
-                                    <span class="text-[10px] font-black text-slate-300 uppercase tracking-widest">Reports</span>
+                {{-- Subject rows --}}
+                <div class="divide-y divide-slate-50">
+                    @forelse ($test->testSubjects()->mine()->get()->sortBy(['section_id', 'lecture_no']) as $testSubject)
+                        @php $isSubmitted = $testSubject->result_date; @endphp
+                        <div class="tr group flex items-center gap-4 px-6 md:px-8 py-4 hover:bg-slate-50/70 transition-all {{ $isSubmitted ? 'submitted' : 'pending' }}">
+
+                            {{-- Index badge --}}
+                            <div class="w-9 h-9 rounded-2xl flex items-center justify-center shrink-0 text-[10px] font-black transition-colors
+                                {{ $isSubmitted ? 'bg-teal-50 text-teal-600 border border-teal-100' : 'bg-slate-50 text-slate-400 border border-slate-100' }}">
+                                {{ $loop->iteration }}
+                            </div>
+
+                            {{-- Subject + teacher --}}
+                            <div class="flex-1 min-w-0">
+                                <a href="{{ route('test.test-subjects.show', [$test, $testSubject]) }}"
+                                   class="font-black text-slate-800 hover:text-teal-600 transition-colors leading-tight text-sm block truncate">
+                                    {{ $testSubject->subject->name }}
+                                    @if($testSubject->hasBeenSubmittedToday())
+                                        <span class="ml-1 text-teal-500 text-[8px] font-black animate-pulse">● NEW</span>
+                                    @endif
+                                </a>
+                                <div class="flex items-center gap-2 mt-1 flex-wrap">
+                                    <span class="inline-flex items-center gap-1 text-[9px] font-black text-slate-400 uppercase tracking-tight">
+                                        <i class="bi-collection text-slate-300"></i> {{ $testSubject->section->name }}
+                                    </span>
+                                    <span class="w-1 h-1 rounded-full bg-slate-200"></span>
+                                    <span class="inline-flex items-center gap-1 text-[9px] font-bold text-teal-600/80 uppercase tracking-tight">
+                                        <i class="bi-person text-[10px]"></i> {{ $testSubject->user?->profile->short_name ?? '—' }}
+                                    </span>
                                 </div>
-                                
-                                <div class="grid gap-3">
-                                    <a href="{{ route('section-result', [$test, $section]) }}" target="_blank" 
-                                       class="flex items-center justify-between p-3 bg-white rounded-xl border border-slate-100 hover:border-rose-200 group/link transition-all">
-                                        <div class="flex items-center gap-2">
-                                            <i class="bi-file-earmark-pdf text-rose-600"></i>
-                                            <span class="text-xs font-bold text-slate-600">Result Sheet</span>
+                            </div>
+
+                            {{-- Status pill --}}
+                            <div class="shrink-0">
+                                @if ($isSubmitted)
+                                    <span class="inline-flex items-center gap-1 px-3 py-1 bg-teal-50 text-teal-700 text-[9px] font-black uppercase tracking-widest rounded-full border border-teal-100">
+                                        <i class="bi-check-circle-fill text-[8px]"></i> Done
+                                    </span>
+                                @else
+                                    <span class="inline-flex items-center gap-1 px-3 py-1 bg-rose-50 text-rose-600 text-[9px] font-black uppercase tracking-widest rounded-full border border-rose-100">
+                                        <i class="bi-clock text-[8px]"></i> Pending
+                                    </span>
+                                @endif
+                            </div>
+
+                            {{-- Arrow CTA --}}
+                            <a href="{{ route('test.test-subjects.show', [$test, $testSubject]) }}"
+                               class="shrink-0 w-9 h-9 flex items-center justify-center rounded-xl bg-white border border-slate-100 text-slate-300 hover:text-teal-600 hover:border-teal-200 hover:shadow-sm transition-all group-hover:translate-x-0.5">
+                                <i class="bi-arrow-right text-sm"></i>
+                            </a>
+                        </div>
+                    @empty
+                        <div class="px-8 py-16 text-center">
+                            <i class="bi-inbox text-4xl text-slate-200 mb-3 block"></i>
+                            <p class="text-sm font-bold text-slate-400">No subjects assigned yet.</p>
+                        </div>
+                    @endforelse
+                </div>
+
+            @else
+                {{-- ── Archived / Report View ── --}}
+                <div class="px-6 md:px-8 py-6 border-b border-slate-50 flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-black text-slate-700">Generate Reports</p>
+                        <p class="text-[10px] text-slate-400 font-medium mt-0.5">Download result sheets and report cards per section</p>
+                    </div>
+                    <span class="px-3 py-1.5 bg-slate-100 text-slate-500 text-[9px] font-black uppercase tracking-widest rounded-full border border-slate-200">
+                        <i class="bi-lock-fill mr-1"></i>Archived
+                    </span>
+                </div>
+
+                <div class="p-6 md:p-8">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                        @foreach ($sections as $section)
+                            <div class="group bg-slate-50/60 rounded-3xl p-6 border border-slate-100 hover:border-teal-200 hover:shadow-md hover:shadow-teal-50 transition-all duration-300">
+                                <div class="flex items-center gap-3 mb-5">
+                                    <div class="w-10 h-10 rounded-2xl bg-white text-teal-600 flex items-center justify-center shadow-sm border border-slate-100">
+                                        <i class="bi-collection-play text-lg"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="font-black text-slate-800 leading-tight">{{ $section->name }}</h3>
+                                        <p class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Section Reports</p>
+                                    </div>
+                                </div>
+
+                                <div class="grid gap-2">
+                                    <a href="{{ route('section-result', [$test, $section]) }}" target="_blank"
+                                       class="flex items-center justify-between p-3.5 bg-white rounded-2xl border border-slate-100 hover:border-rose-200 hover:shadow-sm group/link transition-all">
+                                        <div class="flex items-center gap-2.5">
+                                            <div class="w-7 h-7 rounded-xl bg-rose-50 flex items-center justify-center">
+                                                <i class="bi-file-earmark-pdf text-rose-500 text-sm"></i>
+                                            </div>
+                                            <span class="text-xs font-black text-slate-600 group-hover/link:text-rose-600 transition-colors">Result Sheet</span>
                                         </div>
-                                        <i class="bi-printer text-slate-300 group-hover/link:text-rose-600 transition-colors"></i>
+                                        <i class="bi-box-arrow-up-right text-xs text-slate-300 group-hover/link:text-rose-500 transition-colors"></i>
                                     </a>
-                                    <a href="{{ route('report-cards', [$test, $section]) }}" target="_blank" 
-                                       class="flex items-center justify-between p-3 bg-white rounded-xl border border-slate-100 hover:border-rose-200 group/link transition-all">
-                                        <div class="flex items-center gap-2">
-                                            <i class="bi-postcard text-rose-600"></i>
-                                            <span class="text-xs font-bold text-slate-600">Result Cards</span>
+                                    <a href="{{ route('report-cards', [$test, $section]) }}" target="_blank"
+                                       class="flex items-center justify-between p-3.5 bg-white rounded-2xl border border-slate-100 hover:border-rose-200 hover:shadow-sm group/link transition-all">
+                                        <div class="flex items-center gap-2.5">
+                                            <div class="w-7 h-7 rounded-xl bg-rose-50 flex items-center justify-center">
+                                                <i class="bi-postcard text-rose-500 text-sm"></i>
+                                            </div>
+                                            <span class="text-xs font-black text-slate-600 group-hover/link:text-rose-600 transition-colors">Report Cards</span>
                                         </div>
-                                        <i class="bi-printer text-slate-300 group-hover/link:text-rose-600 transition-colors"></i>
+                                        <i class="bi-box-arrow-up-right text-xs text-slate-300 group-hover/link:text-rose-500 transition-colors"></i>
+                                    </a>
+                                    <a href="{{ route('section-positions', [$test, $section]) }}" target="_blank"
+                                       class="flex items-center justify-between p-3.5 bg-white rounded-2xl border border-slate-100 hover:border-indigo-200 hover:shadow-sm group/link transition-all">
+                                        <div class="flex items-center gap-2.5">
+                                            <div class="w-7 h-7 rounded-xl bg-indigo-50 flex items-center justify-center">
+                                                <i class="bi-trophy text-indigo-500 text-sm"></i>
+                                            </div>
+                                            <span class="text-xs font-black text-slate-600 group-hover/link:text-indigo-600 transition-colors">Positions</span>
+                                        </div>
+                                        <i class="bi-box-arrow-up-right text-xs text-slate-300 group-hover/link:text-indigo-500 transition-colors"></i>
                                     </a>
                                 </div>
                             </div>
@@ -237,41 +322,43 @@
     </div>
 
     <script type="module">
-        $(document).ready(function() {
-            window.search = function(event) {
-                var searchtext = event.target.value.toLowerCase();
-                $('.tr').each(function() {
-                    var content = $(this).text().toLowerCase();
-                    $(this).toggle(content.indexOf(searchtext) > -1);
-                });
-            }
+        $(document).ready(function () {
 
-            window.filterBy = function(criteria) {
-                if (criteria == 'all') {
+            window.search = function (event) {
+                const q = event.target.value.toLowerCase();
+                $('.tr').each(function () {
+                    $(this).toggle($(this).text().toLowerCase().includes(q));
+                });
+            };
+
+            window.filterBy = function (criteria, btn) {
+                // Pill states
+                $('.filter-btn').removeClass('bg-teal-600 text-white shadow-sm').addClass('text-slate-500');
+                $(btn).removeClass('text-slate-500').addClass('bg-teal-600 text-white shadow-sm');
+
+                if (criteria === 'all') {
                     $('.tr').show();
                 } else {
-                    $('.tr').each(function() {
+                    $('.tr').each(function () {
                         $(this).toggle($(this).hasClass(criteria));
                     });
                 }
-            }
+            };
 
-            window.confirmDel = function(event) {
+            window.confirmDel = function (event) {
                 event.preventDefault();
-                var form = event.target;
+                const form = event.target;
                 Swal.fire({
                     title: 'Delete Assessment?',
-                    text: "All associated subject data will be removed!",
+                    text: "All associated subject data will be permanently removed!",
                     icon: 'warning',
                     showCancelButton: true,
-                    confirmButtonColor: '#e11d48', // rose-600
+                    confirmButtonColor: '#e11d48',
                     confirmButtonText: 'Yes, delete it'
                 }).then((result) => {
-                    if (result.isConfirmed) {
-                        form.submit();
-                    }
-                })
-            }
+                    if (result.isConfirmed) form.submit();
+                });
+            };
         });
     </script>
 @endsection

@@ -27,7 +27,7 @@
                 </a>
                 @can('create', App\Models\Test::class)
                     <a href="{{ route('tests.create') }}" 
-                       class="flex items-center gap-2 px-6 py-3 bg-teal-600 text-white rounded-xl text-xs font-black uppercase tracking-widest hover:bg-teal-700 hover:shadow-lg hover:shadow-teal-100 transition-all">
+                       class="flex items-center gap-2 px-6 py-3 bg-teal-600 text-white rounded-xl text-xs font-black uppercase tracking-widest hover:bg-teal-700 hover:shadow-lg hover:shadow-teal-100 transition-all whitespace-nowrap">
                        <i class="bi-plus-lg"></i> New Assessment
                     </a>
                 @endcan
@@ -78,7 +78,7 @@
                     $isOpen = $test->is_open;
                 @endphp
                 
-                <a href="{{ route('tests.show', $test) }}"
+                <a href="{{ $test->user_id ? route('class-tests.show', $test) : route('tests.show', $test) }}"
                    class="group bg-white rounded-2xl border border-slate-100 p-6 hover:shadow-xl hover:shadow-slate-100 hover:border-teal-200 transition-all duration-300">
                     
                     <div class="flex flex-col h-full gap-5">

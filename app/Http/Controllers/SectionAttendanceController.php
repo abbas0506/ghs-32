@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Attendance;
 use App\Models\Section;
 use App\Models\Student;
+use Barryvdh\DomPDF\Facade\Pdf as PDF;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -112,6 +113,119 @@ class SectionAttendanceController extends Controller
 
         return view('attendance.analytics', compact('sections', 'selectedSectionId', 'selectedSection', 'weeklyData', 'monthlyData'));
     }
+
+    public function habitualStudents()
+    {
+        $this->authorize('viewSummary', Attendance::class);
+
+        $report = $this->getHabitualStudentsReport();
+
+        return view('attendance.habitual-students', $report);
+    }
+
+    public function habitualStudentsPdf()
+    {
+        $this->authorize('viewSummary', Attendance::class);
+
+        $report = $this->getHabitualStudentsReport();
+
+        $pdf = PDF::loadView('attendance.habitual-students-pdf', $report)->setPaper('a4', 'portrait');
+        $pdf->set_option('isPhpEnabled', true);
+
+        return $pdf->stream('habitual-students-' . now()->format('Ymd') . '.pdf');
+    }
+
+    private function getHabitualStudentsReport()
+    {
+        $sections = Auth::user()->accessibleSections();
+        $sectionIds = $sections->pluck('id');
+
+        $date = session('date') ?? now()->toDateString();
+        $reportDate = \Carbon\Carbon::parse($date);
+        $sessionStart = $reportDate->month >= 4
+            ? \Carbon\Carbon::create($reportDate->year, 4, 1)
+            : \Carbon\Carbon::create($reportDate->year - 1, 4, 1);
+
+        $students = Student::with('section:id,name')
+            ->whereIn('section_id', $sectionIds)
+            ->withCount([
+                'attendances as attendance_count' => function ($query) use ($sessionStart, $reportDate) {
+                    $query->whereDate('date', '>=', $sessionStart)
+                        ->whereDate('date', '<=', $reportDate);
+                },
+                'attendances as absence_count' => function ($query) use ($sessionStart, $reportDate) {
+                    $query->whereDate('date', '>=', $sessionStart)
+                        ->whereDate('date', '<=', $reportDate)
+                        ->where('status', 0);
+                },
+            ])
+            ->get()
+            ->filter(function ($student) {
+                return $student->attendance_count > 0;
+            })
+            ->map(function ($student) {
+                $student->absence_rate = $student->attendance_count > 0
+                    ? round(($student->absence_count / $student->attendance_count) * 100, 1)
+                    : 0;
+
+                return $student;
+            })
+            ->filter(function ($student) {
+                return $student->absence_count > 0;
+            })
+            ->values();
+
+        $sectionsReport = $sections
+            ->map(function ($section) use ($students) {
+                $sectionStudents = $students
+                    ->filter(function ($student) use ($section) {
+                        return (int) $student->section_id === (int) $section->id;
+                    })
+                    ->sort(function ($left, $right) {
+                        if ($left->absence_count !== $right->absence_count) {
+                            return $right->absence_count <=> $left->absence_count;
+                        }
+
+                        if ($left->absence_rate !== $right->absence_rate) {
+                            return $right->absence_rate <=> $left->absence_rate;
+                        }
+
+                        return strnatcasecmp((string) ($left->rollno ?? ''), (string) ($right->rollno ?? ''));
+                    })
+                    ->values()
+                    ->take(3);
+
+                return [
+                    'section' => $section,
+                    'class_label' => $section->name,
+                    'students' => $sectionStudents,
+                ];
+            })
+            ->values();
+
+        return [
+            'sectionsReport' => $sectionsReport,
+            'sectionsCount' => $sections->count(),
+            'classesWithStudents' => $sectionsReport->filter(function ($item) {
+                return $item['students']->isNotEmpty();
+            })->count(),
+            'highlightedStudents' => $sectionsReport->sum(function ($item) {
+                return $item['students']->count();
+            }),
+            'studentsWithAttendance' => Student::whereIn('section_id', $sectionIds)
+                ->whereHas('attendances', function ($query) use ($sessionStart, $reportDate) {
+                    $query->whereDate('date', '>=', $sessionStart)
+                        ->whereDate('date', '<=', $reportDate);
+                })
+                ->count(),
+            'totalAbsences' => $sectionsReport->sum(function ($item) {
+                return $item['students']->sum('absence_count');
+            }),
+            'reportDate' => $reportDate,
+            'sessionStart' => $sessionStart,
+        ];
+    }
+
     /**
      * Display a listing of the resource.
      */

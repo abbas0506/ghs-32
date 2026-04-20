@@ -133,6 +133,8 @@ Route::group(['middleware' => ['auth']], function () {
     // attendance
     Route::get('attendance/summary', [SectionAttendanceController::class, 'summary'])->name('attendance.summary');
     Route::get('attendance/analytics', [SectionAttendanceController::class, 'analytics'])->name('attendance.analytics');
+    Route::get('attendance/habitual-students', [SectionAttendanceController::class, 'habitualStudents'])->name('attendance.habitual-students');
+    Route::get('attendance/habitual-students/pdf', [SectionAttendanceController::class, 'habitualStudentsPdf'])->name('attendance.habitual-students.pdf');
     Route::get('attendance/filter', [SectionAttendanceController::class, 'filter'])->name('attendance.filter');
     Route::post('attendances/filter', [SectionAttendanceController::class, 'filter'])->name('attendance.filter');
     Route::get('section/{section}/attendance/{attendance}/analytics', [SectionAttendanceController::class, 'studentAnalytics'])->name('attendance.student.analytics');

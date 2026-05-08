@@ -50,22 +50,21 @@
         <!-- Key Metrics Cards (Minimal) -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div
-                class="bg-teal-600 rounded-3xl p-6 text-white shadow-xl shadow-teal-100 flex items-center justify-between relative overflow-hidden">
+                class="bg-teal-600 rounded-[1rem] md:rounded-[1.5rem] p-5 text-white shadow-xl shadow-teal-100 flex items-center justify-between relative overflow-hidden">
                 <div class="absolute -right-4 -bottom-4 w-20 h-20 bg-white/10 rounded-full"></div>
                 <div class="relative z-10">
                     <p class="text-[9px] font-semibold text-teal-100 uppercase tracking-widest mb-1">Total Presence</p>
-                    <h2 class="text-2xl font-bold text-white">{{ $percentage }}%</h2>
+                    <p class="text-lg font-bold leading-none">{{ $overallPresenceCount }}<span class="text-teal-200 font-bold">/{{ $overallAttendanceCount }}</span></p>
                 </div>
                 <div class="text-right relative z-10">
-                    <p class="text-lg font-bold leading-none">{{ $overallPresenceCount }}<span class="text-teal-200 text-xs font-bold">/{{ $overallAttendanceCount }}</span></p>
-                    <p class="text-[10px] font-bold text-teal-100 uppercase tracking-tighter">Present</p>
+                    <h2 class="text-lg font-bold text-white">{{ $percentage }}%</h2>
                 </div>
             </div>
 
-            <div class="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm flex items-center justify-between">
+            <div class="bg-white rounded-[1rem] md:rounded-[1.5rem] p-5 border border-slate-100 shadow-sm flex items-center justify-between">
                 <div>
                     <p class="text-[9px] font-semibold text-slate-400 uppercase tracking-widest mb-1">Reporting Status</p>
-                    <h2 class="text-2xl font-bold text-slate-800">{{ $sectionsMarked }}<span
+                    <h2 class="text-xl font-bold text-slate-800">{{ $sectionsMarked }}<span
                             class="text-slate-200">/{{ $sections->count() }}</span></h2>
                 </div>
                 <div class="w-12 h-12 rounded-full border-4 border-slate-50 flex items-center justify-center">
@@ -73,7 +72,7 @@
                 </div>
             </div>
 
-            <div class="bg-teal-50 rounded-3xl p-6 border border-teal-100 flex items-center gap-4">
+            <div class="bg-teal-50 rounded-[1rem] md:rounded-[1.5rem] p-5 border border-teal-100 flex items-center gap-4">
                 <div class="w-10 h-10 rounded-xl bg-white text-teal-600 flex items-center justify-center shadow-sm">
                     <i class="bi-lightning-fill"></i>
                 </div>
@@ -87,7 +86,7 @@
         </div>
 
         <!-- Section Grid (Minimal Cards) -->
-        <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             @foreach ($sections as $section)
                 @php
                     $isMarked = $section->attendanceCount > 0;
@@ -96,80 +95,62 @@
                             ? round(($section->presenceCount / $section->totalStudents) * 100, 1)
                             : 0;
 
-                    $displayPercentage = $todayPercentage;
                     $avgPercentage = round($section->averageAttendance() ?? 0, 1);
+                    $isAboveAvg = $todayPercentage >= $avgPercentage;
+                    $diff = abs($todayPercentage - $avgPercentage);
 
-                    if (!$isMarked) {
-                        $borderClass = 'hover:border-slate-300';
-                        $textClass = 'group-hover:text-slate-700';
-                        $bgClass = 'bg-slate-500';
-                    } elseif ($displayPercentage >= 90) {
-                        $borderClass = 'hover:border-teal-300';
-                        $textClass = 'group-hover:text-teal-700';
-                        $bgClass = 'bg-teal-500';
-                    } elseif ($displayPercentage >= 75) {
-                        $borderClass = 'hover:border-cyan-300';
-                        $textClass = 'group-hover:text-cyan-700';
-                        $bgClass = 'bg-cyan-500';
-                    } else {
-                        $borderClass = 'hover:border-rose-300';
-                        $textClass = 'group-hover:text-rose-700';
-                        $bgClass = 'bg-rose-500';
+                    $statusColor = 'slate';
+                    if ($isMarked) {
+                        if ($todayPercentage >= 90) {
+                            $statusColor = 'teal';
+                        } elseif ($todayPercentage >= 75) {
+                            $statusColor = 'blue';
+                        } else {
+                            $statusColor = 'rose';
+                        }
                     }
                 @endphp
 
                 <a href="@if ($isMarked) {{ route('section.attendance.index', $section) }} @elseif(\Carbon\Carbon::parse($date)->isToday()){{ route('section.attendance.create', $section) }} @else {{ route('section.attendance.index', $section) }} @endif"
-                    class="group bg-white rounded-2xl border border-slate-100 p-5 {{ $borderClass }} hover:shadow-lg hover:shadow-slate-100 transition-all duration-300">
-
-                    <div class="flex items-start justify-between mb-4">
-                        <div>
-                            <h3 class="font-bold text-slate-800 {{ $textClass }} transition-colors leading-none mb-1">
-                                {{ $section->name }}</h3>
-                            <div class="flex items-center gap-1.5">
+                    class="group bg-white rounded-[1rem] md:rounded-[1.5rem] border border-slate-100 p-5 hover:border-{{ $statusColor }}-200 hover:shadow-xl hover:shadow-{{ $statusColor }}-50/50 transition-all duration-300">
+                    
+                    <div class="flex items-center justify-between">
+                        <!-- Left: Section Info -->
+                        <div class="flex flex-col gap-1">
+                            <div class="flex items-center gap-2">
+                                <h3 class="text-[9px] font-black uppercase tracking-widest text-slate-800 group-hover:text-{{ $statusColor }}-600 transition-colors">
+                                    {{ $section->name }}
+                                </h3>
                                 @if (!$isMarked)
-                                    <span
-                                        class="text-[9px] font-semibold text-orange-500 uppercase tracking-tighter">Awaiting</span>
+                                    <span class="px-2 py-0.5 font-semibold rounded-full bg-orange-50 text-orange-500 text-[8px] uppercase tracking-tighter">Awaiting</span>
                                 @else
-                                    <span
-                                        class="text-[9px] font-semibold text-teal-500 uppercase tracking-tighter">Marked</span>
+                                    <i class="bi bi-check-circle-fill text-{{ $statusColor }}-500 text-xs"></i>
                                 @endif
-                                <span class="w-0.5 h-0.5 rounded-full bg-slate-300"></span>
-                                <span class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">Avg
-                                    {{ $avgPercentage }}%</span>
+                            </div>
+                            
+                            <div class="flex items-center gap-2">
+                                <div class="flex items-baseline gap-1">
+                                    <span class="text-xs font-bold text-slate-600">{{ $isMarked ? $section->presenceCount : '-' }}</span>
+                                    <span class="text-[10px] font-bold text-slate-300 uppercase tracking-widest">/ {{ $section->totalStudents }}</span>
+                                </div>
+                                
+                                @if ($isMarked)
+                                    <div class="flex items-center gap-0.5 {{ $isAboveAvg ? 'text-teal-600' : 'text-rose-600' }}">
+                                        <i class="bi-arrow-{{ $isAboveAvg ? 'up' : 'down' }}-short text-base leading-none"></i>
+                                        <span class="text-[10px] font-bold tracking-tighter">
+                                            {{ round($diff, 1) }}%
+                                        </span>
+                                    </div>
+                                @endif
                             </div>
                         </div>
-                        <div class="text-right">
-                            <span
-                                class="text-lg font-bold text-slate-800 tracking-tighter">{{ $displayPercentage }}%</span>
-                        </div>
-                    </div>
 
-                    <div class="space-y-3">
-                        <div class="flex items-end justify-between">
-                            <div class="flex flex-col">
-                                <div class="flex items-baseline gap-1 leading-none">
-                                    <span
-                                        class="text-sm font-bold text-slate-700">{{ $isMarked ? $section->presenceCount : '-' }}</span>
-                                    <span class="text-[10px] font-bold text-slate-300">/
-                                        {{ $section->totalStudents }}</span>
-                                </div>
+                        <!-- Right: Performance Indicator -->
+                        <div class="flex flex-col items-end gap-1">
+                            <div class="flex items-baseline gap-0.5">
+                                <span class="text-sm font-bold text-slate-800 tracking-tight">{{ $todayPercentage }}</span>
+                                <span class="text-sm font-bold text-slate-400">%</span>
                             </div>
-
-                            @if ($isMarked)
-                                <div
-                                    class="flex items-center gap-0.5 {{ $todayPercentage > $section->averageAttendance() ? 'text-teal-600' : 'text-rose-600' }}">
-                                    <i
-                                        class="bi-{{ $todayPercentage > $section->averageAttendance() ? 'arrow-up-short' : 'arrow-down-short' }} text-base"></i>
-                                    <span
-                                        class="text-[9px] font-semibold uppercase tracking-tighter">{{ $todayPercentage > $section->averageAttendance() ? '+' : '-' }}{{ abs($todayPercentage - $section->averageAttendance()) }}%</span>
-                                </div>
-                            @endif
-                        </div>
-
-                        <!-- Minimal Progress Bar -->
-                        <div class="w-full h-1 bg-slate-50 rounded-full overflow-hidden">
-                            <div class="h-full {{ $bgClass }} transition-all duration-700"
-                                style="width: {{ $displayPercentage }}%"></div>
                         </div>
                     </div>
                 </a>

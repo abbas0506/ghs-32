@@ -4,7 +4,7 @@
         <!-- Header & Breadcrumbs -->
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 py-2">
             <div>
-                <div class="flex items-center gap-2 text-slate-400 text-[10px] uppercase tracking-[0.2em] font-black mb-3">
+                <div class="flex items-center gap-2 text-slate-400 text-[10px] uppercase tracking-[0.2em] font-bold mb-3">
                     <a href="{{ url('/') }}" class="hover:text-teal-600 transition-colors">Home Dashboard</a>
                     <i class="bi-chevron-right text-[8px]"></i>
                     <span class="text-teal-600 uppercase">Fee Vouchers</span>
@@ -14,7 +14,7 @@
                         <i class="bi-wallet2 text-xl"></i>
                     </div>
                     <div>
-                        <h2 class="text-xl font-black text-slate-800 leading-none mb-1">Financial Center</h2>
+                        <h2 class="text-xl font-bold text-slate-800 leading-none mb-1">Financial Center</h2>
                         <p class="text-slate-400 text-xs font-medium italic">Manage and track student fee collections</p>
                     </div>
                 </div>
@@ -22,7 +22,7 @@
 
             @role('head')
                 <a href="{{ route('fee-vouchers.create') }}" 
-                   class="flex items-center gap-2 px-6 py-3 bg-teal-600 text-white rounded-xl text-xs font-black uppercase tracking-widest hover:bg-teal-700 hover:shadow-lg hover:shadow-teal-100 transition-all">
+                   class="flex items-center gap-2 px-6 py-3 bg-teal-600 text-white rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-teal-700 hover:shadow-lg hover:shadow-teal-100 transition-all">
                    <i class="bi-plus-lg"></i> Create Voucher
                 </a>
             @endrole
@@ -39,8 +39,8 @@
             <div class="bg-teal-600 rounded-3xl p-6 text-white shadow-xl shadow-teal-100 flex items-center justify-between relative overflow-hidden">
                 <div class="absolute -right-4 -bottom-4 w-20 h-20 bg-white/10 rounded-full"></div>
                 <div class="relative z-10">
-                    <p class="text-[10px] font-black text-teal-100 uppercase tracking-widest mb-1">Total Collection</p>
-                    <h2 class="text-2xl font-black">Rs. {{ number_format($totalCollection) }}</h2>
+                    <p class="text-[10px] font-bold text-teal-100 uppercase tracking-widest mb-1">Total Collection</p>
+                    <h2 class="text-2xl font-bold">Rs. {{ number_format($totalCollection) }}</h2>
                 </div>
                 <div class="text-right relative z-10">
                     <p class="text-xs font-bold text-teal-100 uppercase tracking-tighter">{{ $collectionRate }}% Rate</p>
@@ -49,8 +49,8 @@
 
             <div class="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm flex items-center justify-between">
                 <div>
-                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Active Vouchers</p>
-                    <h2 class="text-2xl font-black text-slate-800">{{ $feeVouchers->count() }}</h2>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Active Vouchers</p>
+                    <h2 class="text-2xl font-bold text-slate-800">{{ $feeVouchers->count() }}</h2>
                 </div>
                 <div class="w-10 h-10 rounded-xl bg-slate-50 text-slate-400 flex items-center justify-center">
                     <i class="bi-clipboard-check"></i>
@@ -62,7 +62,7 @@
                     <i class="bi-exclamation-circle-fill"></i>
                 </div>
                 <div>
-                    <p class="text-[10px] font-black text-rose-700 uppercase tracking-widest mb-0.5">Outstanding</p>
+                    <p class="text-[10px] font-bold text-rose-700 uppercase tracking-widest mb-0.5">Outstanding</p>
                     <p class="text-sm font-bold text-rose-900 leading-tight">Rs. {{ number_format($totalDue - $totalCollection) }}</p>
                 </div>
             </div>
@@ -89,9 +89,9 @@
                 <table class="table-fixed w-full border-collapse">
                     <thead>
                         <tr class="text-left">
-                            <th class="w-16 py-2 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-50">#</th>
-                            <th class="w-48 py-2 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-50">Voucher Details</th>
-                            <th class="w-24 py-2 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-50 text-center">Collection Status</th>
+                            <th class="w-16 py-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-slate-50">#</th>
+                            <th class="w-48 py-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-slate-50">Voucher Details</th>
+                            <th class="w-24 py-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-slate-50 text-center">Collection Status</th>
                             <th class="w-16"></th>
                         </tr>
                     </thead>
@@ -104,13 +104,13 @@
                             @endphp
                             <tr class="tr group hover:bg-slate-50/80 transition-all">
                                 <td class="py-2">
-                                    <div class="w-8 h-8 mx-auto rounded-full bg-slate-100 flex items-center justify-center text-[10px] font-black text-slate-400 border border-slate-200">
+                                    <div class="w-8 h-8 mx-auto rounded-full bg-slate-100 flex items-center justify-center text-[10px] font-bold text-slate-400 border border-slate-200">
                                         {{ $loop->iteration }}
                                     </div>
                                 </td>
                                 <td class="py-2">
                                     <div class="flex flex-col">
-                                        <a href="{{ route('fee-vouchers.show', $feeVoucher) }}" class="text-sm text-left font-black text-slate-800 hover:text-teal-600 transition-colors leading-tight">
+                                        <a href="{{ route('fee-vouchers.show', $feeVoucher) }}" class="text-sm text-left font-bold text-slate-800 hover:text-teal-600 transition-colors leading-tight">
                                             {{ $feeVoucher->description }}
                                         </a>
                                         <div class="flex items-center gap-3 mt-1.5">
@@ -123,8 +123,8 @@
                                 <td class="py-2">
                                     <div class="flex flex-col items-center gap-2">
                                         <div class="flex items-center justify-between w-full max-w-[120px]">
-                                            <span class="text-[9px] font-black text-slate-400 uppercase">{{ $rate }}%</span>
-                                            <span class="text-[9px] font-black text-slate-700">Rs. {{ number_format($paid) }}</span>
+                                            <span class="text-[9px] font-bold text-slate-400 uppercase">{{ $rate }}%</span>
+                                            <span class="text-[9px] font-bold text-slate-700">Rs. {{ number_format($paid) }}</span>
                                         </div>
                                         <div class="w-full max-w-[120px] h-1.5 bg-slate-100 rounded-full overflow-hidden">
                                             <div class="h-full bg-teal-500 rounded-full transition-all duration-700" style="width:{{ $rate }}%"></div>

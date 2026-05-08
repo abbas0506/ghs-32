@@ -41,18 +41,37 @@ class TestController extends Controller
     public function create()
     {
         $this->authorize('create', Test::class);
-        $sections = Section::whereHas('students')->get();
-        
         $u = Auth::user();
-        if($u->hasAnyRole(['admin', 'head'])) {
-            $allocations = \App\Models\Schedule::with(['section', 'subject', 'user.profile'])->get();
-        } else {
-            $allocations = \App\Models\Schedule::with(['section', 'subject'])
-                ->where('user_id', $u->id)
+
+        if ($u->hasAnyRole(['admin', 'head'])) {
+            $sections = Section::join('grades', 'sections.grade_id', '=', 'grades.id')
+                ->select('sections.*')
+                ->with(['grade.subjects'])
+                ->whereHas('students')
+                ->orderBy('grades.grade_no')
+                ->orderBy('sections.name')
                 ->get();
+        } else {
+            // Teachers only see sections they are assigned to
+            $sections = Section::join('grades', 'sections.grade_id', '=', 'grades.id')
+                ->select('sections.*')
+                ->with(['schedules' => function ($q) use ($u) {
+                    $q->where('user_id', $u->id)->with('subject');
+                }])
+                ->whereHas('schedules', function ($q) use ($u) {
+                    $q->where('user_id', $u->id);
+                })
+                ->orderBy('grades.grade_no')
+                ->orderBy('sections.name')
+                ->get();
+
+            // Filter subjects to only show what the teacher teaches
+            $sections->each(function ($section) {
+                $section->display_subjects = $section->schedules->pluck('subject')->unique('id');
+            });
         }
 
-        return view('tests.create', compact('sections', 'allocations'));
+        return view('tests.create', compact('sections'));
     }
 
     /**
@@ -62,76 +81,57 @@ class TestController extends Controller
     {
         $this->authorize('create', Test::class);
 
-        if ($request->has('allocation_id')) {
-            // Individual Subject Test flow
-            $request->validate([
-                'title' => 'required|string|max:255',
-                'max_marks' => 'required|numeric|min:1',
-                'allocation_id' => 'required|exists:schedules,id',
-                'test_date' => 'required|date',
-            ]);
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'max_marks' => 'required|numeric|min:1',
+            'test_date' => 'required|date',
+            'section_subjects' => 'required|array|min:1',
+        ]);
 
-            $allocation = \App\Models\Schedule::findOrFail($request->allocation_id);
-
-            DB::beginTransaction();
-            try {
-                $test = Test::create([
-                    'title' => $request->title,
-                    'max_marks' => $request->max_marks,
-                    'user_id' => Auth::id(), // Marks as individual test
-                ]);
-
-                $test->testSubjects()->create([
-                    'section_id' => $allocation->section_id,
-                    'lecture_no' => $allocation->lecture_no,
-                    'subject_id' => $allocation->subject_id,
-                    'user_id' => $allocation->user_id,
-                    'max_marks' => $request->max_marks,
-                    'test_date' => $request->test_date,
-                ]);
-
-                DB::commit();
-                return redirect()->route('tests.index')->with('success', 'Individual assessment created successfully.');
-            } catch (Exception $e) {
-                DB::rollBack();
-                return redirect()->back()->withErrors($e->getMessage());
-            }
-
-        } else {
-            // Combined Test flow
-            $request->validate([
-                'title' => 'required|string|max:255',
-                'max_marks' => 'required|numeric|min:1',
-                'sections_array' => 'required|array',
-            ]);
-
-            DB::beginTransaction();
-            try {
-                $test = Test::create([
-                    'title' => $request->title,
-                    'max_marks' => $request->max_marks,
-                ]);
-
-                $sections = \App\Models\Section::whereIn('id', $request->sections_array)->get();
-                foreach ($sections as $section) {
-                    foreach ($section->schedules as $allocation) {
-                        $test->testSubjects()->create([
-                            'section_id' => $allocation->section_id,
-                            'lecture_no' => $allocation->lecture_no,
-                            'subject_id' => $allocation->subject_id,
-                            'user_id' => $allocation->user_id,
-                            'max_marks' => $request->max_marks,
-                            'test_date' => now(),
-                        ]);
-                    }
+        DB::beginTransaction();
+        try {
+            // Enforcement: Teachers can only select one class at a time
+            if (!Auth::user()->hasAnyRole(['admin', 'head'])) {
+                if (count($request->section_subjects) > 1) {
+                    throw new Exception('As a teacher, you can only add subjects to one class at a time.');
                 }
-
-                DB::commit();
-                return redirect()->route('tests.index')->with('success', 'Combined assessment created successfully.');
-            } catch (Exception $e) {
-                DB::rollBack();
-                return redirect()->back()->withErrors($e->getMessage());
             }
+
+            $test = Test::create([
+                'title' => $request->title,
+                'max_marks' => $request->max_marks,
+                'user_id' => !Auth::user()->hasAnyRole(['admin', 'head']) ? Auth::id() : null,
+            ]);
+
+            $addedCount = 0;
+            foreach ($request->section_subjects as $sectionId => $subjectIds) {
+                // Find all schedules for this section and the selected subjects
+                $allocations = \App\Models\Schedule::where('section_id', $sectionId)
+                    ->whereIn('subject_id', $subjectIds)
+                    ->get();
+
+                foreach ($allocations as $allocation) {
+                    $test->testSubjects()->create([
+                        'section_id' => $allocation->section_id,
+                        'lecture_no' => $allocation->lecture_no,
+                        'subject_id' => $allocation->subject_id,
+                        'user_id' => $allocation->user_id,
+                        'max_marks' => $request->max_marks,
+                        'test_date' => $request->test_date,
+                    ]);
+                    $addedCount++;
+                }
+            }
+
+            if ($addedCount === 0) {
+                throw new Exception('No valid subject allocations found for the selected classes and subjects.');
+            }
+
+            DB::commit();
+            return redirect()->route('tests.show', $test)->with('success', 'Assessment framework generated successfully.');
+        } catch (Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->withErrors($e->getMessage())->withInput();
         }
     }
 

@@ -13,7 +13,7 @@
         {{-- ── Header ── --}}
         <div class="flex flex-col md:flex-row md:items-start justify-between gap-4 py-2">
             <div>
-                <div class="flex items-center gap-2 text-slate-400 text-[10px] uppercase tracking-[0.2em] font-black mb-3">
+                <div class="flex items-center gap-2 text-slate-400 text-[10px] uppercase tracking-[0.2em] font-bold mb-3">
                     <a href="{{ route('tests.index') }}" class="hover:text-teal-600 transition-colors">Assessment</a>
                     <i class="bi-chevron-right text-[8px]"></i>
                     <span class="text-teal-600">Details</span>
@@ -23,14 +23,14 @@
                         <i class="bi-journal-check text-2xl"></i>
                     </div>
                     <div>
-                        <h1 class="text-2xl font-black text-slate-800 leading-none mb-2">{{ $test->title }}</h1>
+                        <h1 class="text-2xl font-bold text-slate-800 leading-none mb-2">{{ $test->title }}</h1>
                         <div class="flex items-center gap-2 flex-wrap">
                             @if($test->is_open)
-                                <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-teal-50 text-teal-700 text-[9px] font-black uppercase tracking-widest rounded-full border border-teal-100">
+                                <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-teal-50 text-teal-700 text-[9px] font-bold uppercase tracking-widest rounded-full border border-teal-100">
                                     <span class="w-1.5 h-1.5 rounded-full bg-teal-500 animate-pulse"></span> Live
                                 </span>
                             @else
-                                <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-slate-100 text-slate-500 text-[9px] font-black uppercase tracking-widest rounded-full border border-slate-200">
+                                <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-slate-100 text-slate-500 text-[9px] font-bold uppercase tracking-widest rounded-full border border-slate-200">
                                     <i class="bi-lock-fill text-[8px]"></i> Locked
                                 </span>
                             @endif
@@ -50,7 +50,7 @@
                 @role('admin|head')
                     @if ($test->is_open)
                         <a href="{{ route('test.test-subjects.create', $test) }}"
-                           class="flex items-center gap-2 px-4 py-2.5 bg-teal-600 text-white rounded-xl text-xs font-black uppercase tracking-widest hover:bg-teal-700 hover:shadow-lg hover:shadow-teal-100 transition-all"
+                           class="flex items-center gap-2 px-4 py-2.5 bg-teal-600 text-white rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-teal-700 hover:shadow-lg hover:shadow-teal-100 transition-all"
                            title="Add Subject">
                             <i class="bi-plus-lg"></i> Add Subject
                         </a>
@@ -65,7 +65,7 @@
                                 <button type="submit"
                                     class="w-10 h-10 flex items-center justify-center bg-white border border-slate-200 text-amber-500 rounded-xl hover:bg-amber-50 hover:border-amber-200 transition-all"
                                     title="Lock Assessment">
-                                    <i class="bi-unlock font-black"></i>
+                                    <i class="bi-unlock font-bold"></i>
                                 </button>
                             </form>
                         @endcan
@@ -84,7 +84,7 @@
                             <form action="{{ route('test.unlock', $test) }}" method="post">
                                 @csrf @method('patch')
                                 <button type="submit"
-                                    class="flex items-center gap-2 px-5 py-2.5 bg-amber-500 text-white rounded-xl text-xs font-black uppercase tracking-widest hover:bg-amber-600 transition-all">
+                                    class="flex items-center gap-2 px-5 py-2.5 bg-amber-500 text-white rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-amber-600 transition-all">
                                     <i class="bi-unlock-fill"></i> Reopen Assessment
                                 </button>
                             </form>
@@ -113,11 +113,11 @@
                             stroke-dashoffset="{{ 163.36 - (163.36 * $percent / 100) }}"
                             stroke-linecap="round"/>
                     </svg>
-                    <span class="absolute text-[11px] font-black text-white">{{ $percent }}%</span>
+                    <span class="absolute text-[11px] font-bold text-white">{{ $percent }}%</span>
                 </div>
                 <div>
-                    <p class="text-[9px] font-black text-teal-200 uppercase tracking-widest mb-1">Completion</p>
-                    <p class="text-2xl font-black leading-none">{{ $submitted }}<span class="text-teal-300/60 text-sm font-bold"> / {{ $total }}</span></p>
+                    <p class="text-[9px] font-bold text-teal-200 uppercase tracking-widest mb-1">Completion</p>
+                    <p class="text-2xl font-bold leading-none">{{ $submitted }}<span class="text-teal-300/60 text-sm font-bold"> / {{ $total }}</span></p>
                     <p class="text-[9px] text-teal-100/70 font-bold mt-1">subjects submitted</p>
                 </div>
             </div>
@@ -125,42 +125,42 @@
             {{-- Pending --}}
             <div class="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm flex flex-col justify-between">
                 <div class="flex items-center justify-between mb-3">
-                    <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Pending</p>
+                    <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Pending</p>
                     <div class="w-8 h-8 rounded-xl bg-rose-50 flex items-center justify-center">
                         <i class="bi-hourglass-split text-rose-500 text-sm"></i>
                     </div>
                 </div>
                 <div class="flex items-baseline gap-1">
-                    <span class="text-3xl font-black text-slate-800 leading-none">{{ $pending }}</span>
-                    <span class="text-[9px] font-black text-slate-400 uppercase">subjects</span>
+                    <span class="text-3xl font-bold text-slate-800 leading-none">{{ $pending }}</span>
+                    <span class="text-[9px] font-bold text-slate-400 uppercase">subjects</span>
                 </div>
             </div>
 
             {{-- Today --}}
             <div class="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm flex flex-col justify-between">
                 <div class="flex items-center justify-between mb-3">
-                    <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Today</p>
+                    <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Today</p>
                     <div class="w-8 h-8 rounded-xl bg-indigo-50 flex items-center justify-center">
                         <i class="bi-lightning-charge-fill text-indigo-500 text-sm"></i>
                     </div>
                 </div>
                 <div class="flex items-baseline gap-1">
-                    <span class="text-3xl font-black text-slate-800 leading-none">+{{ $todaySubmitted }}</span>
-                    <span class="text-[9px] font-black text-slate-400 uppercase">new</span>
+                    <span class="text-3xl font-bold text-slate-800 leading-none">+{{ $todaySubmitted }}</span>
+                    <span class="text-[9px] font-bold text-slate-400 uppercase">new</span>
                 </div>
             </div>
 
             {{-- Max Marks --}}
             <div class="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm flex flex-col justify-between">
                 <div class="flex items-center justify-between mb-3">
-                    <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Max Marks</p>
+                    <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Max Marks</p>
                     <div class="w-8 h-8 rounded-xl bg-teal-50 flex items-center justify-center">
                         <i class="bi-award-fill text-teal-500 text-sm"></i>
                     </div>
                 </div>
                 <div class="flex items-baseline gap-1">
-                    <span class="text-3xl font-black text-slate-800 leading-none">{{ $test->max_marks }}</span>
-                    <span class="text-[9px] font-black text-slate-400 uppercase">pts</span>
+                    <span class="text-3xl font-bold text-slate-800 leading-none">{{ $test->max_marks }}</span>
+                    <span class="text-[9px] font-bold text-slate-400 uppercase">pts</span>
                 </div>
             </div>
         </div>
@@ -174,17 +174,17 @@
                     <div class="flex items-center gap-1 bg-white p-1 rounded-xl border border-slate-100 shadow-sm w-full sm:w-auto">
                         <button id="filter-all"
                             onclick="filterBy('all', this)"
-                            class="filter-btn active-filter flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all bg-teal-600 text-white">
+                            class="filter-btn active-filter flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all bg-teal-600 text-white">
                             <i class="bi-grid-fill"></i> All
                         </button>
                         <button id="filter-submitted"
                             onclick="filterBy('submitted', this)"
-                            class="filter-btn flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest text-slate-500 hover:bg-slate-50 transition-all">
+                            class="filter-btn flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg text-[10px] font-bold uppercase tracking-widest text-slate-500 hover:bg-slate-50 transition-all">
                             <i class="bi-check-circle-fill text-teal-500"></i> Done
                         </button>
                         <button id="filter-pending"
                             onclick="filterBy('pending', this)"
-                            class="filter-btn flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest text-slate-500 hover:bg-slate-50 transition-all">
+                            class="filter-btn flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg text-[10px] font-bold uppercase tracking-widest text-slate-500 hover:bg-slate-50 transition-all">
                             <i class="bi-hourglass-split text-rose-500"></i> Pending
                         </button>
                     </div>
@@ -203,7 +203,7 @@
                         <div class="tr group flex items-center gap-4 px-6 md:px-8 py-4 hover:bg-slate-50/70 transition-all {{ $isSubmitted ? 'submitted' : 'pending' }}">
 
                             {{-- Index badge --}}
-                            <div class="w-9 h-9 rounded-2xl flex items-center justify-center shrink-0 text-[10px] font-black transition-colors
+                            <div class="w-9 h-9 rounded-2xl flex items-center justify-center shrink-0 text-[10px] font-bold transition-colors
                                 {{ $isSubmitted ? 'bg-teal-50 text-teal-600 border border-teal-100' : 'bg-slate-50 text-slate-400 border border-slate-100' }}">
                                 {{ $loop->iteration }}
                             </div>
@@ -211,14 +211,14 @@
                             {{-- Subject + teacher --}}
                             <div class="flex-1 min-w-0">
                                 <a href="{{ route('test.test-subjects.show', [$test, $testSubject]) }}"
-                                   class="font-black text-slate-800 hover:text-teal-600 transition-colors leading-tight text-sm block truncate">
+                                   class="font-bold text-slate-800 hover:text-teal-600 transition-colors leading-tight text-sm block truncate">
                                     {{ $testSubject->subject->name }}
                                     @if($testSubject->hasBeenSubmittedToday())
-                                        <span class="ml-1 text-teal-500 text-[8px] font-black animate-pulse">● NEW</span>
+                                        <span class="ml-1 text-teal-500 text-[8px] font-bold animate-pulse">● NEW</span>
                                     @endif
                                 </a>
                                 <div class="flex items-center gap-2 mt-1 flex-wrap">
-                                    <span class="inline-flex items-center gap-1 text-[9px] font-black text-slate-400 uppercase tracking-tight">
+                                    <span class="inline-flex items-center gap-1 text-[9px] font-bold text-slate-400 uppercase tracking-tight">
                                         <i class="bi-collection text-slate-300"></i> {{ $testSubject->section->name }}
                                     </span>
                                     <span class="w-1 h-1 rounded-full bg-slate-200"></span>
@@ -231,11 +231,11 @@
                             {{-- Status pill --}}
                             <div class="shrink-0">
                                 @if ($isSubmitted)
-                                    <span class="inline-flex items-center gap-1 px-3 py-1 bg-teal-50 text-teal-700 text-[9px] font-black uppercase tracking-widest rounded-full border border-teal-100">
+                                    <span class="inline-flex items-center gap-1 px-3 py-1 bg-teal-50 text-teal-700 text-[9px] font-bold uppercase tracking-widest rounded-full border border-teal-100">
                                         <i class="bi-check-circle-fill text-[8px]"></i> Done
                                     </span>
                                 @else
-                                    <span class="inline-flex items-center gap-1 px-3 py-1 bg-rose-50 text-rose-600 text-[9px] font-black uppercase tracking-widest rounded-full border border-rose-100">
+                                    <span class="inline-flex items-center gap-1 px-3 py-1 bg-rose-50 text-rose-600 text-[9px] font-bold uppercase tracking-widest rounded-full border border-rose-100">
                                         <i class="bi-clock text-[8px]"></i> Pending
                                     </span>
                                 @endif
@@ -259,10 +259,10 @@
                 {{-- ── Archived / Report View ── --}}
                 <div class="px-6 md:px-8 py-6 border-b border-slate-50 flex items-center justify-between">
                     <div>
-                        <p class="text-xs font-black text-slate-700">Generate Reports</p>
+                        <p class="text-xs font-bold text-slate-700">Generate Reports</p>
                         <p class="text-[10px] text-slate-400 font-medium mt-0.5">Download result sheets and report cards per section</p>
                     </div>
-                    <span class="px-3 py-1.5 bg-slate-100 text-slate-500 text-[9px] font-black uppercase tracking-widest rounded-full border border-slate-200">
+                    <span class="px-3 py-1.5 bg-slate-100 text-slate-500 text-[9px] font-bold uppercase tracking-widest rounded-full border border-slate-200">
                         <i class="bi-lock-fill mr-1"></i>Archived
                     </span>
                 </div>
@@ -276,7 +276,7 @@
                                         <i class="bi-collection-play text-lg"></i>
                                     </div>
                                     <div>
-                                        <h3 class="font-black text-slate-800 leading-tight">{{ $section->name }}</h3>
+                                        <h3 class="font-bold text-slate-800 leading-tight">{{ $section->name }}</h3>
                                         <p class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Section Reports</p>
                                     </div>
                                 </div>
@@ -288,7 +288,7 @@
                                             <div class="w-7 h-7 rounded-xl bg-rose-50 flex items-center justify-center">
                                                 <i class="bi-file-earmark-pdf text-rose-500 text-sm"></i>
                                             </div>
-                                            <span class="text-xs font-black text-slate-600 group-hover/link:text-rose-600 transition-colors">Result Sheet</span>
+                                            <span class="text-xs font-bold text-slate-600 group-hover/link:text-rose-600 transition-colors">Result Sheet</span>
                                         </div>
                                         <i class="bi-box-arrow-up-right text-xs text-slate-300 group-hover/link:text-rose-500 transition-colors"></i>
                                     </a>
@@ -298,7 +298,7 @@
                                             <div class="w-7 h-7 rounded-xl bg-rose-50 flex items-center justify-center">
                                                 <i class="bi-postcard text-rose-500 text-sm"></i>
                                             </div>
-                                            <span class="text-xs font-black text-slate-600 group-hover/link:text-rose-600 transition-colors">Report Cards</span>
+                                            <span class="text-xs font-bold text-slate-600 group-hover/link:text-rose-600 transition-colors">Report Cards</span>
                                         </div>
                                         <i class="bi-box-arrow-up-right text-xs text-slate-300 group-hover/link:text-rose-500 transition-colors"></i>
                                     </a>
@@ -308,7 +308,7 @@
                                             <div class="w-7 h-7 rounded-xl bg-indigo-50 flex items-center justify-center">
                                                 <i class="bi-trophy text-indigo-500 text-sm"></i>
                                             </div>
-                                            <span class="text-xs font-black text-slate-600 group-hover/link:text-indigo-600 transition-colors">Positions</span>
+                                            <span class="text-xs font-bold text-slate-600 group-hover/link:text-indigo-600 transition-colors">Positions</span>
                                         </div>
                                         <i class="bi-box-arrow-up-right text-xs text-slate-300 group-hover/link:text-indigo-500 transition-colors"></i>
                                     </a>

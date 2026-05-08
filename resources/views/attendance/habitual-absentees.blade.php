@@ -29,7 +29,7 @@
         <div class="grid gap-6 px-6 py-7 md:grid-cols-[2fr,1fr] md:px-10 md:py-9">
             <div>
                 <p class="text-xs uppercase tracking-[0.35em] text-cyan-200/80">Attendance Intelligence</p>
-                <h3 class="mt-3 text-2xl font-black leading-tight md:text-4xl">Top 3 habitual absentees from each class.
+                <h3 class="mt-3 text-2xl font-bold leading-tight md:text-4xl">Top 3 habitual absentees from each class.
                 </h3>
                 <p class="mt-3 max-w-2xl text-sm text-slate-200/90 md:text-base">
                     Session window: {{ $sessionStart->format('d M Y') }} to {{ $reportDate->format('d M Y') }}.
@@ -40,16 +40,16 @@
             <div class="grid grid-cols-2 gap-3 md:grid-cols-1">
                 <div class="rounded-2xl border border-white/10 bg-white/10 px-4 py-4 backdrop-blur-sm">
                     <p class="text-xs uppercase tracking-[0.25em] text-cyan-100/70">Classes covered</p>
-                    <p class="mt-2 text-3xl font-black">{{ $sectionsReport->count() }}</p>
+                    <p class="mt-2 text-3xl font-bold">{{ $sectionsReport->count() }}</p>
                 </div>
                 <div class="rounded-2xl border border-white/10 bg-white/10 px-4 py-4 backdrop-blur-sm">
                     <p class="text-xs uppercase tracking-[0.25em] text-cyan-100/70">Classes flagged</p>
-                    <p class="mt-2 text-3xl font-black">{{ $classesWithAbsentees }}</p>
+                    <p class="mt-2 text-3xl font-bold">{{ $classesWithAbsentees }}</p>
                 </div>
                 <div
                     class="col-span-2 rounded-2xl border border-white/10 bg-white/10 px-4 py-4 backdrop-blur-sm md:col-span-1">
                     <p class="text-xs uppercase tracking-[0.25em] text-cyan-100/70">Students highlighted</p>
-                    <p class="mt-2 text-3xl font-black">{{ $highlightedStudents }}</p>
+                    <p class="mt-2 text-3xl font-bold">{{ $highlightedStudents }}</p>
                 </div>
             </div>
         </div>
@@ -62,11 +62,11 @@
                     <div class="flex items-start justify-between gap-4">
                         <div>
                             <p class="text-xs uppercase tracking-[0.3em] text-slate-400">Class</p>
-                            <h3 class="mt-2 text-xl font-black text-slate-900">{{ $item['class_label'] }}</h3>
+                            <h3 class="mt-2 text-xl font-bold text-slate-900">{{ $item['class_label'] }}</h3>
                         </div>
                         <div class="min-w-[120px] rounded-2xl bg-slate-900 px-4 py-3 text-right text-white">
                             <p class="text-[11px] uppercase tracking-[0.24em] text-cyan-100/70">Top students</p>
-                            <p class="mt-1 text-2xl font-black">{{ $item['students']->count() }}</p>
+                            <p class="mt-1 text-2xl font-bold">{{ $item['students']->count() }}</p>
                         </div>
                     </div>
                 </div>
@@ -85,11 +85,11 @@
                                     <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                                         <div class="flex items-start gap-4">
                                             <div
-                                                class="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-400 to-orange-500 text-lg font-black text-white shadow-lg shadow-orange-200">
+                                                class="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-400 to-orange-500 text-lg font-bold text-white shadow-lg shadow-orange-200">
                                                 {{ $index + 1 }}
                                             </div>
                                             <div>
-                                                <p class="text-lg font-black text-slate-900">{{ $student->name }}</p>
+                                                <p class="text-lg font-bold text-slate-900">{{ $student->name }}</p>
                                                 <p class="text-sm text-slate-500">S/O {{ $student->father_name ?: 'N/A' }}
                                                 </p>
                                                 <div class="mt-3 flex flex-wrap gap-2 text-xs font-semibold">

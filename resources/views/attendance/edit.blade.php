@@ -4,7 +4,7 @@
         <!-- Header & Breadcrumbs -->
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 py-2">
             <div>
-                <div class="flex items-center gap-2 text-slate-400 text-[10px] uppercase tracking-[0.2em] font-black mb-3">
+                <div class="flex items-center gap-2 text-slate-400 text-[10px] uppercase tracking-[0.2em] font-bold mb-3">
                     <a href="{{ route('attendance.summary') }}" class="hover:text-teal-600 transition-colors">Attendance</a>
                     <i class="bi-chevron-right text-[8px]"></i>
                     <a href="{{ route('section.attendance.index', $section) }}" class="hover:text-teal-600 transition-colors">{{ $section->name }}</a>
@@ -16,9 +16,9 @@
                         <i class="bi-calendar-check text-xl"></i>
                     </div>
                     <div>
-                        <h2 class="text-xl font-black text-slate-800 leading-none mb-1">{{ $section->name }} — Attendance</h2>
+                        <h2 class="text-xl font-bold text-slate-800 leading-none mb-1">{{ $section->name }} — Attendance</h2>
                         <div class="flex items-center gap-2 mt-1">
-                            <span class="px-2 py-0.5 bg-orange-50 text-orange-600 text-[8px] font-black uppercase tracking-widest rounded-full border border-orange-100 italic">Editing Mode</span>
+                            <span class="px-2 py-0.5 bg-orange-50 text-orange-600 text-[8px] font-bold uppercase tracking-widest rounded-full border border-orange-100 italic">Editing Mode</span>
                             <span class="w-1 h-1 rounded-full bg-slate-200"></span>
                             <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">{{ now()->format('l, d M Y') }}</span>
                         </div>
@@ -28,11 +28,11 @@
 
             <div class="flex items-center gap-3">
                 <a href="{{ route('section.attendance.index', $section) }}" 
-                   class="px-6 py-3 bg-white border border-slate-200 text-slate-500 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-slate-50 transition-all">
+                   class="px-6 py-3 bg-white border border-slate-200 text-slate-500 rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-slate-50 transition-all">
                    Cancel
                 </a>
                 <button type="submit" form="attendanceFlow"
-                   class="px-6 py-3 bg-teal-600 text-white rounded-xl text-xs font-black uppercase tracking-widest hover:bg-teal-700 hover:shadow-lg hover:shadow-teal-100 transition-all">
+                   class="px-6 py-3 bg-teal-600 text-white rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-teal-700 hover:shadow-lg hover:shadow-teal-100 transition-all">
                    Save
                 </button>
             </div>
@@ -57,7 +57,7 @@
                 </div>
                 
                 <div class="flex items-center gap-3">
-                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Select All Present</span>
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Select All Present</span>
                     <label class="relative inline-flex items-center cursor-pointer">
                         <input type="checkbox" id="chkAll" onclick="checkAll()" class="sr-only peer">
                         <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-teal-600"></div>
@@ -71,9 +71,9 @@
                     <table class="table-fixed w-full border-collapse">
                         <thead>
                             <tr class="text-left">
-                                <th class="w-16 py-2 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-50">#</th>
-                                <th class="w-40 py-2 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-50">Student Profile</th>
-                                <th class="w-16 py-2 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-50 text-center">Status</th>
+                                <th class="w-16 py-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-slate-50">#</th>
+                                <th class="w-40 py-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-slate-50">Student Profile</th>
+                                <th class="w-16 py-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-slate-50 text-center">Status</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-50">
@@ -81,7 +81,7 @@
                                 <tr class="tr group hover:bg-slate-50/80 transition-all">
                                     <input type="hidden" name="attendance_ids[]" value="{{ $attendance->id }}">
                                     <td class="py-2">
-                                        <div class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center mx-auto text-[10px] font-black text-slate-500 group-hover:bg-white group-hover:shadow-sm transition-all border border-transparent group-hover:border-slate-100 uppercase">
+                                        <div class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center mx-auto text-[10px] font-bold text-slate-500 group-hover:bg-white group-hover:shadow-sm transition-all border border-transparent group-hover:border-slate-100 uppercase">
                                             {{ $attendance->student->rollno }}
                                         </div>
                                     </td>

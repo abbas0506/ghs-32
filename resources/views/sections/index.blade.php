@@ -5,7 +5,7 @@
         <!-- Header & Breadcrumbs -->
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 py-2 mb-2">
             <div>
-                <div class="flex items-center gap-2 text-slate-400 text-[10px] uppercase tracking-[0.2em] font-black mb-3">
+                <div class="flex items-center gap-2 text-slate-400 text-[10px] uppercase tracking-[0.2em] font-bold mb-3">
                     <a href="{{ url('/') }}" class="hover:text-teal-600 transition-colors">School</a>
                     <i class="bi-chevron-right text-[8px]"></i>
                     <span class="text-teal-600">Classes</span>
@@ -15,7 +15,7 @@
                         <i class="bi-mortarboard text-xl"></i>
                     </div>
                     <div>
-                        <h1 class="text-2xl font-black text-slate-800 leading-none mb-1">Academic Classes</h1>
+                        <h1 class="text-2xl font-bold text-slate-800 leading-none mb-1">Academic Classes</h1>
                         <p class="text-slate-400 text-xs font-medium italic">Manage academic sections and enrollments</p>
                     </div>
                 </div>
@@ -24,7 +24,7 @@
             <div class="flex items-center gap-3">
                 @can('create', App\Models\Section::class)
                     <a href="{{ route('sections.create') }}" 
-                       class="flex items-center gap-2 px-6 py-3 bg-teal-600 text-white rounded-xl text-xs font-black uppercase tracking-widest hover:bg-teal-700 hover:shadow-lg hover:shadow-teal-100 transition-all">
+                       class="flex items-center gap-2 px-6 py-3 bg-teal-600 text-white rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-teal-700 hover:shadow-lg hover:shadow-teal-100 transition-all">
                        <i class="bi-plus-lg"></i> New Class
                     </a>
                 @endcan
@@ -38,23 +38,23 @@
                 <div class="absolute -right-4 -bottom-4 w-16 h-16 bg-white/10 rounded-full"></div>
                 <div class="absolute top-4 right-4 w-6 h-6 bg-white/10 rounded-full"></div>
                 <div class="flex items-center justify-between mb-1 relative z-10">
-                    <p class="text-[9px] md:text-[10px] font-black text-teal-100 uppercase tracking-widest">Total Classes</p>
+                    <p class="text-[9px] md:text-[10px] font-bold text-teal-100 uppercase tracking-widest">Total Classes</p>
                     <i class="bi-mortarboard text-white opacity-60"></i>
                 </div>
                 <div class="flex items-baseline gap-2 relative z-10">
-                    <h2 class="text-xl md:text-2xl font-black text-white">{{ $sections->count() }}</h2>
+                    <h2 class="text-xl md:text-2xl font-bold text-white">{{ $sections->count() }}</h2>
                 </div>
             </div>
 
             <!-- Metric 2: Total Students -->
             <div class="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm flex flex-col justify-center hover:-translate-y-1 transition-transform">
                 <div class="flex items-center justify-between mb-1">
-                    <p class="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest">Total Students</p>
+                    <p class="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase tracking-widest">Total Students</p>
                     <i class="bi bi-people text-teal-600 opacity-60"></i>
                 </div>
                 <div class="flex items-baseline gap-1">
-                    <h2 class="text-xl md:text-2xl font-black text-slate-800">{{ number_format($studentsCount) }}</h2>
-                    <span class="text-[9px] font-black text-slate-400 uppercase tracking-tighter">Enrolled</span>
+                    <h2 class="text-xl md:text-2xl font-bold text-slate-800">{{ number_format($studentsCount) }}</h2>
+                    <span class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">Enrolled</span>
                 </div>
             </div>
         </div>
@@ -80,13 +80,13 @@
                         <div class="bg-white rounded-[1.25rem] border border-slate-100 p-4 hover:shadow-xl hover:shadow-teal-900/5 hover:border-teal-200 transition-all duration-300 relative hover:-translate-y-1 flex items-center gap-4 w-full">
                             
                             <!-- Class Initial Avatar -->
-                            <div class="w-14 h-14 bg-slate-50 text-slate-400 rounded-xl flex items-center justify-center text-2xl group-hover:bg-teal-50 group-hover:text-teal-600 transition-colors font-black shrink-0">
+                            <div class="w-14 h-14 bg-slate-50 text-slate-400 rounded-xl flex items-center justify-center text-2xl group-hover:bg-teal-50 group-hover:text-teal-600 transition-colors font-bold shrink-0">
                                 {{ substr($section->name, 0, 1) }}
                             </div>
                             
                             <!-- Primary Info -->
                             <div class="flex-1 min-w-0">
-                                <h3 class="text-base font-black text-slate-800 group-hover:text-teal-700 transition-colors leading-none mb-1.5 truncate">{{ $section->name }}</h3>
+                                <h3 class="text-base font-bold text-slate-800 group-hover:text-teal-700 transition-colors leading-none mb-1.5 truncate">{{ $section->name }}</h3>
                                 <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400 truncate">
                                     {{ $section->students->count() }} Enrolled
                                 </p>
@@ -96,7 +96,7 @@
                             <div class="flex items-center shrink-0">
                                 @php $newCount = $section->newAdmissions()->count(); @endphp
                                 @if($newCount > 0)
-                                    <span class="bg-emerald-50 text-emerald-600 text-[9px] font-black uppercase tracking-widest px-2 py-1 rounded border border-emerald-100 mr-2">
+                                    <span class="bg-emerald-50 text-emerald-600 text-[9px] font-bold uppercase tracking-widest px-2 py-1 rounded border border-emerald-100 mr-2">
                                         +{{ $newCount }}
                                     </span>
                                 @endif

@@ -5,7 +5,7 @@
         <!-- Header & Breadcrumbs -->
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 py-2 mb-2">
             <div>
-                <div class="flex flex-wrap items-center gap-2 text-slate-400 text-[10px] uppercase tracking-[0.2em] font-black mb-3">
+                <div class="flex flex-wrap items-center gap-2 text-slate-400 text-[10px] uppercase tracking-[0.2em] font-bold mb-3">
                     <a href="{{ url('/') }}" class="hover:text-teal-600 transition-colors">School</a>
                     <i class="bi-chevron-right text-[8px]"></i>
                     <a href="{{ route('attendance.summary') }}" class="hover:text-teal-600 transition-colors">Attendance</a>
@@ -17,7 +17,7 @@
                         <i class="bi-calendar-check text-xl"></i>
                     </div>
                     <div>
-                        <h1 class="text-2xl font-black text-slate-800 leading-none mb-1">Class {{ $section->name }}</h1>
+                        <h1 class="text-xl font-bold text-slate-800 leading-none mb-1">Class {{ $section->name }}</h1>
                         <p class="text-slate-400 text-xs font-medium italic">Mark attendance for {{ now()->format('l, j M Y') }}</p>
                     </div>
                 </div>
@@ -25,7 +25,7 @@
             
             <div class="flex items-center gap-3">
                 <a href="{{ route('attendance.summary', $section) }}" 
-                   class="flex items-center gap-2 px-6 py-3 bg-white border border-slate-200 text-slate-500 rounded-xl text-xs font-black uppercase tracking-widest hover:text-teal-600 hover:border-teal-200 hover:bg-teal-50 transition-all">
+                   class="flex items-center gap-2 px-6 py-3 bg-white border border-slate-200 text-slate-500 rounded-xl text-xs uppercase hover:text-teal-600 hover:border-teal-200 hover:bg-teal-50 transition-all">
                    <i class="bi-arrow-left"></i> Back to Attendance
                 </a>
             </div>
@@ -38,10 +38,10 @@
         @endif
 
         <!-- Main Form Box -->
-        <div class="max-w-4xl bg-white rounded-[2rem] border border-slate-100 shadow-sm overflow-hidden mt-8">
+        <div class="max-w-4xl bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden mt-8">
             <div class="p-8 border-b border-slate-50 flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div>
-                    <h2 class="text-xl font-black text-slate-800">Student Roster</h2>
+                    <h2 class="text-lg font-bold text-slate-800">Student Roster</h2>
                     <p class="text-slate-400 text-xs font-medium italic mt-1">Found {{ $section->students->count() }} enrolled students</p>
                 </div>
                 
@@ -57,10 +57,10 @@
                     <table class="w-full text-left">
                         <thead>
                             <tr class="bg-slate-50/50">
-                                <th class="px-2 md:px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400 w-12 md:w-20 text-center">Roll #</th>
-                                <th class="px-2 md:px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400 text-left whitespace-nowrap">Student Profile</th>
+                                <th class="px-2 md:px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-slate-400 w-12 md:w-20 text-center">Roll #</th>
+                                <th class="px-2 md:px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-slate-400 text-left whitespace-nowrap">Student Profile</th>
                                 <th class="px-2 md:px-6 py-4 text-center w-24 border-l border-slate-100">
-                                    <div class="flex flex-col items-center justify-center gap-2 text-[9px] font-black uppercase tracking-widest text-teal-600">
+                                    <div class="flex flex-col items-center justify-center gap-2 text-[9px] font-bold uppercase tracking-widest text-teal-600">
                                         Mark All
                                         <label class="group/check relative flex items-center justify-center cursor-pointer">
                                             <input type="checkbox" id='chkAll' class="peer hidden" onclick="checkAll()">
@@ -76,13 +76,13 @@
                             @foreach ($section->students->sortBy('rollno') as $student)
                                 <tr class="tr group hover:bg-slate-50/80 transition-colors">
                                     <td class="px-2 md:px-6 py-3 w-12 md:w-20 text-center align-middle">
-                                        <div class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-slate-100 text-slate-500 text-[10px] font-black group-hover:bg-white group-hover:shadow-sm border border-transparent group-hover:border-slate-100 transition-all uppercase">
+                                        <div class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-slate-100 text-slate-500 text-[10px] font-bold group-hover:bg-white group-hover:shadow-sm border border-transparent group-hover:border-slate-100 transition-all uppercase">
                                             {{ $student->rollno }}
                                         </div>
                                     </td>
                                     <td class="px-2 md:px-6 py-3 text-left align-middle overflow-hidden">
                                         <div class="flex flex-col">
-                                            <span class="text-xs md:text-sm font-black text-slate-700 group-hover:text-teal-900 transition-colors leading-tight truncate">{{ $student->name }}</span>
+                                            <span class="text-xs md:text-sm font-bold text-slate-700 group-hover:text-teal-900 transition-colors leading-tight truncate">{{ $student->name }}</span>
                                             <span class="text-[9px] font-bold uppercase tracking-widest text-slate-400 mt-1 truncate">{{ $student->father_name }}</span>
                                         </div>
                                     </td>
@@ -103,7 +103,7 @@
                 </div>
 
                 <div class="p-6 border-t border-slate-50 bg-slate-50/30 flex items-center justify-end gap-3">
-                   <button type="submit" class="flex items-center gap-2 px-8 py-3 bg-teal-600 text-white rounded-xl text-xs font-black uppercase tracking-widest hover:bg-teal-700 hover:shadow-lg hover:shadow-teal-100 transition-all active:scale-95">
+                   <button type="submit" class="flex items-center gap-2 px-8 py-3 bg-teal-600 text-white rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-teal-700 hover:shadow-lg hover:shadow-teal-100 transition-all active:scale-95">
                         <i class="bi-check2-circle text-lg"></i> Submit Attendance
                     </button>
                 </div>

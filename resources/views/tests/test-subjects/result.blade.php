@@ -7,7 +7,7 @@
         {{-- ── Header ── --}}
         <div class="flex flex-col md:flex-row md:items-start justify-between gap-4 py-2">
             <div>
-                <div class="flex items-center gap-2 text-slate-400 text-[10px] uppercase tracking-[0.2em] font-black mb-3 flex-wrap">
+                <div class="flex items-center gap-2 text-slate-400 text-[10px] uppercase tracking-[0.2em] font-bold mb-3 flex-wrap">
                     <a href="{{ route('tests.index') }}" class="hover:text-teal-600 transition-colors">Assessment</a>
                     <i class="bi-chevron-right text-[8px]"></i>
                     <a href="{{ route('tests.show', $testSubject->test) }}" class="hover:text-teal-600 transition-colors">{{ $testSubject->test->title }}</a>
@@ -21,15 +21,15 @@
                         <i class="bi-pencil-square text-2xl"></i>
                     </div>
                     <div>
-                        <h1 class="text-2xl font-black text-slate-800 leading-none mb-2">Enter Marks</h1>
+                        <h1 class="text-2xl font-bold text-slate-800 leading-none mb-2">Enter Marks</h1>
                         <div class="flex items-center gap-2 flex-wrap">
-                            <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-teal-50 text-teal-700 text-[9px] font-black uppercase tracking-widest rounded-full border border-teal-100">
+                            <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-teal-50 text-teal-700 text-[9px] font-bold uppercase tracking-widest rounded-full border border-teal-100">
                                 <i class="bi-book text-[8px]"></i> {{ $testSubject->subject->name }}
                             </span>
-                            <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-slate-100 text-slate-600 text-[9px] font-black uppercase tracking-widest rounded-full border border-slate-200">
+                            <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-slate-100 text-slate-600 text-[9px] font-bold uppercase tracking-widest rounded-full border border-slate-200">
                                 <i class="bi-collection text-[8px]"></i> {{ $testSubject->section->name }}
                             </span>
-                            <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-slate-100 text-slate-600 text-[9px] font-black uppercase tracking-widest rounded-full border border-slate-200">
+                            <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-slate-100 text-slate-600 text-[9px] font-bold uppercase tracking-widest rounded-full border border-slate-200">
                                 <i class="bi-people text-[8px]"></i> {{ $results->count() }} students
                             </span>
                         </div>
@@ -38,7 +38,7 @@
             </div>
 
             <a href="{{ route('test.test-subjects.show', [$testSubject->test, $testSubject]) }}"
-               class="flex items-center gap-2 px-4 py-2.5 bg-white border border-slate-200 text-slate-500 rounded-xl text-xs font-black uppercase tracking-widest hover:text-teal-600 hover:border-teal-200 transition-all self-start shrink-0">
+               class="flex items-center gap-2 px-4 py-2.5 bg-white border border-slate-200 text-slate-500 rounded-xl text-xs font-bold uppercase tracking-widest hover:text-teal-600 hover:border-teal-200 transition-all self-start shrink-0">
                 <i class="bi-arrow-left"></i> Back
             </a>
         </div>
@@ -56,7 +56,7 @@
                     <div class="w-16 h-16 rounded-2xl bg-teal-50 text-teal-600 flex items-center justify-center mx-auto mb-5 shadow-sm">
                         <i class="bi-award-fill text-3xl"></i>
                     </div>
-                    <h2 class="text-lg font-black text-slate-800 mb-1">Set Maximum Marks</h2>
+                    <h2 class="text-lg font-bold text-slate-800 mb-1">Set Maximum Marks</h2>
                     <p class="text-xs text-slate-400 font-medium mb-8 leading-relaxed">
                         Confirm the total marks for this test before entering student results.
                         Current value is pre-filled from the test record.
@@ -64,21 +64,21 @@
 
                     <div class="flex items-center justify-center gap-3 mb-8">
                         <div class="flex flex-col items-start">
-                            <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">Maximum Marks</label>
+                            <label class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-2 ml-1">Maximum Marks</label>
                             <div class="flex items-center gap-2">
                                 <input type="number" id="max_marks_step1"
                                        value="{{ $testSubject->max_marks }}"
                                        min="1" max="500"
-                                       class="w-28 px-4 py-3 bg-slate-50 border-2 border-teal-200 rounded-2xl text-2xl font-black text-teal-700 text-center focus:ring-4 focus:ring-teal-500/10 focus:border-teal-500 outline-none transition-all"
+                                       class="w-28 px-4 py-3 bg-slate-50 border-2 border-teal-200 rounded-2xl text-2xl font-bold text-teal-700 text-center focus:ring-4 focus:ring-teal-500/10 focus:border-teal-500 outline-none transition-all"
                                        onkeydown="if(event.key==='Enter'){event.preventDefault();confirmMaxMarks();}"
                                 >
-                                <span class="text-sm font-black text-slate-400">pts</span>
+                                <span class="text-sm font-bold text-slate-400">pts</span>
                             </div>
                         </div>
                     </div>
 
                     <button type="button" onclick="confirmMaxMarks()"
-                            class="w-full flex items-center justify-center gap-2 p-4 bg-teal-600 text-white rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-teal-700 hover:shadow-lg hover:shadow-teal-100 transition-all">
+                            class="w-full flex items-center justify-center gap-2 p-4 bg-teal-600 text-white rounded-2xl text-xs font-bold uppercase tracking-widest hover:bg-teal-700 hover:shadow-lg hover:shadow-teal-100 transition-all">
                         <i class="bi-pencil-square"></i> Proceed to Enter Marks
                     </button>
                 </div>
@@ -99,23 +99,23 @@
                     <div class="px-6 md:px-8 py-5 border-b border-slate-50 bg-slate-50/40 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                         <div class="flex items-center gap-4">
                             <div class="flex flex-col">
-                                <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Max Marks</span>
+                                <span class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Max Marks</span>
                                 <div class="flex items-center gap-1.5">
                                     <input type="number" id="max_marks" name="max_marks"
                                            value="{{ $testSubject->max_marks }}"
                                            min="1" max="500"
-                                           class="w-20 px-3 py-1.5 bg-white border-2 border-teal-200 rounded-xl text-lg font-black text-teal-700 text-center focus:ring-4 focus:ring-teal-500/10 focus:border-teal-500 outline-none transition-all">
-                                    <span class="text-[10px] font-black text-slate-400">pts</span>
+                                           class="w-20 px-3 py-1.5 bg-white border-2 border-teal-200 rounded-xl text-lg font-bold text-teal-700 text-center focus:ring-4 focus:ring-teal-500/10 focus:border-teal-500 outline-none transition-all">
+                                    <span class="text-[10px] font-bold text-slate-400">pts</span>
                                 </div>
                             </div>
                             <div class="w-px h-10 bg-slate-100"></div>
                             <div class="flex flex-col">
-                                <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Students</span>
-                                <span class="text-lg font-black text-slate-800">{{ $results->count() }}</span>
+                                <span class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Students</span>
+                                <span class="text-lg font-bold text-slate-800">{{ $results->count() }}</span>
                             </div>
                         </div>
                         <button type="submit"
-                                class="flex items-center gap-2 px-6 py-3 bg-teal-600 text-white rounded-xl text-xs font-black uppercase tracking-widest hover:bg-teal-700 hover:shadow-lg hover:shadow-teal-100 transition-all whitespace-nowrap">
+                                class="flex items-center gap-2 px-6 py-3 bg-teal-600 text-white rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-teal-700 hover:shadow-lg hover:shadow-teal-100 transition-all whitespace-nowrap">
                             <i class="bi-check-lg"></i> Save Marks
                         </button>
                     </div>
@@ -126,13 +126,13 @@
                             @foreach ($results as $result)
                                 <div class="flex flex-wrap items-center gap-3 px-6 md:px-8 py-4 hover:bg-slate-50/50 transition-all">
                                     {{-- Roll --}}
-                                    <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 text-[10px] font-black bg-teal-50 text-teal-700 border border-teal-100">
+                                    <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 text-[10px] font-bold bg-teal-50 text-teal-700 border border-teal-100">
                                         {{ $result->student->rollno }}
                                     </div>
 
                                     {{-- Name — takes remaining space on desktop, full width minus badge on mobile --}}
                                     <div class="flex-1 min-w-[120px]">
-                                        <p class="text-sm font-black text-slate-800 leading-tight">{{ $result->student->name }}</p>
+                                        <p class="text-sm font-bold text-slate-800 leading-tight">{{ $result->student->name }}</p>
                                         <p class="text-[10px] font-medium text-slate-400 mt-0.5">{{ $result->student->father_name }}</p>
                                     </div>
 
@@ -146,7 +146,7 @@
                                                min="0" max="500"
                                                onclick="this.select()"
                                                oninput="highlightRow(this)"
-                                               class="obtained-marks w-20 px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-black text-slate-700 text-center hover:border-teal-300 focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10 outline-none transition-all">
+                                               class="obtained-marks w-20 px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-700 text-center hover:border-teal-300 focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10 outline-none transition-all">
                                         <span class="text-[10px] font-bold text-slate-400 whitespace-nowrap">/ <span class="max-label">{{ $testSubject->max_marks }}</span></span>
                                     </div>
                                 </div>
@@ -155,16 +155,16 @@
 
                         <div class="px-6 md:px-8 py-6 border-t border-slate-50 bg-slate-50/40 flex justify-end">
                             <button type="submit"
-                                    class="flex items-center gap-2 px-8 py-3 bg-teal-600 text-white rounded-xl text-xs font-black uppercase tracking-widest hover:bg-teal-700 hover:shadow-lg hover:shadow-teal-100 transition-all">
+                                    class="flex items-center gap-2 px-8 py-3 bg-teal-600 text-white rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-teal-700 hover:shadow-lg hover:shadow-teal-100 transition-all">
                                 <i class="bi-check-lg"></i> Save All Marks
                             </button>
                         </div>
                     @else
                         <div class="py-20 text-center">
                             <i class="bi-people text-5xl text-slate-200 mb-4 block"></i>
-                            <p class="text-sm font-black text-slate-400">No students enrolled.</p>
+                            <p class="text-sm font-bold text-slate-400">No students enrolled.</p>
                             <a href="{{ route('test-subject.import.index', $testSubject) }}"
-                               class="inline-flex items-center gap-2 mt-4 px-5 py-2.5 bg-teal-600 text-white rounded-xl text-xs font-black uppercase tracking-widest hover:bg-teal-700 transition-all">
+                               class="inline-flex items-center gap-2 mt-4 px-5 py-2.5 bg-teal-600 text-white rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-teal-700 transition-all">
                                 <i class="bi-person-plus"></i> Import Students
                             </a>
                         </div>

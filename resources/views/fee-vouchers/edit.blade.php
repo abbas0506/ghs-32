@@ -16,7 +16,7 @@
                         <i class="bi-pencil-square text-2xl text-white"></i>
                     </div>
                     <div>
-                        <h1 class="text-xl font-black text-slate-800 leading-tight">Edit Fee Voucher</h1>
+                        <h1 class="text-xl font-bold text-slate-800 leading-tight">Edit Fee Voucher</h1>
                         <p class="text-slate-400 text-sm font-medium">Voucher #{{ $feeVoucher->id }} - {{ $feeVoucher->description }}</p>
                     </div>
                 </div>
@@ -46,27 +46,27 @@
                     <div class="bg-white p-6 md:p-8 rounded-3xl border border-gray-100 shadow-sm space-y-6">
                         <div class="flex items-center gap-2 text-teal-600 mb-2">
                             <i class="bi-info-circle-fill"></i>
-                            <h2 class="text-sm font-black uppercase tracking-wider">Basic Information</h2>
+                            <h2 class="text-sm font-bold uppercase tracking-wider">Basic Information</h2>
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div class="md:col-span-2">
-                                <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 px-1">Description / Title</label>
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 px-1">Description / Title</label>
                                 <input type="text" name='description' class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-teal-500 focus:ring-4 focus:ring-teal-50/50 transition-all outline-none font-medium text-slate-700" 
                                     placeholder="Describe fee voucher" value="{{ old('description', $feeVoucher->description) }}" required>
                             </div>
 
                             <div>
-                                <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 px-1">Amount (Rs.)</label>
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 px-1">Amount (Rs.)</label>
                                 <div class="relative">
                                     <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-sm">Rs.</span>
-                                    <input type="number" name='amount' class="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-200 focus:border-teal-500 focus:ring-4 focus:ring-teal-50/50 transition-all outline-none font-black text-slate-700" 
+                                    <input type="number" name='amount' class="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-200 focus:border-teal-500 focus:ring-4 focus:ring-teal-50/50 transition-all outline-none font-bold text-slate-700" 
                                         placeholder="0.00" value="{{ old('amount', $feeVoucher->amount) }}" required>
                                 </div>
                             </div>
 
                             <div>
-                                <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 px-1">Due Date</label>
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 px-1">Due Date</label>
                                 <input type="date" name='due_date' class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-teal-500 focus:ring-4 focus:ring-teal-50/50 transition-all outline-none font-medium text-slate-700" 
                                     value="{{ old('due_date', $feeVoucher->due_date->format('Y-m-d')) }}" required>
                             </div>
@@ -77,13 +77,13 @@
                     <div class="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
                         <div class="p-6 border-b border-gray-50 bg-slate-50/30 flex items-center justify-between">
                             <div>
-                                <h3 class="font-black text-slate-800">Assign Sections</h3>
+                                <h3 class="font-bold text-slate-800">Assign Sections</h3>
                                 <p class="text-xs text-slate-400">Select classes this voucher applies to</p>
                             </div>
                             <div class="flex items-center gap-3">
                                 <label for="check_all" class="flex items-center gap-2 cursor-pointer group">
                                     <input type="checkbox" id="check_all" class="w-4 h-4 rounded border-gray-300 text-teal-600 focus:ring-teal-500">
-                                    <span class="text-[10px] font-black text-slate-500 uppercase tracking-widest group-hover:text-teal-600 transition-colors">Select All</span>
+                                    <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest group-hover:text-teal-600 transition-colors">Select All</span>
                                 </label>
                             </div>
                         </div>
@@ -119,7 +119,7 @@
 
                     <div class="flex items-center justify-end gap-3 pt-4">
                         <a href="{{ route('fee-vouchers.show', $feeVoucher) }}" class="px-6 py-3 rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-100 transition-all uppercase tracking-widest">Cancel</a>
-                        <button type="submit" class="px-8 py-3 rounded-xl bg-teal-600 text-white text-xs font-black uppercase tracking-widest hover:bg-teal-700 hover:shadow-xl hover:shadow-teal-100 transition-all">
+                        <button type="submit" class="px-8 py-3 rounded-xl bg-teal-600 text-white text-xs font-bold uppercase tracking-widest hover:bg-teal-700 hover:shadow-xl hover:shadow-teal-100 transition-all">
                             Save Changes <i class="bi-check2-all ml-2"></i>
                         </button>
                     </div>
@@ -134,7 +134,7 @@
                         <div class="w-10 h-10 rounded-xl bg-teal-500 flex items-center justify-center">
                             <i class="bi-lightning-charge-fill text-xl"></i>
                         </div>
-                        <h3 class="text-lg font-black leading-tight">Fast Sync Logic</h3>
+                        <h3 class="text-lg font-bold leading-tight">Fast Sync Logic</h3>
                         <p class="text-sm text-slate-400 leading-relaxed font-medium">When you add a section, the system automatically creates payment records for all students in that class. Unchecking a section will remove unpaid records from that class.</p>
                         <div class="pt-4 border-t border-white/10">
                             <div class="flex items-center gap-2 text-xs font-bold text-teal-400">
@@ -146,15 +146,15 @@
                 </div>
 
                 <div class="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm space-y-4">
-                    <h3 class="text-xs font-black text-slate-800 uppercase tracking-widest border-b border-slate-50 pb-3">Status Overview</h3>
+                    <h3 class="text-xs font-bold text-slate-800 uppercase tracking-widest border-b border-slate-50 pb-3">Status Overview</h3>
                     <div class="space-y-4">
                         @php
                             $paid = $feeVoucher->feePayments()->whereNotNull('payment_date')->count();
                             $total = $feeVoucher->feePayments()->count();
                         @endphp
                         <div class="flex justify-between items-end">
-                            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Collection Rate</p>
-                            <span class="text-lg font-black text-slate-800">{{ $total > 0 ? round(($paid/$total)*100) : 0 }}%</span>
+                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Collection Rate</p>
+                            <span class="text-lg font-bold text-slate-800">{{ $total > 0 ? round(($paid/$total)*100) : 0 }}%</span>
                         </div>
                         <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
                             <div class="bg-teal-500 h-full transition-all" style="width: {{ $total > 0 ? ($paid/$total)*100 : 0 }}%"></div>

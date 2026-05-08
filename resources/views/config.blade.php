@@ -5,7 +5,7 @@
         <!-- Header & Breadcrumbs -->
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 py-2 mb-2">
             <div>
-                <div class="flex items-center gap-2 text-slate-400 text-[10px] uppercase tracking-[0.2em] font-black mb-3">
+                <div class="flex items-center gap-2 text-slate-400 text-[10px] uppercase tracking-[0.2em] font-bold mb-3">
                     <a href="{{ url('/') }}" class="hover:text-teal-600 transition-colors">School</a>
                     <i class="bi-chevron-right text-[8px]"></i>
                     <span class="text-teal-600">Settings</span>
@@ -15,7 +15,7 @@
                         <i class="bi-sliders text-xl"></i>
                     </div>
                     <div>
-                        <h1 class="text-2xl font-black text-slate-800 leading-none mb-1">Configuration</h1>
+                        <h1 class="text-2xl font-bold text-slate-800 leading-none mb-1">Configuration</h1>
                         <p class="text-slate-400 text-xs font-medium italic">Manage system settings, users, and core academic parameters</p>
                     </div>
                 </div>
@@ -31,9 +31,9 @@
                 <div class="w-12 h-12 rounded-2xl bg-teal-50 text-teal-600 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
                     <i class="bi bi-people text-2xl"></i>
                 </div>
-                <h3 class="text-lg font-black text-slate-800 mb-1.5">Users</h3>
+                <h3 class="text-lg font-bold text-slate-800 mb-1.5">Users</h3>
                 <p class="text-xs text-slate-500 font-medium leading-relaxed">Manage staff accounts, edit profiles, and configure system permissions.</p>
-                <div class="mt-auto pt-6 flex items-center text-[10px] font-black text-teal-600 uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">
+                <div class="mt-auto pt-6 flex items-center text-[10px] font-bold text-teal-600 uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">
                     Access <i class="bi-arrow-right ml-1"></i>
                 </div>
             </a>
@@ -44,9 +44,9 @@
                 <div class="w-12 h-12 rounded-2xl bg-teal-50 text-teal-600 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
                     <i class="bi bi-book text-2xl"></i>
                 </div>
-                <h3 class="text-lg font-black text-slate-800 mb-1.5">Subjects</h3>
+                <h3 class="text-lg font-bold text-slate-800 mb-1.5">Subjects</h3>
                 <p class="text-xs text-slate-500 font-medium leading-relaxed">System-wide subject directory. Manage all subjects taught across the school.</p>
-                <div class="mt-auto pt-6 flex items-center text-[10px] font-black text-teal-600 uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">
+                <div class="mt-auto pt-6 flex items-center text-[10px] font-bold text-teal-600 uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">
                     Configure <i class="bi-arrow-right ml-1"></i>
                 </div>
             </a>
@@ -57,9 +57,9 @@
                 <div class="w-12 h-12 rounded-2xl bg-teal-50 text-teal-600 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
                     <i class="bi bi-layers text-2xl"></i>
                 </div>
-                <h3 class="text-lg font-black text-slate-800 mb-1.5">Classes</h3>
+                <h3 class="text-lg font-bold text-slate-800 mb-1.5">Classes</h3>
                 <p class="text-xs text-slate-500 font-medium leading-relaxed">Manage academic sections, class rosters, and bulk enrollments natively.</p>
-                <div class="mt-auto pt-6 flex items-center text-[10px] font-black text-teal-600 uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">
+                <div class="mt-auto pt-6 flex items-center text-[10px] font-bold text-teal-600 uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">
                     Configure <i class="bi-arrow-right ml-1"></i>
                 </div>
             </a>
@@ -70,9 +70,9 @@
                 <div class="w-12 h-12 rounded-2xl bg-teal-50 text-teal-600 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
                     <i class="bi bi-calendar-range text-2xl"></i>
                 </div>
-                <h3 class="text-lg font-black text-slate-800 mb-1.5">Allocations</h3>
+                <h3 class="text-lg font-bold text-slate-800 mb-1.5">Allocations</h3>
                 <p class="text-xs text-slate-500 font-medium leading-relaxed">Master timetable controls. Assign teachers, classes, and subjects to periods.</p>
-                <div class="mt-auto pt-6 flex items-center text-[10px] font-black text-teal-600 uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">
+                <div class="mt-auto pt-6 flex items-center text-[10px] font-bold text-teal-600 uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">
                     Open <i class="bi-arrow-right ml-1"></i>
                 </div>
             </a>
@@ -83,9 +83,9 @@
                 <div class="w-12 h-12 rounded-2xl bg-teal-50 text-teal-600 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
                     <i class="bi bi-clock-history text-2xl"></i>
                 </div>
-                <h3 class="text-lg font-black text-slate-800 mb-1.5">Lecture Timings</h3>
+                <h3 class="text-lg font-bold text-slate-800 mb-1.5">Lecture Timings</h3>
                 <p class="text-xs text-slate-500 font-medium leading-relaxed">Establish standard period lengths and synchronize school bells globally.</p>
-                <div class="mt-auto pt-6 flex items-center text-[10px] font-black text-teal-600 uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">
+                <div class="mt-auto pt-6 flex items-center text-[10px] font-bold text-teal-600 uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">
                     Configure <i class="bi-arrow-right ml-1"></i>
                 </div>
             </a>
@@ -96,9 +96,9 @@
                 <div class="w-12 h-12 rounded-2xl bg-teal-50 text-teal-600 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
                     <i class="bi bi-diagram-3 text-2xl"></i>
                 </div>
-                <h3 class="text-lg font-black text-slate-800 mb-1.5">Grade Setup</h3>
+                <h3 class="text-lg font-bold text-slate-800 mb-1.5">Grade Setup</h3>
                 <p class="text-xs text-slate-500 font-medium leading-relaxed">Architect curriculum rules. Decide which subjects map exactly to which grade.</p>
-                <div class="mt-auto pt-6 flex items-center text-[10px] font-black text-teal-600 uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">
+                <div class="mt-auto pt-6 flex items-center text-[10px] font-bold text-teal-600 uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">
                     Configure <i class="bi-arrow-right ml-1"></i>
                 </div>
             </a>
@@ -109,9 +109,9 @@
                 <div class="w-12 h-12 rounded-2xl bg-teal-50 text-teal-600 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
                     <i class="bi bi-ui-checks text-2xl"></i>
                 </div>
-                <h3 class="text-lg font-black text-slate-800 mb-1.5">Task Manager</h3>
+                <h3 class="text-lg font-bold text-slate-800 mb-1.5">Task Manager</h3>
                 <p class="text-xs text-slate-500 font-medium leading-relaxed">Assign administrative tasks, track progress, and manage workflow approvals.</p>
-                <div class="mt-auto pt-6 flex items-center text-[10px] font-black text-teal-600 uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">
+                <div class="mt-auto pt-6 flex items-center text-[10px] font-bold text-teal-600 uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">
                     Manage <i class="bi-arrow-right ml-1"></i>
                 </div>
             </a>

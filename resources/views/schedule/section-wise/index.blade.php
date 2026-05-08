@@ -4,7 +4,7 @@
         <!-- Header & Breadcrumbs -->
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 py-2 mb-2">
             <div>
-                <div class="flex items-center gap-2 text-slate-400 text-[10px] uppercase tracking-[0.2em] font-black mb-3">
+                <div class="flex items-center gap-2 text-slate-400 text-[10px] uppercase tracking-[0.2em] font-bold mb-3">
                     <a href="{{ url('/') }}" class="hover:text-teal-600 transition-colors">School</a>
                     <i class="bi-chevron-right text-[8px]"></i>
                     <a href="{{ route('sections.index') }}" class="hover:text-teal-600 transition-colors">Classes</a>
@@ -16,7 +16,7 @@
                         <i class="bi-calendar-week text-xl"></i>
                     </div>
                     <div>
-                        <h1 class="text-2xl font-black text-slate-800 leading-none mb-1">Section Allocations</h1>
+                        <h1 class="text-2xl font-bold text-slate-800 leading-none mb-1">Section Allocations</h1>
                         <p class="text-slate-400 text-xs font-medium italic">Manage class timetables and teacher assignments</p>
                     </div>
                 </div>
@@ -56,14 +56,14 @@
             <div class="flex flex-wrap md:flex-nowrap items-center gap-4 w-full xl:w-auto">
                 <label class="flex items-center gap-2 cursor-pointer group">
                     <input type="checkbox" id="chkAll" class="w-4 h-4 rounded text-teal-600 focus:ring-teal-500 border-slate-300 transition-colors cursor-pointer" onclick="checkAll()" checked>
-                    <span class="text-[10px] font-black text-slate-600 group-hover:text-teal-600 uppercase tracking-widest transition-colors">Print All Sections</span>
+                    <span class="text-[10px] font-bold text-slate-600 group-hover:text-teal-600 uppercase tracking-widest transition-colors">Print All Sections</span>
                 </label>
                 <div class="h-5 w-px bg-slate-200 hidden md:block"></div>
                 <div class="flex items-center gap-2 w-full md:w-auto">
-                    <button type="button" onclick="submitForm('landscape')" class="flex-1 md:flex-none justify-center flex items-center gap-2 px-5 py-2.5 bg-slate-800 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-700 hover:shadow-lg hover:shadow-slate-800/20 transition-all">
+                    <button type="button" onclick="submitForm('landscape')" class="flex-1 md:flex-none justify-center flex items-center gap-2 px-5 py-2.5 bg-slate-800 text-white rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-slate-700 hover:shadow-lg hover:shadow-slate-800/20 transition-all">
                         <i class="bi-view-stacked"></i> Unified <span class="hidden md:inline">(Landscape)</span>
                     </button>
-                    <button type="button" onclick="submitForm('portrait')" class="flex-1 md:flex-none justify-center flex items-center gap-2 px-5 py-2.5 bg-teal-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-teal-700 hover:shadow-lg hover:shadow-teal-100 transition-all">
+                    <button type="button" onclick="submitForm('portrait')" class="flex-1 md:flex-none justify-center flex items-center gap-2 px-5 py-2.5 bg-teal-600 text-white rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-teal-700 hover:shadow-lg hover:shadow-teal-100 transition-all">
                         <i class="bi-layout-split"></i> Section-wise <span class="hidden md:inline">(Portrait)</span>
                     </button>
                 </div>
@@ -79,10 +79,10 @@
                         <thead>
                             <tr class="bg-slate-50 border-b border-slate-100">
                                 <th class="chk w-[5%] hidden px-4 py-4"></th>
-                                <th class="px-6 py-4 text-[10px] font-black tracking-[0.2em] text-slate-400 uppercase w-32 sticky left-0 z-10 bg-slate-50 border-r border-slate-100">Class</th>
+                                <th class="px-6 py-4 text-[10px] font-bold tracking-[0.2em] text-slate-400 uppercase w-32 sticky left-0 z-10 bg-slate-50 border-r border-slate-100">Class</th>
                                 @foreach ($lectures as $lecture)
                                     <th class="px-4 py-3 border-l border-slate-100 text-center min-w-[110px]">
-                                        <div class="text-[11px] font-black text-slate-700 mb-1 uppercase tracking-widest">Period {{ $lecture->lecture_no }}</div>
+                                        <div class="text-[11px] font-bold text-slate-700 mb-1 uppercase tracking-widest">Period {{ $lecture->lecture_no }}</div>
                                         <div class="inline-flex items-center justify-center px-1.5 py-0.5 rounded text-[9px] font-bold tracking-widest bg-white border border-slate-200 text-slate-500 shadow-sm">
                                             <i class="bi-clock mr-1 opacity-70"></i> {{ $lecture->starts_at->format('H:i') }}
                                         </div>
@@ -96,7 +96,7 @@
                                     <td class="chk hidden px-4 py-3 align-middle text-center border-b border-slate-100">
                                         <input type="checkbox" class="w-4 h-4 rounded text-teal-600 focus:ring-teal-500 border-slate-300" name="section_ids_array[]" value="{{ $section->id }}" checked>
                                     </td>
-                                    <td class="px-6 py-4 font-black text-slate-700 text-sm border-r border-slate-100 sticky left-0 z-10 bg-white group-hover/row:bg-slate-50/50 transition-colors tracking-tight">
+                                    <td class="px-6 py-4 font-bold text-slate-700 text-sm border-r border-slate-100 sticky left-0 z-10 bg-white group-hover/row:bg-slate-50/50 transition-colors tracking-tight">
                                         {{ $section->name }}
                                     </td>
                                     @foreach ($lectures as $lecture)
@@ -105,7 +105,7 @@
                                                 @foreach ($section->schedules()->havingLectureNo($lecture->lecture_no)->get() as $allocation)
                                                     <a href="{{ route('section.lecture.schedule.edit', [$section, $lecture->lecture_no, $allocation]) }}"
                                                         class="block bg-gradient-to-br from-teal-50 to-emerald-50 hover:from-teal-100 hover:to-emerald-100 border border-teal-100/60 rounded-xl p-2 text-center transition-all hover:-translate-y-0.5 hover:shadow-md hover:shadow-teal-100/50 relative group">
-                                                        <h4 class="text-[10px] font-black text-teal-800 uppercase tracking-widest mb-1 truncate">{{ $allocation->subject->short_name }}</h4>
+                                                        <h4 class="text-[10px] font-bold text-teal-800 uppercase tracking-widest mb-1 truncate">{{ $allocation->subject->short_name }}</h4>
                                                         <p class="text-[9px] font-bold text-teal-600/90 bg-white/70 rounded px-1.5 py-0.5 inline-block truncate max-w-full">{{ $allocation->user->profile?->short_name ?? 'N/A' }}</p>
                                                     </a>
                                                 @endforeach

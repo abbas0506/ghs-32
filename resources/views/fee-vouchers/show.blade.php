@@ -16,7 +16,7 @@
                         <i class="bi-receipt text-2xl"></i>
                     </div>
                     <div>
-                        <h1 class="text-2xl font-black text-slate-800 leading-tight">{{ $feeVoucher->name }}</h1>
+                        <h1 class="text-2xl font-bold text-slate-800 leading-tight">{{ $feeVoucher->name }}</h1>
                         <p class="text-slate-400 text-sm font-medium">Month: {{ date('F', mktime(0, 0, 0, $feeVoucher->month, 10)) }} {{ $feeVoucher->year }} | Due: {{ $feeVoucher->due_date->format('d M, Y') }}</p>
                     </div>
                 </div>
@@ -24,11 +24,11 @@
 
             <div class="flex items-center gap-2">
                 @if($feeVoucher->isOpen())
-                    <span class="px-3 py-1 rounded-full bg-green-50 text-green-600 text-[10px] font-black uppercase tracking-tighter border border-green-100 flex items-center gap-1">
+                    <span class="px-3 py-1 rounded-full bg-green-50 text-green-600 text-[10px] font-bold uppercase tracking-tighter border border-green-100 flex items-center gap-1">
                         <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span> Open
                     </span>
                 @else
-                    <span class="px-3 py-1 rounded-full bg-slate-50 text-slate-400 text-[10px] font-black uppercase tracking-tighter border border-slate-100">
+                    <span class="px-3 py-1 rounded-full bg-slate-50 text-slate-400 text-[10px] font-bold uppercase tracking-tighter border border-slate-100">
                         Closed
                     </span>
                 @endif
@@ -69,7 +69,7 @@
                 <div class="absolute -right-4 -top-4 w-24 h-24 bg-teal-50 rounded-full opacity-50 group-hover:scale-110 transition-transform"></div>
                 <div class="relative">
                     <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Total Expected</p>
-                    <h3 class="text-3xl font-black text-slate-800">Rs. {{ number_format($payable) }}</h3>
+                    <h3 class="text-3xl font-bold text-slate-800">Rs. {{ number_format($payable) }}</h3>
                     <div class="mt-4 flex items-center gap-2">
                         <span class="text-[10px] font-bold text-teal-600 bg-teal-50 px-2 py-0.5 rounded-lg">Target Revenue</span>
                     </div>
@@ -80,7 +80,7 @@
                 <div class="absolute -right-4 -top-4 w-24 h-24 bg-white/10 rounded-full group-hover:scale-110 transition-transform"></div>
                 <div class="relative">
                     <p class="text-xs font-bold text-teal-100 uppercase tracking-widest mb-1">Total Collected</p>
-                    <h3 class="text-2xl font-black text-white">Rs. {{ number_format($paid) }}</h3>
+                    <h3 class="text-2xl font-bold text-white">Rs. {{ number_format($paid) }}</h3>
                     <div class="mt-4">
                         <div class="flex justify-between text-[10px] font-bold text-teal-100 mb-1">
                             <span>Collection Progress</span>
@@ -97,7 +97,7 @@
                 <div class="absolute -right-4 -top-4 w-24 h-24 bg-orange-50 rounded-full opacity-50 group-hover:scale-110 transition-transform"></div>
                 <div class="relative">
                     <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Pending Amount</p>
-                    <h3 class="text-2xl font-black text-slate-800">Rs. {{ number_format($pending) }}</h3>
+                    <h3 class="text-2xl font-bold text-slate-800">Rs. {{ number_format($pending) }}</h3>
                     <div class="mt-4 flex items-center gap-2">
                         <i class="bi-exclamation-circle-fill text-orange-400 text-xs"></i>
                         <span class="text-[10px] font-bold text-orange-600 italic">Needs Attention</span>
@@ -110,7 +110,7 @@
         <div class="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
             <div class="p-6 border-b border-gray-50 flex items-center justify-between bg-slate-50/30">
                 <div>
-                    <h3 class="font-black text-slate-800">Section-wise Breakdown</h3>
+                    <h3 class="font-bold text-slate-800">Section-wise Breakdown</h3>
                     <p class="text-xs text-slate-400">Manage payments for each class section</p>
                 </div>
                 <div class="flex items-center gap-2">
@@ -122,7 +122,7 @@
             <div class="overflow-x-auto">
                 <table class="table-fixed w-full text-left border-collapse">
                     <thead>
-                        <tr class="bg-slate-50/50 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b border-gray-100">
+                        <tr class="bg-slate-50/50 text-[10px] font-bold uppercase tracking-widest text-slate-400 border-b border-gray-100">
                             <th class="w-24 px-5 py-2">Class</th>
                             <th class="w-40 px-5 py-2">Status</th>
                             <th class="w-40 px-5 py-2">Collection %</th>
@@ -146,7 +146,7 @@
                                 </td>
                                 <td class="px-8 py-2">
                                     <div class="flex items-center gap-2">
-                                        <p class="text-sm font-black text-slate-700">{{ $paidCount }} <span class="text-slate-300 font-medium">/ {{ $totalCount }}</span></p>
+                                        <p class="text-sm font-bold text-slate-700">{{ $paidCount }} <span class="text-slate-300 font-medium">/ {{ $totalCount }}</span></p>
                                         @if ($paidToday)
                                             <span class="flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-green-50 text-green-600 text-[10px] font-bold border border-green-100 animate-bounce">
                                                 <i class="bi-lightning-fill text-[8px]"></i> +{{ $paidToday }}
@@ -160,11 +160,11 @@
                                         <div class="w-32 bg-slate-100 h-1 rounded-full overflow-hidden mb-1">
                                             <div class="h-full bg-teal-500 rounded-full transition-all" style="width: {{ $secPercentage }}%"></div>
                                         </div>
-                                        <span class="text-[10px] font-black text-slate-500">{{ $secPercentage }}%</span>
+                                        <span class="text-[10px] font-bold text-slate-500">{{ $secPercentage }}%</span>
                                     </div>
                                 </td>
                                 <td class="px-8 py-2 text-right">
-                                    <a href="{{ route('voucher.section.payments.index', [$feeVoucher, $section]) }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-800 text-white text-[10px] font-black uppercase tracking-widest hover:bg-teal-600 hover:shadow-lg hover:shadow-teal-100 transition-all">
+                                    <a href="{{ route('voucher.section.payments.index', [$feeVoucher, $section]) }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-800 text-white text-[10px] font-bold uppercase tracking-widest hover:bg-teal-600 hover:shadow-lg hover:shadow-teal-100 transition-all">
                                         Manage <i class="bi-arrow-right"></i>
                                     </a>
                                 </td>
@@ -190,7 +190,7 @@
                 <i class="bi-exclamation-triangle"></i>
             </div>
             <div>
-                <h4 class="text-xs font-black text-orange-800 uppercase tracking-widest">Destructive Activity Warning</h4>
+                <h4 class="text-xs font-bold text-orange-800 uppercase tracking-widest">Destructive Activity Warning</h4>
                 <p class="text-xs text-orange-600 leading-relaxed max-w-2xl">Deleting this voucher will permanently remove all associated payment records for every student across all sections. This action cannot be undone. Please ensure you have backed up any necessary data before proceeding.</p>
             </div>
         </div>
@@ -216,7 +216,7 @@
                 customClass: {
                     container: 'modern-swal-container',
                     popup: 'modern-swal-popup rounded-3xl',
-                    title: 'font-black text-slate-800',
+                    title: 'font-bold text-slate-800',
                     confirmButton: 'rounded-xl font-bold uppercase tracking-widest text-xs px-6 py-3',
                     cancelButton: 'rounded-xl font-bold uppercase tracking-widest text-xs px-6 py-3'
                 }

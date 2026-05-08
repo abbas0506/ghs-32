@@ -4,180 +4,97 @@
     <div class="space-y-6 overflow-x-hidden">
         <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
             <div class="min-w-0">
-                <h2><i class="ri-user-star-line"></i> Habitual Students</h2>
-                <div class="bread-crumb">
+                <h2 class="text-xl font-bold text-slate-800"><i class="ri-user-star-line text-teal-600"></i> Habitual Students</h2>
+                <div class="bread-crumb mt-1">
                     <a href="{{ url('/') }}">Home</a>
                     <div>/</div>
                     <a href="{{ route('attendance.summary') }}">Attendance</a>
                     <div>/</div>
-                    <div>Habitual Students</div>
+                    <div class="text-teal-600">Habitual Students</div>
                 </div>
             </div>
 
             <div class="flex w-full flex-wrap gap-3 md:w-auto md:justify-end">
                 <a href="{{ route('attendance.summary') }}"
-                    class="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition-all hover:shadow-md">
+                    class="rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-bold text-slate-600 shadow-sm transition-all hover:bg-slate-50">
                     Back to Summary
                 </a>
                 <a href="{{ route('attendance.habitual-students.pdf') }}" target="_blank"
-                    class="rounded-xl border border-teal-100 bg-teal-50 px-4 py-2.5 text-sm font-semibold text-teal-700 shadow-sm transition-all hover:border-teal-200 hover:bg-teal-100">
+                    class="rounded-xl border border-teal-100 bg-teal-50 px-4 py-2 text-xs font-bold text-teal-700 shadow-sm transition-all hover:bg-teal-100">
                     <i class="bi bi-printer mr-1"></i> Print PDF
                 </a>
             </div>
         </div>
 
-        <section class="overflow-hidden rounded-[28px] border border-teal-100 bg-white shadow-sm shadow-slate-200/70">
-            <div class="border-b border-slate-100 bg-gradient-to-r from-teal-50 via-white to-cyan-50 px-6 py-6 md:px-8">
-                <div class="grid gap-6 lg:grid-cols-[1.8fr,1fr] lg:items-end">
-                    <div class="min-w-0">
-                        <p class="text-[10px] font-black uppercase tracking-[0.35em] text-teal-600">Attendance Intelligence
-                        </p>
-                        <h1 class="mt-3 text-2xl font-black leading-tight text-slate-900 md:text-4xl">Top 3 habitual
-                            students from each class</h1>
-                        <p class="mt-3 max-w-2xl text-sm text-slate-600 md:text-base">
-                            Ranked from {{ $sessionStart->format('d M Y') }} to {{ $reportDate->format('d M Y') }} using
-                            total absences first,
-                            then absence rate across marked attendance days, with key contact details ready for follow-up.
-                        </p>
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-1">
-                        <div class="rounded-2xl border border-slate-100 bg-slate-50 px-4 py-4">
-                            <p class="text-[11px] font-black uppercase tracking-[0.24em] text-slate-400">Students listed</p>
-                            <p class="mt-2 text-3xl font-black text-slate-900">{{ $highlightedStudents }}</p>
-                        </div>
-                        <div class="rounded-2xl border border-teal-100 bg-teal-50 px-4 py-4">
-                            <p class="text-[11px] font-black uppercase tracking-[0.24em] text-teal-700">Classes covered</p>
-                            <p class="mt-2 text-3xl font-black text-teal-900">{{ $sectionsCount }}</p>
-                        </div>
-                        <div class="col-span-2 rounded-2xl border border-amber-100 bg-amber-50 px-4 py-4 md:col-span-1">
-                            <p class="text-[11px] font-black uppercase tracking-[0.24em] text-amber-700">Classes flagged</p>
-                            <p class="mt-2 text-3xl font-black text-amber-900">{{ $classesWithStudents }}</p>
-                        </div>
-                    </div>
-                </div>
+        <!-- Summary Bar -->
+        <div class="flex flex-wrap items-center gap-4 rounded-2xl border border-slate-100 bg-white p-4 shadow-sm">
+            <div class="flex items-center gap-3 pr-4 border-r border-slate-100">
+                <span class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Reporting Window</span>
+                <span class="text-xs font-bold text-slate-700">{{ $sessionStart->format('d M Y') }} - {{ $reportDate->format('d M Y') }}</span>
             </div>
-
-            <div class="grid gap-4 px-6 py-5 md:grid-cols-3 md:px-8">
-                <div class="rounded-2xl border border-slate-100 bg-slate-50 px-4 py-4">
-                    <p class="text-[10px] font-black uppercase tracking-[0.28em] text-slate-400">Reporting window</p>
-                    <p class="mt-2 text-sm font-bold text-slate-800 md:text-base">{{ $sessionStart->format('d M Y') }} -
-                        {{ $reportDate->format('d M Y') }}</p>
-                </div>
-                <div class="rounded-2xl border border-slate-100 bg-white px-4 py-4">
-                    <p class="text-[10px] font-black uppercase tracking-[0.28em] text-slate-400">Students with marked
-                        attendance</p>
-                    <p class="mt-2 text-2xl font-black text-slate-900">{{ $studentsWithAttendance }}</p>
-                </div>
-                <div class="rounded-2xl border border-rose-100 bg-rose-50 px-4 py-4">
-                    <p class="text-[10px] font-black uppercase tracking-[0.28em] text-rose-600">Absences in highlighted
-                        students</p>
-                    <p class="mt-2 text-2xl font-black text-rose-900">{{ $totalAbsences }}</p>
-                </div>
+            <div class="flex items-center gap-3 pr-4 border-r border-slate-100">
+                <span class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Top Students</span>
+                <span class="text-xs font-bold text-teal-600">{{ $highlightedStudents }}</span>
             </div>
-        </section>
+            <div class="flex items-center gap-3">
+                <span class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Total Absences</span>
+                <span class="text-xs font-bold text-rose-500">{{ $totalAbsences }}</span>
+            </div>
+        </div>
 
         @if ($highlightedStudents === 0)
             <div class="rounded-[28px] border border-dashed border-slate-300 bg-white px-6 py-16 text-center shadow-sm">
-                <p class="text-sm font-black uppercase tracking-[0.3em] text-slate-400">No habitual students found</p>
-                <p class="mt-3 text-base font-semibold text-slate-600">No student has recorded absences in the current
-                    reporting window.</p>
+                <p class="text-sm font-bold uppercase tracking-[0.3em] text-slate-400">No habitual students found</p>
+                <p class="mt-3 text-sm font-semibold text-slate-600">No student has recorded absences in the current reporting window.</p>
             </div>
         @else
-            <div class="grid gap-5 2xl:grid-cols-2">
+            <div class="grid gap-6 2xl:grid-cols-2">
                 @foreach ($sectionsReport as $item)
-                    <section
-                        class="overflow-hidden rounded-[26px] border border-slate-200 bg-white shadow-lg shadow-slate-200/60">
-                        <div
-                            class="border-b border-slate-100 bg-gradient-to-r from-amber-50 via-white to-cyan-50 px-6 py-5">
-                            <div class="flex items-start justify-between gap-4">
-                                <div class="min-w-0">
-                                    <p class="text-xs uppercase tracking-[0.3em] text-slate-400">Class</p>
-                                    <h3 class="mt-2 break-words text-xl font-black text-slate-900">
-                                        {{ $item['class_label'] }}</h3>
-                                </div>
-                                <div
-                                    class="min-w-[120px] rounded-2xl border border-teal-100 bg-teal-50 px-4 py-3 text-right">
-                                    <p class="text-[11px] uppercase tracking-[0.24em] text-teal-700">Top students</p>
-                                    <p class="mt-1 text-2xl font-black text-teal-900">{{ $item['students']->count() }}</p>
-                                </div>
+                    <section class="overflow-hidden rounded-3xl border border-slate-100 bg-white shadow-sm">
+                        <div class="border-b border-slate-50 bg-slate-50/50 px-6 py-3">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-sm font-bold text-slate-800 uppercase tracking-wider">Class {{ $item['class_label'] }}</h3>
+                                <span class="rounded-full bg-teal-100 px-3 py-1 text-[10px] font-bold text-teal-700 uppercase">{{ $item['students']->count() }} Students</span>
                             </div>
                         </div>
 
-                        <div class="p-6">
+                        <div class="p-4">
                             @if ($item['students']->isEmpty())
-                                <div
-                                    class="rounded-[24px] border border-dashed border-slate-200 bg-slate-50 px-5 py-10 text-center text-sm font-semibold text-slate-500">
-                                    No student with recorded absences in this class during the selected window.
+                                <div class="px-5 py-8 text-center text-[11px] font-bold text-slate-400">
+                                    No student with recorded absences in this class.
                                 </div>
                             @else
-                                <div class="grid gap-4">
+                                <div class="divide-y divide-slate-50">
                                     @foreach ($item['students'] as $index => $student)
-                                        <article
-                                            class="overflow-hidden rounded-[22px] border border-slate-100 bg-gradient-to-br from-white to-slate-50 px-5 py-5 shadow-sm">
-                                            <div class="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
-                                                <div class="min-w-0 flex-1">
-                                                    <div class="flex items-start gap-4">
-                                                        <div
-                                                            class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-400 to-orange-500 text-lg font-black text-white shadow-lg shadow-orange-200">
-                                                            {{ $index + 1 }}
+                                        <article class="group py-4 first:pt-0 last:pb-0">
+                                            <div class="flex items-start gap-4">
+                                                <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-xs font-bold text-slate-500 group-hover:bg-teal-600 group-hover:text-white transition-colors">
+                                                    {{ $index + 1 }}
+                                                </div>
+                                                
+                                                <div class="flex-1 min-w-0">
+                                                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-2">
+                                                        <div>
+                                                            <h4 class="text-sm font-bold text-slate-900 leading-tight">{{ $student->name }}</h4>
+                                                            <p class="text-[11px] text-slate-500 font-medium">S/O {{ $student->father_name ?: '---' }} • Roll: {{ $student->rollno ?: 'N/A' }}</p>
                                                         </div>
-                                                        <div class="min-w-0">
-                                                            <p
-                                                                class="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">
-                                                                Student</p>
-                                                            <p
-                                                                class="mt-1 break-words text-lg font-black leading-tight text-slate-900 md:text-xl">
-                                                                {{ $student->name }}</p>
-                                                            <p class="mt-1 break-words text-sm text-slate-500">S/O
-                                                                {{ $student->father_name ?: 'Not provided' }}</p>
-                                                            <div class="mt-3 flex flex-wrap gap-2 text-xs font-semibold">
-                                                                <span
-                                                                    class="rounded-full bg-red-50 px-3 py-1 text-red-700">{{ $student->absence_count }}
-                                                                    absences</span>
-                                                                <span
-                                                                    class="rounded-full bg-slate-100 px-3 py-1 text-slate-700">{{ $student->absence_rate }}%
-                                                                    absence rate</span>
-                                                                <span
-                                                                    class="rounded-full bg-cyan-50 px-3 py-1 text-cyan-800">Roll
-                                                                    {{ $student->rollno ?: 'N/A' }}</span>
+                                                        <div class="flex gap-2">
+                                                            <div class="flex flex-col items-end">
+                                                                <span class="text-xs font-bold text-rose-600">{{ $student->absence_count }} Absences</span>
+                                                                <span class="text-[10px] font-bold text-slate-400">{{ $student->absence_rate }}% Rate</span>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </div>
 
-                                                <div
-                                                    class="grid min-w-0 gap-3 text-sm text-slate-600 sm:grid-cols-2 xl:w-[280px] xl:flex-none 2xl:w-[320px]">
-                                                    <div class="min-w-0">
-                                                        <p class="text-[11px] uppercase tracking-[0.22em] text-slate-400">
-                                                            Phone</p>
-                                                        <p class="mt-1 break-all font-semibold text-slate-800">
-                                                            {{ $student->phone ?: 'Not provided' }}</p>
-                                                    </div>
-                                                    <div class="min-w-0">
-                                                        <p class="text-[11px] uppercase tracking-[0.22em] text-slate-400">
-                                                            Attendance marks</p>
-                                                        <p class="mt-1 font-semibold text-slate-800">
-                                                            {{ $student->attendance_count }} days</p>
-                                                    </div>
-                                                    <div class="min-w-0">
-                                                        <p class="text-[11px] uppercase tracking-[0.22em] text-slate-400">
-                                                            Class</p>
-                                                        <p class="mt-1 break-words font-semibold text-slate-800">
-                                                            {{ $item['class_label'] }}</p>
-                                                    </div>
-                                                    <div class="min-w-0">
-                                                        <p class="text-[11px] uppercase tracking-[0.22em] text-slate-400">
-                                                            Report date</p>
-                                                        <p class="mt-1 font-semibold text-slate-800">
-                                                            {{ $reportDate->format('d M Y') }}</p>
-                                                    </div>
-                                                    <div class="min-w-0 sm:col-span-2">
-                                                        <p class="text-[11px] uppercase tracking-[0.22em] text-slate-400">
-                                                            Address</p>
-                                                        <p
-                                                            class="mt-1 break-all font-semibold leading-relaxed text-slate-800">
-                                                            {{ $student->address ?: 'Not provided' }}</p>
+                                                    <div class="mt-3 grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-1">
+                                                        <div class="flex items-center gap-2">
+                                                            <i class="bi bi-telephone text-[10px] text-slate-400"></i>
+                                                            <span class="text-[11px] font-bold text-slate-600">{{ $student->phone ?: 'No Phone' }}</span>
+                                                        </div>
+                                                        <div class="flex items-center gap-2">
+                                                            <i class="bi bi-geo-alt text-[10px] text-slate-400"></i>
+                                                            <span class="text-[11px] font-bold text-slate-600 truncate">{{ $student->address ?: 'No Address' }}</span>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -190,6 +107,5 @@
                 @endforeach
             </div>
         @endif
-
     </div>
 @endsection

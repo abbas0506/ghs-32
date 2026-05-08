@@ -27,7 +27,7 @@
 
         .data tr th,
         .data tr td {
-            font-size: 10px;
+            font-size: 12px;
             padding-left: 4px;
             padding-right: 4px;
             /* text-align: left; */
@@ -127,7 +127,6 @@
                             <th>Total</th>
                             <th>Marks</th>
                             <th>Percentage</th>
-                            <th>Grade</th>
                             <th>Status</th>
                         </tr>
                     </thead>
@@ -144,23 +143,8 @@
                                         ($result->obtained_marks / $result->testSubject->max_marks) * 100,
                                         2,
                                     );
-
-                                    if ($percentage >= 80) {
-                                        $grade = 'A+';
-                                    } elseif ($percentage >= 70) {
-                                        $grade = 'A';
-                                    } elseif ($percentage >= 60) {
-                                        $grade = 'B';
-                                    } elseif ($percentage >= 45) {
-                                        $grade = 'C';
-                                    } elseif ($percentage >= 33) {
-                                        $grade = 'D';
-                                    } else {
-                                        $grade = 'F';
-                                    }
                                 @endphp
                                 <td>{{ $percentage }} %</td>
-                                <td>{{ $grade }}</td>
                                 <td>
                                     @if ($percentage >= 33)
                                         Pass
@@ -169,33 +153,9 @@
                                     @endif
                                 </td>
                             </tr>
+                            @php
+                            @endphp
                         @endforeach
-                        @php
-                            $overallPercentage = $total > 0 ? round(($obtained / $total) * 100, 2) : 0;
-                            if ($overallPercentage >= 80) {
-                                $overallGrade = 'A+';
-                            } elseif ($overallPercentage >= 70) {
-                                $overallGrade = 'A';
-                            } elseif ($overallPercentage >= 60) {
-                                $overallGrade = 'B';
-                            } elseif ($overallPercentage >= 45) {
-                                $overallGrade = 'C';
-                            } elseif ($overallPercentage >= 33) {
-                                $overallGrade = 'D';
-                            } else {
-                                $overallGrade = 'F';
-                            }
-
-                            $overallStatus = $overallPercentage >= 33 ? 'Pass' : 'Fail';
-                        @endphp
-                        <tr class="border font-bold">
-                            <td colspan="2">Overall</td>
-                            <td>{{ $total }}</td>
-                            <td>{{ $obtained }}</td>
-                            <td>{{ $overallPercentage }} %</td>
-                            <td>{{ $overallGrade }}</td>
-                            <td>{{ $overallStatus }}</td>
-                        </tr>
 
                     </tbody>
                 </table>

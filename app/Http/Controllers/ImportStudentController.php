@@ -54,9 +54,10 @@ class ImportStudentController extends Controller
             $studentIdsArray = $request->student_ids_array;
 
             foreach ($studentIdsArray as $studentId) {
-                Result::create([
+                Result::firstOrCreate([
                     'student_id' => $studentId,
                     'test_subject_id' => $testSubject->id,
+                ], [
                     'obtained_marks' => 0,
                 ]);
             }

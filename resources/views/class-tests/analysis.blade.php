@@ -67,22 +67,22 @@
     <div class="flex flex-col space-y-6" id="printableReport">
         <!-- Print Only Header -->
         <div class="hidden print:block mb-8 border-b-2 border-slate-800 pb-4">
-            <h1 class="text-2xl font-black uppercase text-slate-800 tracking-tighter">Comparative Performance Report</h1>
+            <h1 class="text-2xl font-bold uppercase text-slate-800 tracking-tighter">Comparative Performance Report</h1>
             <div class="flex flex-wrap gap-x-12 gap-y-2 mt-4">
                 <div class="flex flex-col">
-                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Subject</span>
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Subject</span>
                     <span class="text-xs font-bold text-slate-700 uppercase">{{ $allocation->subject->name }}</span>
                 </div>
                 <div class="flex flex-col">
-                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Class / Section</span>
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Class / Section</span>
                     <span class="text-xs font-bold text-slate-700 uppercase">{{ $allocation->section->name }}</span>
                 </div>
                 <div class="flex flex-col">
-                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Instructor</span>
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Instructor</span>
                     <span class="text-xs font-bold text-slate-700 uppercase">{{ $allocation->user->profile->name ?? 'Unknown Teacher' }}</span>
                 </div>
                 <div class="flex flex-col ml-auto text-right">
-                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Generated On</span>
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Generated On</span>
                     <span class="text-xs font-bold text-slate-700 uppercase">{{ now()->format('d M Y') }}</span>
                 </div>
             </div>
@@ -91,7 +91,7 @@
         <!-- Header -->
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 py-2 no-print">
             <div>
-                <div class="flex items-center gap-2 text-slate-400 text-[10px] uppercase tracking-[0.2em] font-black mb-3">
+                <div class="flex items-center gap-2 text-slate-400 text-[10px] uppercase tracking-[0.2em] font-bold mb-3">
                     <a href="{{ route('class-tests.analysis') }}" class="hover:text-teal-600 transition-colors">Analysis Engine</a>
                     <i class="bi-chevron-right text-[8px]"></i>
                     <span class="text-teal-600 uppercase">{{ $allocation->subject->name }} ({{ $allocation->section->name }})</span>
@@ -101,7 +101,7 @@
                         <i class="bi-bar-chart-fill text-xl"></i>
                     </div>
                     <div>
-                        <h2 class="text-xl font-black text-slate-800 leading-none mb-1">Comparative Insights</h2>
+                        <h2 class="text-xl font-bold text-slate-800 leading-none mb-1">Comparative Insights</h2>
                         <p class="text-slate-400 text-xs font-medium italic uppercase tracking-tighter">Instructor: {{ $allocation->user->profile->name ?? 'Unknown' }}</p>
                     </div>
                 </div>
@@ -109,7 +109,7 @@
 
             <div class="flex items-center gap-2">
                  <button onclick="window.print()" 
-                   class="flex items-center gap-2 px-6 py-3 bg-white border border-slate-200 text-slate-500 rounded-xl text-xs font-black uppercase tracking-widest hover:text-teal-600 hover:border-teal-200 transition-all">
+                   class="flex items-center gap-2 px-6 py-3 bg-white border border-slate-200 text-slate-500 rounded-xl text-xs font-bold uppercase tracking-widest hover:text-teal-600 hover:border-teal-200 transition-all">
                    <i class="bi-printer"></i> Print Report
                 </a>
             </div>
@@ -121,19 +121,19 @@
                     <thead>
                         <tr class="bg-slate-50">
                             <th class="p-3 text-left border-b border-slate-100 sticky left-0 bg-slate-50 z-10 w-64 md:w-72">
-                                <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Student Details</span>
+                                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Student Details</span>
                             </th>
                             @foreach($testSubjects as $ts)
                                 <th class="p-3 text-center border-b border-slate-100 min-w-[100px]">
                                     <div class="flex flex-col items-center">
-                                        <span class="text-[9px] font-black text-teal-600 uppercase tracking-widest mb-0.5">{{ $ts->test->title }}</span>
+                                        <span class="text-[9px] font-bold text-teal-600 uppercase tracking-widest mb-0.5">{{ $ts->test->title }}</span>
                                         <span class="text-[8px] font-bold text-slate-400 p-0.5 bg-white rounded-md border border-slate-100 mb-1">{{ optional($ts->test_date)->format('d M') ?? 'N/A' }}</span>
-                                        <span class="text-[9px] font-black text-slate-700">Total: {{ $ts->max_marks }}</span>
+                                        <span class="text-[9px] font-bold text-slate-700">Total: {{ $ts->max_marks }}</span>
                                     </div>
                                 </th>
                             @endforeach
                             <th class="p-3 text-center border-b border-slate-100 bg-teal-50/50">
-                                <span class="text-[10px] font-black text-teal-700 uppercase tracking-widest">Avg %</span>
+                                <span class="text-[10px] font-bold text-teal-700 uppercase tracking-widest">Avg %</span>
                             </th>
                         </tr>
                     </thead>
@@ -168,7 +168,7 @@
                                 onclick="showStudentTrends('{{ addslashes($student->name) }}', {{ json_encode($performanceData) }})">
                                 <td class="p-2 sticky left-0 bg-white group-hover:bg-slate-50/50 z-10 transition-colors">
                                     <div class="flex items-center gap-2">
-                                        <span class="w-7 h-7 shrink-0 rounded-lg bg-slate-100 text-slate-400 group-hover:bg-teal-600 group-hover:text-white flex items-center justify-center text-[10px] font-black transition-all">{{ $student->rollno }}</span>
+                                        <span class="w-7 h-7 shrink-0 rounded-lg bg-slate-100 text-slate-400 group-hover:bg-teal-600 group-hover:text-white flex items-center justify-center text-[10px] font-bold transition-all">{{ $student->rollno }}</span>
                                         <div class="flex flex-col min-w-0">
                                             <span class="text-[11px] font-bold text-slate-700 uppercase group-hover:text-teal-600 transition-colors truncate">{{ $student->name }}</span>
                                         </div>
@@ -180,7 +180,7 @@
                                     <td class="p-2 text-center">
                                         @if($data['max'] > 0)
                                             <div class="flex flex-col items-center gap-0.5">
-                                                <span class="text-[11px] font-black {{ $isFail ? 'text-red-600' : 'text-slate-700' }}">{{ $data['marks'] }}</span>
+                                                <span class="text-[11px] font-bold {{ $isFail ? 'text-red-600' : 'text-slate-700' }}">{{ $data['marks'] }}</span>
                                                 <div class="w-10 h-1 bg-slate-100 rounded-full overflow-hidden no-print">
                                                     <div class="h-full {{ $isFail ? 'bg-red-400' : 'bg-teal-500' }}" style="width: {{ $data['perc'] }}%"></div>
                                                 </div>
@@ -194,7 +194,7 @@
                                 <td class="p-2 text-center bg-teal-50/20">
                                     @if($countedTests > 0)
                                         @php $finalAvg = round($totalPercentage / $countedTests, 1); @endphp
-                                        <span class="px-3 py-1 rounded-full text-[10px] font-black {{ $finalAvg < 40 ? 'bg-red-100 text-red-600' : 'bg-teal-100 text-teal-600' }}">
+                                        <span class="px-3 py-1 rounded-full text-[10px] font-bold {{ $finalAvg < 40 ? 'bg-red-100 text-red-600' : 'bg-teal-100 text-teal-600' }}">
                                             {{ $finalAvg }}%
                                         </span>
                                     @else
@@ -207,7 +207,7 @@
                     <tfoot>
                         <tr class="bg-slate-50/50 border-t-2 border-slate-100">
                             <td class="p-6 sticky left-0 bg-slate-50/80 backdrop-blur-sm z-10 border-b border-slate-100">
-                                <span class="text-[10px] font-black text-slate-500 uppercase tracking-widest">Class Average</span>
+                                <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Class Average</span>
                             </td>
                             @php $classAverages = []; @endphp
                             @foreach($testSubjects as $ts)
@@ -220,7 +220,7 @@
                                 @endphp
                                 <td class="p-6 text-center border-b border-slate-100">
                                     <div class="flex flex-col items-center">
-                                        <span class="text-xs font-black text-teal-600">{{ $classAvgPerc }}%</span>
+                                        <span class="text-xs font-bold text-teal-600">{{ $classAvgPerc }}%</span>
                                         <div class="w-16 h-1.5 bg-slate-200 rounded-full mt-2 overflow-hidden">
                                             <div class="h-full bg-teal-500" style="width: {{ $classAvgPerc }}%"></div>
                                         </div>
@@ -236,7 +236,7 @@
                                         return $results->average(fn($r) => ($r->obtained_marks / $r->testSubject->max_marks) * 100);
                                     })->filter()->average() ?? 0;
                                 @endphp
-                                <span class="text-xs font-black text-teal-700">{{ round($overallAvg, 1) }}%</span>
+                                <span class="text-xs font-bold text-teal-700">{{ round($overallAvg, 1) }}%</span>
                             </td>
                         </tr>
                     </tfoot>
@@ -247,9 +247,9 @@
                 <div class="w-20 h-20 rounded-full bg-slate-50 flex items-center justify-center mb-6 text-slate-300">
                     <i class="bi-bar-chart-line text-4xl"></i>
                 </div>
-                <h3 class="font-black text-slate-500 uppercase tracking-widest text-lg">No assessment data available</h3>
+                <h3 class="font-bold text-slate-500 uppercase tracking-widest text-lg">No assessment data available</h3>
                 <p class="text-slate-400 text-sm mt-2 italic max-w-sm mx-auto">This specific subject and class combination does not have any recorded individual tests for comparative analysis yet.</p>
-                <a href="{{ route('class-tests.create') }}" class="mt-8 px-8 py-3 bg-teal-600 text-white rounded-xl text-xs font-black uppercase tracking-widest hover:bg-teal-700 transition-all">
+                <a href="{{ route('class-tests.create') }}" class="mt-8 px-8 py-3 bg-teal-600 text-white rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-teal-700 transition-all">
                     Create First Test
                 </a>
             </div>
@@ -266,7 +266,7 @@
                                 <i class="bi-graph-up-arrow text-xl md:text-2xl"></i>
                             </div>
                             <div>
-                                <h3 id="modalStudentName" class="text-base md:text-xl font-black text-slate-800 uppercase leading-none mb-1">Student Performance</h3>
+                                <h3 id="modalStudentName" class="text-base md:text-xl font-bold text-slate-800 uppercase leading-none mb-1">Student Performance</h3>
                                 <p class="text-slate-400 text-[10px] md:text-xs font-medium italic underline decoration-teal-500/30 decoration-2">Trends across selected assessments</p>
                             </div>
                         </div>
@@ -274,11 +274,11 @@
                              <div class="hidden sm:flex items-center gap-4 mr-4">
                                 <div class="flex items-center gap-2">
                                     <div class="w-2.5 h-2.5 rounded-full bg-teal-500"></div>
-                                    <span class="text-[9px] font-black text-slate-500 uppercase tracking-widest">Student</span>
+                                    <span class="text-[9px] font-bold text-slate-500 uppercase tracking-widest">Student</span>
                                 </div>
                                 <div class="flex items-center gap-2">
                                     <div class="w-2.5 h-2.5 rounded-full bg-slate-300"></div>
-                                    <span class="text-[9px] font-black text-slate-500 uppercase tracking-widest">Class Avg</span>
+                                    <span class="text-[9px] font-bold text-slate-500 uppercase tracking-widest">Class Avg</span>
                                 </div>
                             </div>
                             <button onclick="closeModal()" class="w-10 h-10 rounded-xl bg-slate-50 text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-all flex items-center justify-center">
@@ -293,16 +293,16 @@
                     </div>
                     <div class="px-6 md:px-8 pb-6 flex items-center justify-center gap-6 md:gap-12 border-t border-slate-50 pt-6 mt-2">
                          <div class="flex flex-col items-center">
-                            <span class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Average</span>
-                            <span id="statAvg" class="text-xl font-black text-teal-600">-</span>
+                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-1">Average</span>
+                            <span id="statAvg" class="text-xl font-bold text-teal-600">-</span>
                         </div>
                          <div class="flex flex-col items-center">
-                            <span class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Highest</span>
-                            <span id="statHigh" class="text-xl font-black text-slate-800">-</span>
+                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-1">Highest</span>
+                            <span id="statHigh" class="text-xl font-bold text-slate-800">-</span>
                         </div>
                          <div class="flex flex-col items-center">
-                            <span class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Tests</span>
-                            <span id="statTests" class="text-xl font-black text-slate-800">-</span>
+                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-1">Tests</span>
+                            <span id="statTests" class="text-xl font-bold text-slate-800">-</span>
                         </div>
                     </div>
                 </div>

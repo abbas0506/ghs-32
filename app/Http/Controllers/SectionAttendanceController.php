@@ -71,7 +71,7 @@ class SectionAttendanceController extends Controller
             
             // Weekly Data
             $weeklyDates = collect();
-            for ($i = 6; $i >= 0; $i--) {
+            for ($i = 14; $i >= 0; $i--) {
                 $weeklyDates->push(now()->subDays($i)->toDateString());
             }
 
@@ -193,7 +193,7 @@ class SectionAttendanceController extends Controller
                         return strnatcasecmp((string) ($left->rollno ?? ''), (string) ($right->rollno ?? ''));
                     })
                     ->values()
-                    ->take(3);
+                    ->take(5);
 
                 return [
                     'section' => $section,
@@ -357,7 +357,7 @@ class SectionAttendanceController extends Controller
         // Weekly Data
         $weeklyData = [];
         $weeklyDates = collect();
-        for ($i = 6; $i >= 0; $i--) {
+        for ($i = 14; $i >= 0; $i--) {
             $weeklyDates->push(now()->subDays($i)->toDateString());
         }
 

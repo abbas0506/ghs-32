@@ -4,7 +4,7 @@
         <!-- Header & Breadcrumbs -->
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 py-2 mb-2">
             <div>
-                <div class="flex items-center gap-2 text-slate-400 text-[10px] uppercase tracking-[0.2em] font-black mb-3">
+                <div class="flex items-center gap-2 text-slate-400 text-[10px] uppercase tracking-[0.2em] font-bold mb-3">
                     <a href="{{ url('/') }}" class="hover:text-teal-600 transition-colors">School</a>
                     <i class="bi-chevron-right text-[8px]"></i>
                     <a href="{{ route('section.attendance.index', $section) }}" class="hover:text-teal-600 transition-colors">Attendance Details</a>
@@ -16,16 +16,16 @@
                         <i class="bi-clock-history text-xl"></i>
                     </div>
                     <div>
-                        <h1 class="text-2xl font-black text-slate-800 leading-none mb-1">Attendance Record</h1>
+                        <h1 class="text-2xl font-bold text-slate-800 leading-none mb-1">Attendance Record</h1>
                         <p class="text-slate-400 text-xs font-medium italic">Detailed historical view of student absences</p>
                     </div>
                 </div>
             </div>
             <div class="flex flex-col md:flex-row items-center gap-3 w-full md:w-auto mt-4 md:mt-0">
-                <a href="{{ route('attendance.student.analytics', ['section' => $section->id, 'attendance' => $attendance->id]) }}" class="w-full md:w-auto px-5 py-2.5 bg-teal-50 text-teal-600 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-teal-100 hover:text-teal-700 transition-all shadow-sm flex items-center justify-center gap-2 border border-teal-100">
+                <a href="{{ route('attendance.student.analytics', ['section' => $section->id, 'attendance' => $attendance->id]) }}" class="w-full md:w-auto px-5 py-2.5 bg-teal-50 text-teal-600 rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-teal-100 hover:text-teal-700 transition-all shadow-sm flex items-center justify-center gap-2 border border-teal-100">
                     <i class="bi-bar-chart-fill text-sm"></i> Analytics View
                 </a>
-                <a href="{{ route('section.attendance.index', $section) }}" class="w-full md:w-auto flex items-center justify-center gap-2 px-5 py-2.5 bg-white text-slate-600 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 border border-slate-200 transition-all shadow-sm">
+                <a href="{{ route('section.attendance.index', $section) }}" class="w-full md:w-auto flex items-center justify-center gap-2 px-5 py-2.5 bg-white text-slate-600 rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-slate-50 border border-slate-200 transition-all shadow-sm">
                     <i class="bi-arrow-left text-sm"></i> Back to Roster
                 </a>
             </div>
@@ -47,13 +47,13 @@
                     <!-- @php
                         $initials = strtoupper(implode('', array_map(fn($w) => $w[0] ?? '', explode(' ', $student->name))));
                     @endphp
-                    <div class="hidden md:flex w-16 h-16 rounded-[1.5rem] bg-teal-50 border border-teal-100 text-teal-600 items-center justify-center text-xl font-black shadow-sm shrink-0">
+                    <div class="hidden md:flex w-16 h-16 rounded-[1.5rem] bg-teal-50 border border-teal-100 text-teal-600 items-center justify-center text-xl font-bold shadow-sm shrink-0">
                         {{ $initials }}
                     </div> -->
                     <div class="overflow-hidden w-full md:w-auto">
                         <div class="flex flex-wrap md:flex-nowrap items-center gap-2 md:gap-3 mb-1">
-                            <h2 class="text-xl md:text-2xl font-black text-slate-800 truncate">{{ $student->name }}</h2>
-                            <span class="px-2.5 py-1 bg-slate-100 text-slate-500 text-[10px] font-black uppercase tracking-widest rounded-lg border border-slate-200 whitespace-nowrap">Roll # {{ $student->rollno }}</span>
+                            <h2 class="text-xl md:text-2xl font-bold text-slate-800 truncate">{{ $student->name }}</h2>
+                            <span class="px-2.5 py-1 bg-slate-100 text-slate-500 text-[10px] font-bold uppercase tracking-widest rounded-lg border border-slate-200 whitespace-nowrap">Roll # {{ $student->rollno }}</span>
                         </div>
                         <p class="text-xs uppercase tracking-widest text-slate-400 font-bold flex items-center gap-2 mt-1 md:mt-0">
                             <i class="bi-person text-sm block md:inline"></i> {{ $student->father_name }}
@@ -68,8 +68,8 @@
                         <i class="bi-mortarboard"></i>
                     </div>
                     <div>
-                        <p class="text-[9px] font-black uppercase tracking-widest text-slate-400 mb-0.5">Enrolled Class</p>
-                        <h3 class="text-sm font-black text-slate-700 whitespace-nowrap">{{ $student->section->name }}</h3>
+                        <p class="text-[9px] font-bold uppercase tracking-widest text-slate-400 mb-0.5">Enrolled Class</p>
+                        <h3 class="text-sm font-bold text-slate-700 whitespace-nowrap">{{ $student->section->name }}</h3>
                     </div>
                 </div>
             </div>
@@ -84,9 +84,9 @@
                 <div class="bg-teal-600 rounded-lg p-5 text-white shadow-xl shadow-teal-100 flex items-center justify-between relative overflow-hidden">
                     <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-white/10 rounded-[2rem] rotate-12"></div>
                     <div class="relative z-10">
-                        <p class="text-[10px] font-black text-teal-100 uppercase tracking-widest mb-1.5">Total Session Attendance</p>
+                        <p class="text-[10px] font-bold text-teal-100 uppercase tracking-widest mb-1.5">Total Session Attendance</p>
                         <div class="flex items-end gap-3">
-                            <h2 class="text-3xl font-black text-white leading-none">{{ $sessionAttendancePercentage }}%</h2>
+                            <h2 class="text-3xl font-bold text-white leading-none">{{ $sessionAttendancePercentage }}%</h2>
                             <span class="text-white/60 text-[10px] font-bold uppercase tracking-widest mb-0.5 pb-px">Since {{ $sessionStart->format('M Y') }}</span>
                         </div>
                     </div>
@@ -98,10 +98,10 @@
                 <!-- Monthly Metric -->
                 <div class="bg-white rounded-lg p-5 border border-slate-100 shadow-sm flex items-center justify-between">
                     <div>
-                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Current Month Rate</p>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">Current Month Rate</p>
                         <div class="flex items-center gap-3">
-                            <h2 class="text-3xl font-black text-slate-800 leading-none">{{ $monthAttendancePercentage }}%</h2>
-                            <span class="{{ $trendColor }} text-[10px] font-black bg-slate-50 px-2 py-0.5 rounded border border-slate-100 flex items-center gap-1">
+                            <h2 class="text-3xl font-bold text-slate-800 leading-none">{{ $monthAttendancePercentage }}%</h2>
+                            <span class="{{ $trendColor }} text-[10px] font-bold bg-slate-50 px-2 py-0.5 rounded border border-slate-100 flex items-center gap-1">
                                 <i class="bi-graph-{{ $trending }}"></i> {{ ucfirst($trending) }}
                             </span>
                         </div>
@@ -116,18 +116,18 @@
                     <div class="px-6 md:px-8 py-5 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between">
                         <div class="flex items-center gap-3">
                             <i class="bi-calendar-x text-rose-500 text-xl"></i>
-                            <h3 class="font-black text-slate-800 text-sm">Absence Log</h3>
+                            <h3 class="font-bold text-slate-800 text-sm">Absence Log</h3>
                         </div>
-                        <span class="px-3 py-1 bg-rose-50 text-rose-600 text-[8px] md:text-[10px] font-black uppercase tracking-widest rounded-full border border-rose-100">{{ $sessionAbsences->count() }} Entries</span>
+                        <span class="px-3 py-1 bg-rose-50 text-rose-600 text-[8px] md:text-[10px] font-bold uppercase tracking-widest rounded-full border border-rose-100">{{ $sessionAbsences->count() }} Entries</span>
                     </div>
                     
                     <div class="overflow-x-auto p-4 md:p-6">
                         <table class="w-full border-collapse">
                             <thead>
                                 <tr>
-                                    <th class="w-10 md:w-16 px-2 md:px-4 py-2 md:py-3 text-center text-[8px] md:text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] border-b border-slate-100">#</th>
-                                    <th class="px-2 md:px-4 py-2 md:py-3 text-left text-[8px] md:text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] border-b border-slate-100">Date Logged</th>
-                                    <th class="w-20 md:w-32 px-2 md:px-4 py-2 md:py-3 text-center text-[8px] md:text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] border-b border-slate-100">Status</th>
+                                    <th class="w-10 md:w-16 px-2 md:px-4 py-2 md:py-3 text-center text-[8px] md:text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] border-b border-slate-100">#</th>
+                                    <th class="px-2 md:px-4 py-2 md:py-3 text-left text-[8px] md:text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] border-b border-slate-100">Date Logged</th>
+                                    <th class="w-20 md:w-32 px-2 md:px-4 py-2 md:py-3 text-center text-[8px] md:text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] border-b border-slate-100">Status</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-slate-50">
@@ -145,7 +145,7 @@
                                             </div>
                                         </td>
                                         <td class="px-2 md:px-4 py-2 md:py-3 text-center">
-                                            <span class="inline-block px-2 md:px-3 py-1 bg-rose-50 text-rose-600 text-[8px] md:text-[10px] font-black uppercase tracking-widest rounded-full border border-rose-100 shadow-sm">
+                                            <span class="inline-block px-2 md:px-3 py-1 bg-rose-50 text-rose-600 text-[8px] md:text-[10px] font-bold uppercase tracking-widest rounded-full border border-rose-100 shadow-sm">
                                                 Absent
                                             </span>
                                         </td>
@@ -160,7 +160,7 @@
                     <div class="w-24 h-24 bg-teal-50 text-teal-600 rounded-full flex items-center justify-center mx-auto mb-6">
                         <i class="bi-award text-4xl"></i>
                     </div>
-                    <h3 class="text-xl font-black text-slate-800 mb-2">Perfect Attendance!</h3>
+                    <h3 class="text-xl font-bold text-slate-800 mb-2">Perfect Attendance!</h3>
                     <p class="text-slate-500 font-medium max-w-sm mx-auto">Outstanding! {{ $student->name }} has zero recorded absences during this academic session.</p>
                 </div>
             @endif

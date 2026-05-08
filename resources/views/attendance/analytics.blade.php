@@ -4,7 +4,7 @@
         <!-- Header -->
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 py-2">
             <div>
-                <div class="flex items-center gap-2 text-slate-400 text-[10px] uppercase tracking-[0.2em] font-black mb-3">
+                <div class="flex items-center gap-2 text-slate-400 text-[10px] uppercase tracking-[0.2em] font-bold mb-3">
                     <a href="{{ route('attendance.summary') }}" class="hover:text-teal-600 transition-colors">Attendance</a>
                     <i class="bi-chevron-right text-[8px]"></i>
                     <span class="text-teal-600 uppercase">Analytics</span>
@@ -14,12 +14,12 @@
                         <i class="bi-bar-chart-fill text-xl"></i>
                     </div>
                     <div>
-                        <h2 class="text-xl font-black text-slate-800 leading-none mb-1">Attendance Analytics</h2>
+                        <h2 class="text-xl font-bold text-slate-800 leading-none mb-1">Attendance Analytics</h2>
                         <p class="text-slate-400 text-xs font-medium italic">Graphical timeline of class presence rates</p>
                     </div>
                 </div>
             </div>
-            <a href="{{ route('attendance.summary') }}" class="px-6 py-3 bg-white border border-slate-200 text-slate-500 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 transition-all shadow-sm flex items-center justify-center gap-2">
+            <a href="{{ route('attendance.summary') }}" class="px-6 py-3 bg-white border border-slate-200 text-slate-500 rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-slate-50 transition-all shadow-sm flex items-center justify-center gap-2">
                 <i class="bi-arrow-left"></i> Back to Summary
             </a>
         </div>
@@ -29,7 +29,7 @@
             <div class="bg-white rounded-[2rem] border border-slate-100 p-8 shadow-sm h-fit sticky top-6">
                 <form action="{{ route('attendance.analytics') }}" method="GET" class="space-y-6" id="analyticsForm">
                     <div class="space-y-4">
-                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">1. Select Class</label>
+                        <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">1. Select Class</label>
                         <div class="grid grid-cols-1 gap-3 max-h-[400px] overflow-y-auto pr-2 relative">
                             @foreach($sections as $section)
                                 <label class="relative flex items-center p-4 rounded-2xl border border-slate-100 cursor-pointer hover:bg-slate-50 transition-all group {{ $selectedSectionId == $section->id ? 'bg-teal-50/50 border-teal-200' : '' }}">
@@ -38,7 +38,7 @@
                                         <div class="w-2.5 h-2.5 rounded-full bg-teal-600 {{ $selectedSectionId == $section->id ? 'opacity-100 scale-100' : 'opacity-0 scale-50' }} transition-all"></div>
                                     </div>
                                     <div class="flex flex-col">
-                                        <span class="text-xs font-black {{ $selectedSectionId == $section->id ? 'text-teal-700' : 'text-slate-700' }} group-hover:text-teal-600 transition-colors leading-tight">
+                                        <span class="text-xs font-bold {{ $selectedSectionId == $section->id ? 'text-teal-700' : 'text-slate-700' }} group-hover:text-teal-600 transition-colors leading-tight">
                                             Class {{ $section->name }}
                                         </span>
                                     </div>
@@ -57,10 +57,10 @@
                         <div class="absolute right-0 bottom-0 w-80 h-80 bg-teal-500/5 rounded-full blur-3xl translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
                         <div class="flex items-center justify-between mb-6 relative z-10 w-full shrink-0">
                             <div>
-                                <h3 class="font-black text-slate-800 text-lg flex items-center gap-2">
-                                    <i class="bi-activity text-teal-500"></i> Weekly Pulse
+                                <h3 class="font-bold text-slate-800 text-lg flex items-center gap-2">
+                                    <i class="bi-activity text-teal-500"></i> 15-Day Pulse
                                 </h3>
-                                <p class="text-[10px] font-bold text-slate-400 tracking-widest uppercase mt-1">Class {{ $selectedSection->name }} - Last 7 Days</p>
+                                <p class="text-[10px] font-bold text-slate-400 tracking-widest uppercase mt-1">Class {{ $selectedSection->name }} - Last 15 Days</p>
                             </div>
                         </div>
                         <div class="relative w-full z-10 flex-1 overflow-x-auto custom-scrollbar">
@@ -75,7 +75,7 @@
                         <div class="absolute right-0 bottom-0 w-80 h-80 bg-rose-500/5 rounded-full blur-3xl translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
                         <div class="flex items-center justify-between mb-6 relative z-10 w-full shrink-0">
                             <div>
-                                <h3 class="font-black text-slate-800 text-lg flex items-center gap-2">
+                                <h3 class="font-bold text-slate-800 text-lg flex items-center gap-2">
                                     <i class="bi-graph-up-arrow text-rose-500"></i> Monthly Retrospective
                                 </h3>
                                 <p class="text-[10px] font-bold text-slate-400 tracking-widest uppercase mt-1">Class {{ $selectedSection->name }} - Session Averages</p>
@@ -92,7 +92,7 @@
                         <div class="w-24 h-24 bg-slate-50 text-slate-300 rounded-full flex items-center justify-center mb-6">
                             <i class="bi-bar-chart text-4xl"></i>
                         </div>
-                        <h4 class="text-lg font-black text-slate-700 mb-2">No Data Available</h4>
+                        <h4 class="text-lg font-bold text-slate-700 mb-2">No Data Available</h4>
                         <p class="text-slate-400 text-xs font-bold max-w-sm">Please select a valid class and analytical period on the left to review the attendance rate.</p>
                     </div>
                 @endif

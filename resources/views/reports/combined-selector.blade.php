@@ -4,7 +4,7 @@
         <!-- Header & Breadcrumbs -->
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 py-2">
             <div>
-                <div class="flex items-center gap-2 text-slate-400 text-[10px] uppercase tracking-[0.2em] font-black mb-3">
+                <div class="flex items-center gap-2 text-slate-400 text-[10px] uppercase tracking-[0.2em] font-bold mb-3">
                     <a href="{{ route('tests.index') }}" class="hover:text-teal-600 transition-colors">Assessment</a>
                     <i class="bi-chevron-right text-[8px]"></i>
                     <span class="text-teal-600 uppercase">Combined Report</span>
@@ -14,7 +14,7 @@
                         <i class="bi-journals text-xl"></i>
                     </div>
                     <div>
-                        <h2 class="text-xl font-black text-slate-800 leading-none mb-1">Combined Reports</h2>
+                        <h2 class="text-xl font-bold text-slate-800 leading-none mb-1">Combined Reports</h2>
                         <p class="text-slate-400 text-xs font-medium italic">Select multiple assessments to generate aggregate results</p>
                     </div>
                 </div>
@@ -23,12 +23,12 @@
             <div class="flex items-center gap-3">
                 <button type="submit" form="combinedReportForm" 
                     onclick="document.getElementById('combinedReportForm').action='{{ route('reports.combined.pdf') }}'"
-                    class="flex items-center gap-2 px-6 py-3 bg-white border border-slate-200 text-slate-500 rounded-xl text-xs font-black uppercase tracking-widest hover:text-teal-600 hover:border-teal-200 transition-all">
+                    class="flex items-center gap-2 px-6 py-3 bg-white border border-slate-200 text-slate-500 rounded-xl text-xs font-bold uppercase tracking-widest hover:text-teal-600 hover:border-teal-200 transition-all">
                     <i class="bi-file-earmark-pdf"></i> Result Sheet
                 </button>
                 <button type="submit" form="combinedReportForm" 
                     onclick="document.getElementById('combinedReportForm').action='{{ route('reports.combined.report-cards') }}'"
-                    class="flex items-center gap-2 px-8 py-3 bg-teal-600 text-white rounded-xl text-xs font-black uppercase tracking-widest hover:bg-teal-700 hover:shadow-lg hover:shadow-teal-100 transition-all">
+                    class="flex items-center gap-2 px-8 py-3 bg-teal-600 text-white rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-teal-700 hover:shadow-lg hover:shadow-teal-100 transition-all">
                     <i class="bi-person-badge"></i> Report Cards
                 </button>
             </div>
@@ -44,7 +44,7 @@
                         <div class="w-8 h-8 rounded-lg bg-teal-50 text-teal-600 flex items-center justify-center">
                             <i class="bi-people-fill"></i>
                         </div>
-                        <h3 class="font-black text-slate-800 uppercase tracking-tighter">1. Select Class</h3>
+                        <h3 class="font-bold text-slate-800 uppercase tracking-tighter">1. Select Class</h3>
                     </div>
                     
                     <div class="grid grid-cols-1 gap-3">
@@ -68,9 +68,9 @@
                                 <div class="w-8 h-8 rounded-lg bg-teal-50 text-teal-600 flex items-center justify-center">
                                     <i class="bi-check2-all"></i>
                                 </div>
-                                <h3 class="font-black text-slate-800 uppercase tracking-tighter">2. Select Assessments</h3>
+                                <h3 class="font-bold text-slate-800 uppercase tracking-tighter">2. Select Assessments</h3>
                             </div>
-                            <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest italic" id="countDisplay">0 Selected</span>
+                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest italic" id="countDisplay">0 Selected</span>
                         </div>
                         
                         <div class="relative group">

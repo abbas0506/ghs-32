@@ -3,7 +3,7 @@
 @section('page-content')
     <div class="space-y-8">
         <!-- Hero Section - Premium Teal -->
-        <div class="relative overflow-hidden bg-gradient-to-br from-teal-700 via-teal-800 to-slate-900 rounded-[2rem] p-8 md:p-12 text-white shadow-lg">
+        <div class="relative overflow-hidden bg-gradient-to-br from-teal-700 via-teal-800 to-slate-900 rounded-3xl p-5 md:p-8 text-white shadow-lg">
             <!-- Elegant Background Accents -->
             <div class="absolute inset-0 pointer-events-none opacity-30">
                 <div class="absolute top-0 right-0 w-[30rem] h-[30rem] bg-teal-400 rounded-full blur-[100px] opacity-20 -translate-y-1/2 translate-x-1/3"></div>
@@ -11,45 +11,22 @@
                 <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMiIgY3k9IjIiIHI9IjIiIGZpbGw9IiNmZmZiIiBmaWxsLW9wYWNpdHk9IjAuMDUiLz48L3N2Zz4=')] opacity-30 bg-repeat pointer-events-none"></div>
             </div>
 
-            <div class="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-12">
+            <div class="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-6">
                 <div class="max-w-2xl">
-                    <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/10 text-teal-100 text-[10px] font-bold uppercase tracking-widest mb-6">
-                        <span class="relative flex h-2 w-2">
-                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-teal-300 opacity-75"></span>
-                            <span class="relative inline-flex rounded-full h-2 w-2 bg-teal-400"></span>
-                        </span>
-                        System Online
-                    </div>
-                    
-                    <h1 class="text-4xl md:text-5xl font-black mb-4 tracking-tight leading-tight">
-                        Welcome back,<br/>
-                        <span class="text-teal-300">
-                            {{ Auth::user()->profile->short_name }}!
-                        </span>
+                    <h1 class="text-lg md:text-xl font-semibold text-black mb-2 tracking-tight leading-tight">
+                        Welcome back, <span class="text-teal-300">{{ Auth::user()->profile->short_name }}!</span>
                     </h1>
-                    <p class="text-teal-50/80 text-lg leading-relaxed mb-8 font-light">
-                        Here is your snapshot for today. You have <span class="text-white font-medium">{{ $pendingTasks->count() }} pending tasks</span> and <span class="text-white font-medium">{{ $tests->open()->count() }} active assessments</span>.
+                    <p class="text-teal-50/80 text-sm leading-relaxed mb-5 font-light">
+                        You have <span class="text-white">{{ $pendingTasks->count() }} pending tasks</span> and <span class="text-white">{{ $tests->open()->count() }} active assessments</span>.
                     </p>
                     
-                    <div class="flex flex-wrap gap-4">
-                        <a href="{{ route('attendance.summary') }}" class="group bg-white text-teal-900 px-7 py-3.5 rounded-xl font-bold transition-all flex items-center gap-2 hover:shadow-[0_8px_30px_rgb(20,184,166,0.2)] hover:-translate-y-0.5">
-                            <i class="bi bi-person-check text-lg"></i> Mark Attendance 
+                    <div class="flex flex-wrap gap-2.5 ">
+                        <a href="{{ route('attendance.summary') }}" class="group bg-white text-teal-900 px-5 py-2.5 text-xs md:text-sm rounded-lg font-semibold transition-all flex items-center gap-2 hover:shadow-[0_8px_30px_rgb(20,184,166,0.2)] hover:-translate-y-0.5">
+                            <i class="bi bi-person-check text-sm"></i> Mark Attendance 
                         </a>
-                        <a href="{{ route('tests.create') }}" class="bg-white/10 hover:bg-white/20 backdrop-blur-md text-white px-7 py-3.5 rounded-xl font-bold transition-all border border-white/10 flex items-center gap-2 hover:-translate-y-0.5">
-                            <i class="bi bi-plus-lg text-lg"></i> Create Assessment
+                        <a href="{{ route('tests.create') }}" class="bg-white/10 hover:bg-white/20 backdrop-blur-md text-white px-5 py-2.5 rounded-lg text-xs md:text-sm font-semibold transition-all border border-white/10 flex items-center gap-2 hover:-translate-y-0.5">
+                            <i class="bi bi-plus-lg text-sm"></i> Create Assessment
                         </a>
-                    </div>
-                </div>
-
-                <!-- Hero Mini Stats -->
-                <div class="hidden lg:grid grid-cols-2 gap-4 w-full lg:w-80 shrink-0">
-                    <div class="bg-white/5 backdrop-blur-md border border-white/10 p-5 rounded-2xl">
-                        <p class="text-teal-200/70 text-[10px] font-bold uppercase tracking-widest mb-1">Total Students</p>
-                        <p class="text-3xl font-black text-white">{{ $students->count() }}</p>
-                    </div>
-                    <div class="bg-white/5 backdrop-blur-md border border-white/10 p-5 rounded-2xl">
-                        <p class="text-teal-200/70 text-[10px] font-bold uppercase tracking-widest mb-1">Present Today</p>
-                        <p class="text-3xl font-black text-white">{{ $attendances->count() }}</p>
                     </div>
                 </div>
             </div>
@@ -59,30 +36,30 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <!-- Students -->
             <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-all group">
-                <div class="flex items-center justify-between mb-4">
-                    <div class="w-12 h-12 bg-teal-50 text-teal-600 rounded-xl flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="w-10 h-10 bg-teal-50 text-teal-600 rounded-xl flex items-center justify-center text-lg group-hover:scale-110 transition-transform">
                         <i class="bi bi-people-fill"></i>
                     </div>
-                    <span class="bg-teal-50 text-teal-700 text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full">
+                    <span class="bg-teal-50 text-teal-700 text-[9px] font-semibold uppercase tracking-wider px-2.5 py-1 rounded-full">
                         +{{ $newAdmissions->count() }} new
                     </span>
                 </div>
-                <h3 class="text-slate-500 text-xs font-bold uppercase tracking-wider mb-1">Total Students</h3>
-                <p class="text-3xl font-black text-slate-800">{{ number_format($students->count()) }}</p>
+                <h3 class="text-slate-500 text-[10px] font-semibold uppercase tracking-wider mb-1">Total Students</h3>
+                <p class="text-2xl font-bold text-slate-800">{{ number_format($students->count()) }}</p>
             </div>
 
             <!-- Attendance -->
             <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-all group">
-                <div class="flex items-center justify-between mb-4">
-                    <div class="w-12 h-12 bg-teal-50 text-teal-600 rounded-xl flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="w-10 h-10 bg-teal-50 text-teal-600 rounded-xl flex items-center justify-center text-lg group-hover:scale-110 transition-transform">
                         <i class="bi bi-calendar-check-fill"></i>
                     </div>
-                    <span class="bg-teal-50 text-teal-700 text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full">
+                    <span class="bg-teal-50 text-teal-700 text-[9px] font-semibold uppercase tracking-wider px-2.5 py-1 rounded-full">
                         {{ $highestAttenancePercentage }}% max
                     </span>
                 </div>
-                <h3 class="text-slate-500 text-xs font-bold uppercase tracking-wider mb-1">Today's Attendance</h3>
-                <p class="text-3xl font-black text-slate-800">
+                <h3 class="text-slate-500 text-[10px] font-semibold uppercase tracking-wider mb-1">Today's Attendance</h3>
+                <p class="text-2xl font-bold text-slate-800">
                     @php
                         $todayPerc = $students->count() > 0 ? round(($attendances->count() / $students->count()) * 100, 0) : 0;
                     @endphp
@@ -92,30 +69,30 @@
 
             <!-- Assessments -->
             <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-all group">
-                <div class="flex items-center justify-between mb-4">
-                    <div class="w-12 h-12 bg-teal-50 text-teal-600 rounded-xl flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="w-10 h-10 bg-teal-50 text-teal-600 rounded-xl flex items-center justify-center text-lg group-hover:scale-110 transition-transform">
                         <i class="bi bi-clipboard2-data-fill"></i>
                     </div>
-                    <span class="bg-teal-50 text-teal-700 text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full">
+                    <span class="bg-teal-50 text-teal-700 text-[9px] font-semibold uppercase tracking-wider px-2.5 py-1 rounded-full">
                         {{ $tests->open()->count() }} Active
                     </span>
                 </div>
-                <h3 class="text-slate-500 text-xs font-bold uppercase tracking-wider mb-1">Assessments</h3>
-                <p class="text-3xl font-black text-slate-800">{{ $tests->count() }}</p>
+                <h3 class="text-slate-500 text-[10px] font-semibold uppercase tracking-wider mb-1">Assessments</h3>
+                <p class="text-2xl font-bold text-slate-800">{{ $tests->count() }}</p>
             </div>
 
             <!-- My Schedule -->
             <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-all group">
-                <div class="flex items-center justify-between mb-4">
-                    <div class="w-12 h-12 bg-teal-50 text-teal-600 rounded-xl flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="w-10 h-10 bg-teal-50 text-teal-600 rounded-xl flex items-center justify-center text-lg group-hover:scale-110 transition-transform">
                         <i class="bi bi-journal-bookmark-fill"></i>
                     </div>
-                    <span class="bg-teal-50 text-teal-700 text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full">
+                    <span class="bg-teal-50 text-teal-700 text-[9px] font-semibold uppercase tracking-wider px-2.5 py-1 rounded-full">
                         Weekly
                     </span>
                 </div>
-                <h3 class="text-slate-500 text-xs font-bold uppercase tracking-wider mb-1">My Subjects</h3>
-                <p class="text-3xl font-black text-slate-800">{{ $myAllocationsCount }}</p>
+                <h3 class="text-slate-500 text-[10px] font-semibold uppercase tracking-wider mb-1">My Subjects</h3>
+                <p class="text-2xl font-bold text-slate-800">{{ $myAllocationsCount }}</p>
             </div>
         </div>
 
@@ -125,7 +102,7 @@
                 <div class="flex items-center justify-between mb-8">
                     <div>
                         <h2 class="text-xl font-bold text-slate-800">Attendance Trend</h2>
-                        <p class="text-slate-500 text-sm">Student attendance over the last 7 days</p>
+                        <p class="text-slate-500 text-sm">Student attendance over the last 15 days</p>
                     </div>
                     <div class="flex items-center gap-2">
                         <span class="w-2.5 h-2.5 bg-teal-500 rounded-full"></span>
@@ -182,7 +159,7 @@
         <div class="bg-white border border-slate-100 rounded-[2rem] p-8 md:p-10 relative overflow-hidden shadow-sm">
             <div class="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-10">
                 <div class="max-w-md text-center lg:text-left">
-                    <h2 class="text-2xl font-bold text-slate-800 mb-2">Need a Report?</h2>
+                    <h2 class="text-lg font-semibold text-slate-800 mb-2">Need a Report?</h2>
                     <p class="text-slate-500">Access comprehensive analytics and generate formal academic reports effortlessly.</p>
                 </div>
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4 w-full lg:flex-1 lg:max-w-3xl">

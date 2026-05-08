@@ -7,6 +7,7 @@ use App\Models\Schedule;
 use App\Models\Section;
 use App\Models\Student;
 use App\Models\Test;
+use App\Models\Result;
 use App\Models\TestSubject;
 use Barryvdh\DomPDF\Facade\Pdf as PDF;
 use Exception;
@@ -101,30 +102,23 @@ class ReportController extends Controller
         return $pdf->stream($file);
     }
 
-
-
-
-    // public function subjectResult($id)
-    // {
-    //     $testSubject = TestSubject::find($id);
-
-    //     $pdf = PDF::loadview('reports.subject-result', compact('testSubject'))->setPaper('a4', 'portrait');
-    //     $pdf->set_option("isPhpEnabled", true);
-    //     $file = $testSubject->subject->short_name . "-" . rand(1, 100) . ".pdf";
-    //     return $pdf->stream($file);
-    // }
+    // Entire Section Result
     public function sectionResult($testId, $sectionId)
     {
-        $test = Test::find($testId);
-        $section = Section::find($sectionId);
+        $test = Test::findOrFail($testId);
+        $section = Section::findOrFail($sectionId);
 
         $students = Student::where('section_id', $sectionId)
-            ->orderBy('rollno', 'asc') // ✅ sorting
+            ->orderBy('rollno', 'asc')
             ->get();
 
-        $groupedSubjects = $test->testSubjects
-            ->where('section_id', $sectionId) // 🔥 CRITICAL FIX
-            ->groupBy('subject_id');
+        // Eager load test subjects for THIS section to define columns/subjects
+        $testSubjects = TestSubject::with(['subject'])
+            ->where('test_id', $test->id)
+            ->where('section_id', $section->id)
+            ->get();
+
+        $groupedSubjects = $testSubjects->groupBy('subject_id');
 
         $subjects = $groupedSubjects->map(function ($items) {
             return $items->first()->subject;
@@ -132,11 +126,28 @@ class ReportController extends Controller
 
         $subjectMaxMarks = $groupedSubjects->mapWithKeys(function ($items, $subjectId) {
             return [
-                $subjectId => $items->sum('max_marks') // total max per subject
+                $subjectId => $items->sum('max_marks') // total max per subject for this section
             ];
         });
 
-        $data = $students->map(function ($student) use ($groupedSubjects) {
+        // Fetch ALL results for these students for this test (handles students who moved sections)
+        $studentIds = $students->pluck('id');
+        $allResults = Result::whereIn('student_id', $studentIds)
+            ->whereHas('testSubject', function ($query) use ($test) {
+                $query->where('test_id', $test->id);
+            })
+            ->with('testSubject')
+            ->get();
+
+        $resultsByStudentAndSubject = [];
+        foreach ($allResults as $res) {
+            if (!isset($resultsByStudentAndSubject[$res->student_id][$res->testSubject->subject_id])) {
+                $resultsByStudentAndSubject[$res->student_id][$res->testSubject->subject_id] = [];
+            }
+            $resultsByStudentAndSubject[$res->student_id][$res->testSubject->subject_id][] = $res;
+        }
+
+        $data = $students->map(function ($student) use ($groupedSubjects, $resultsByStudentAndSubject) {
 
             $row = [
                 'rollno' => $student->rollno,
@@ -150,29 +161,24 @@ class ReportController extends Controller
                 'position' => 0,
             ];
 
-            foreach ($groupedSubjects as $subjectId => $testSubjects) {
+            foreach ($groupedSubjects as $subjectId => $subjectTestSubjects) {
 
                 $subjectObt = 0;
                 $subjectMax = 0;
-                $hasSubject = false; // ✅ KEY FLAG
+                $hasSubject = false;
 
-                foreach ($testSubjects as $testSubject) {
-
-                    $result = $testSubject->results
-                        ->where('student_id', $student->id)
-                        ->first();
-
-                    if ($result) {
-                        $hasSubject = true; // student actually has this subject
+                if (isset($resultsByStudentAndSubject[$student->id][$subjectId])) {
+                    $results = $resultsByStudentAndSubject[$student->id][$subjectId];
+                    foreach ($results as $result) {
+                        $hasSubject = true;
                         $subjectObt += $result->obtained_marks ?? 0;
-                        $subjectMax += $testSubject->max_marks ?? 0;
+                        $subjectMax += $result->testSubject->max_marks ?? 0;
                     }
                 }
 
-                // store marks (even if 0, for display)
-                $row['subjects'][$subjectId] = $subjectObt;
+                // store marks (null if student has no result for this subject)
+                $row['subjects'][$subjectId] = $hasSubject ? $subjectObt : null;
 
-                // ✅ CRITICAL FIX:
                 // only add to total if student has this subject
                 if ($hasSubject) {
                     $row['obtained'] += $subjectObt;
@@ -180,12 +186,12 @@ class ReportController extends Controller
                 }
             }
 
-            // ✅ Percentage
+            // Percentage
             $row['percentage'] = $row['total'] > 0
                 ? round(($row['obtained'] / $row['total']) * 100, 1)
                 : 0;
 
-            // ✅ Grade
+            // Grade
             $p = $row['percentage'];
 
             if ($p >= 90) $row['grade'] = 'A+';
@@ -226,6 +232,8 @@ class ReportController extends Controller
             return $item['position'] <= 3;
         })->values();
 
+        
+
         $pdf = PDF::loadview('reports.section-result', compact('test', 'section', 'data', 'topStudents', 'subjects', 'subjectMaxMarks'))->setPaper('a4', 'portrait');
         $pdf->set_option("isPhpEnabled", true);
         $file = $section->name . "-" . rand(1, 100) . ".pdf";
@@ -234,6 +242,8 @@ class ReportController extends Controller
 
     public function reportCards($testId, $sectionId)
     {
+        set_time_limit(120);
+
         $test = Test::find($testId);
         $section = Section::find($sectionId);
         $students = Student::with('results.testSubject')

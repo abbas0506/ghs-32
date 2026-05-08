@@ -17,6 +17,12 @@ class Subject extends Model
     {
         return $this->hasMany(Lesson::class);
     }
+
+    public function schedules()
+    {
+        return $this->hasMany(Schedule::class);
+    }
+
     public function lessonPlanCompletionPercentageForGrade($gradeId)
     {
         return round($this->lessons()->havingGradeId($gradeId)->whereNotNull('objective')->count() / 72 * 100, 1);

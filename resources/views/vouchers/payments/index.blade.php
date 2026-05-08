@@ -18,7 +18,7 @@
                         <i class="bi-people text-2xl"></i>
                     </div>
                     <div>
-                        <h1 class="text-2xl font-black text-slate-800 leading-tight">{{ $section->name }}</h1>
+                        <h1 class="text-2xl font-bold text-slate-800 leading-tight">{{ $section->name }}</h1>
                         <p class="text-slate-400 text-sm font-medium">{{ $voucher->description }}</p>
                     </div>
                 </div>
@@ -50,36 +50,36 @@
         @endphp
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div class="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm flex items-center gap-4">
-                <div class="w-10 h-10 rounded-xl bg-slate-50 text-slate-400 flex items-center justify-center font-black">
+                <div class="w-10 h-10 rounded-xl bg-slate-50 text-slate-400 flex items-center justify-center font-bold">
                     {{ $totalStudents }}
                 </div>
                 <div>
                     <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Students</p>
-                    <p class="text-xs font-black text-slate-700">In Section</p>
+                    <p class="text-xs font-bold text-slate-700">In Section</p>
                 </div>
             </div>
             <div class="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm flex items-center gap-4">
-                <div class="w-10 h-10 rounded-xl bg-green-50 text-green-600 flex items-center justify-center font-black">
+                <div class="w-10 h-10 rounded-xl bg-green-50 text-green-600 flex items-center justify-center font-bold">
                     {{ $paidStudents }}
                 </div>
                 <div>
                     <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Paid</p>
-                    <p class="text-xs font-black text-green-600">Collected</p>
+                    <p class="text-xs font-bold text-green-600">Collected</p>
                 </div>
             </div>
             <div class="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm flex items-center gap-4">
-                <div class="w-10 h-10 rounded-xl bg-red-50 text-red-400 flex items-center justify-center font-black">
+                <div class="w-10 h-10 rounded-xl bg-red-50 text-red-400 flex items-center justify-center font-bold">
                     {{ $pendingStudents }}
                 </div>
                 <div>
                     <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Pending</p>
-                    <p class="text-xs font-black text-red-400">Not Paid</p>
+                    <p class="text-xs font-bold text-red-400">Not Paid</p>
                 </div>
             </div>
             <div class="bg-teal-600 p-4 rounded-2xl shadow-lg shadow-teal-100 flex flex-col justify-center">
                 <div class="flex justify-between items-center mb-1">
                     <span class="text-[10px] font-bold text-teal-100 uppercase tracking-widest">Progress</span>
-                    <span class="text-[10px] font-black text-white">{{ $percent }}%</span>
+                    <span class="text-[10px] font-bold text-white">{{ $percent }}%</span>
                 </div>
                 <div class="w-full bg-white/20 h-1.5 rounded-full overflow-hidden">
                     <div class="bg-white h-full transition-all duration-1000" style="width: {{ $percent }}%"></div>
@@ -100,7 +100,7 @@
                         oninput="search(event)">
                     <i class="bi-search absolute left-4 top-2.5 text-slate-300"></i>
                 </div>
-                <div class="flex items-center gap-4 text-[10px] font-black uppercase tracking-widest text-slate-400">
+                <div class="flex items-center gap-4 text-[10px] font-bold uppercase tracking-widest text-slate-400">
                     <div class="flex items-center gap-1.5">
                         <span class="w-2 h-2 rounded-full bg-green-500"></span> Paid
                     </div>
@@ -113,7 +113,7 @@
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse">
                     <thead>
-                        <tr class="bg-slate-50/50 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b border-gray-100">
+                        <tr class="bg-slate-50/50 text-[10px] font-bold uppercase tracking-widest text-slate-400 border-b border-gray-100">
                             <th class="w-16">Roll#</th>
                             <th class="w-40 py-1">Student Info</th>
                             <th class="w-24 py-1 text-center">Status</th>
@@ -128,7 +128,7 @@
                             @endphp
                             <tr class="tr group hover:bg-slate-50 transition-all border-b border-gray-50 last:border-0">
                                 <td class="px-3 py-1">
-                                    <span class="text-sm font-black text-slate-400">{{ $fee->student->rollno }}</span>
+                                    <span class="text-sm font-bold text-slate-400">{{ $fee->student->rollno }}</span>
                                 </td>
                                 <td class="px-3 py-1 text-search">
                                     <div class="flex items-center text-left">
@@ -141,11 +141,11 @@
                                <td class="px-8 py-1 text-center">
                                     @if ($isPaid)
                                         <div class="inline-flex flex-col items-center">
-                                            <span class="px-3 py-1 rounded-full bg-green-50 text-green-600 text-[10px] font-black uppercase tracking-widest border border-green-100">Paid</span>
+                                            <span class="px-3 py-1 rounded-full bg-green-50 text-green-600 text-[10px] font-bold uppercase tracking-widest border border-green-100">Paid</span>
                                             <p class="text-[9px] text-slate-400 mt-1 font-bold">{{ $fee->payment_date->format('d M, Y') }}</p>
                                         </div>
                                     @else
-                                        <span class="px-3 py-1 rounded-full bg-slate-50 text-slate-400 text-[10px] font-black uppercase tracking-widest border border-slate-100">Unpaid</span>
+                                        <span class="px-3 py-1 rounded-full bg-slate-50 text-slate-400 text-[10px] font-bold uppercase tracking-widest border border-slate-100">Unpaid</span>
                                     @endif
                                 </td>
                                 <td class="px-3 py-1">
@@ -161,7 +161,7 @@
                                                     <i class="bi-arrow-counterclockwise text-lg"></i>
                                                 </button>
                                             @else
-                                                <button class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-teal-600 text-white text-[10px] font-black uppercase tracking-widest hover:bg-slate-800 hover:shadow-lg hover:shadow-teal-100 transition-all shadow-md shadow-teal-50">
+                                                <button class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-teal-600 text-white text-[10px] font-bold uppercase tracking-widest hover:bg-slate-800 hover:shadow-lg hover:shadow-teal-100 transition-all shadow-md shadow-teal-50">
                                                     Pay Now <i class="bi-check2-circle text-sm leading-none"></i>
                                                 </button>
                                             @endif

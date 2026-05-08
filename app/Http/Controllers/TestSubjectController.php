@@ -28,26 +28,38 @@ class TestSubjectController extends Controller
      */
     public function create($id)
     {
-        //
         $test = Test::findOrFail($id);
+        $u = Auth::user();
 
-        #identify classes/section of this test
-        $sectionIds = $test->testSubjects->pluck('section_id')->unique()->toArray();
-        $allocations =  Schedule::whereIn('section_id', $sectionIds)->get();
+        if ($u->hasAnyRole(['admin', 'head'])) {
+            $sections = Section::join('grades', 'sections.grade_id', '=', 'grades.id')
+                ->select('sections.*')
+                ->with(['grade.subjects'])
+                ->whereHas('students')
+                ->orderBy('grades.grade_no')
+                ->orderBy('sections.name')
+                ->get();
+        } else {
+            // Teachers only see sections they are assigned to
+            $sections = Section::join('grades', 'sections.grade_id', '=', 'grades.id')
+                ->select('sections.*')
+                ->with(['schedules' => function ($q) use ($u) {
+                    $q->where('user_id', $u->id)->with('subject');
+                }])
+                ->whereHas('schedules', function ($q) use ($u) {
+                    $q->where('user_id', $u->id);
+                })
+                ->orderBy('grades.grade_no')
+                ->orderBy('sections.name')
+                ->get();
 
+            // Filter subjects to only show what the teacher teaches
+            $sections->each(function ($section) {
+                $section->display_subjects = $section->schedules->pluck('subject')->unique('id');
+            });
+        }
 
-        $unallocated =  Schedule::whereIn('section_id', $sectionIds)
-            ->whereNotExists(function ($query) use ($test) {
-                $query->select(DB::raw(1))
-                    ->from('test_subjects')
-                    ->where('test_subjects.test_id', $test->id)
-                    ->whereColumn('test_subjects.section_id', 'schedules.section_id')
-                    ->whereColumn('test_subjects.lecture_no', 'schedules.lecture_no')
-                    ->whereColumn('test_subjects.subject_id', 'schedules.subject_id');
-            })
-            ->get();
-
-        return view('tests.test-subjects.create', compact('test', 'unallocated'));
+        return view('tests.test-subjects.create', compact('test', 'sections'));
     }
 
     /**
@@ -55,26 +67,59 @@ class TestSubjectController extends Controller
      */
     public function store(Request $request, $testId)
     {
-        //
         $request->validate([
-            'allocation_id' => 'required|numeric',
+            'section_subjects' => 'required|array|min:1',
         ]);
 
         $test = Test::findOrFail($testId);
-        $allocation =  Schedule::findOrFail($request->allocation_id);
+        
+        DB::beginTransaction();
         try {
-            $test->testSubjects()->create([
-                'section_id' => $allocation->section_id,
-                'lecture_no' => $allocation->lecture_no,
-                'subject_id' => $allocation->subject_id,
-                'user_id' => $allocation->user_id,
-                'max_marks' => $test->max_marks,
-                'test_date' => $test->test_date,
-            ]);
-            return redirect()->route('test.test-subjects.index', $test)->with('success', 'Successfully created');
+            // Enforcement: Teachers can only select one class at a time
+            if (!Auth::user()->hasAnyRole(['admin', 'head'])) {
+                if (count($request->section_subjects) > 1) {
+                    throw new Exception('As a teacher, you can only add subjects to one class at a time.');
+                }
+            }
+
+            $addedCount = 0;
+            foreach ($request->section_subjects as $sectionId => $subjectIds) {
+                // Find all schedules for this section and the selected subjects
+                $allocations = \App\Models\Schedule::where('section_id', $sectionId)
+                    ->whereIn('subject_id', $subjectIds)
+                    ->get();
+
+                foreach ($allocations as $allocation) {
+                    // Check if already exists to avoid duplicates
+                    $exists = $test->testSubjects()
+                        ->where('section_id', $allocation->section_id)
+                        ->where('subject_id', $allocation->subject_id)
+                        ->where('lecture_no', $allocation->lecture_no)
+                        ->exists();
+
+                    if (!$exists) {
+                        $test->testSubjects()->create([
+                            'section_id' => $allocation->section_id,
+                            'lecture_no' => $allocation->lecture_no,
+                            'subject_id' => $allocation->subject_id,
+                            'user_id' => $allocation->user_id,
+                            'max_marks' => $test->max_marks,
+                            'test_date' => $test->test_date ?? now(),
+                        ]);
+                        $addedCount++;
+                    }
+                }
+            }
+
+            if ($addedCount === 0) {
+                throw new Exception('No new valid subject allocations were found for the selected sections and subjects.');
+            }
+
+            DB::commit();
+            return redirect()->route('tests.show', $test)->with('success', $addedCount . ' subjects added to the assessment.');
         } catch (Exception $e) {
+            DB::rollBack();
             return redirect()->back()->withErrors($e->getMessage());
-            // something went wrong
         }
     }
 

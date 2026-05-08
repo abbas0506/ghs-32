@@ -4,7 +4,7 @@
         <!-- Header -->
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 py-2">
             <div>
-                <div class="flex items-center gap-2 text-slate-400 text-[10px] uppercase tracking-[0.2em] font-black mb-3">
+                <div class="flex items-center gap-2 text-slate-400 text-[10px] uppercase tracking-[0.2em] font-bold mb-3">
                     <a href="{{ route('tests.index') }}" class="hover:text-teal-600 transition-colors">Assessment</a>
                     <i class="bi-chevron-right text-[8px]"></i>
                     <span class="text-teal-600 uppercase">My Class Tests</span>
@@ -14,7 +14,7 @@
                         <i class="bi-mortarboard text-xl"></i>
                     </div>
                     <div>
-                        <h2 class="text-xl font-black text-slate-800 leading-none mb-1">Individual Assessments</h2>
+                        <h2 class="text-xl font-bold text-slate-800 leading-none mb-1">Individual Assessments</h2>
                         <p class="text-slate-400 text-xs font-medium italic">Manage and analyze your own subject-specific tests</p>
                     </div>
                 </div>
@@ -22,11 +22,11 @@
 
             <div class="flex items-center gap-3">
                 <a href="{{ route('class-tests.analysis') }}" 
-                   class="flex items-center gap-2 px-6 py-3 bg-white border border-slate-200 text-slate-500 rounded-xl text-xs font-black uppercase tracking-widest hover:text-teal-600 hover:border-teal-200 transition-all">
+                   class="flex items-center gap-2 px-6 py-3 bg-white border border-slate-200 text-slate-500 rounded-xl text-xs font-bold uppercase tracking-widest hover:text-teal-600 hover:border-teal-200 transition-all">
                    <i class="bi-graph-up-arrow"></i> Comparative Analysis
                 </a>
                 <a href="{{ route('class-tests.create') }}" 
-                   class="flex items-center gap-2 px-6 py-3 bg-teal-600 text-white rounded-xl text-xs font-black uppercase tracking-widest hover:bg-teal-700 hover:shadow-lg hover:shadow-teal-100 transition-all">
+                   class="flex items-center gap-2 px-6 py-3 bg-teal-600 text-white rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-teal-700 hover:shadow-lg hover:shadow-teal-100 transition-all">
                    <i class="bi-plus-lg"></i> New Class Test
                 </a>
             </div>
@@ -43,8 +43,8 @@
                     <div class="flex flex-col h-full">
                         <div class="flex items-start justify-between mb-4">
                             <div class="flex flex-col">
-                                <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{{ $ts?->section?->name ?? 'Mixed' }}</span>
-                                <h3 class="font-black text-slate-800 leading-tight group-hover:text-teal-600 transition-colors">{{ $test->title }}</h3>
+                                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">{{ $ts?->section?->name ?? 'Mixed' }}</span>
+                                <h3 class="font-bold text-slate-800 leading-tight group-hover:text-teal-600 transition-colors">{{ $test->title }}</h3>
                             </div>
                             <div class="w-10 h-10 rounded-xl {{ $submitted ? 'bg-teal-50 text-teal-600' : 'bg-slate-50 text-slate-400' }} flex items-center justify-center transition-colors">
                                 <i class="bi {{ $submitted ? 'bi-check-circle-fill' : 'bi-hourglass-split' }} text-lg"></i>
@@ -54,15 +54,15 @@
                         <div class="space-y-4 mb-6">
                             <div class="flex items-center justify-between">
                                 <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tight">Subject</span>
-                                <span class="text-xs font-black text-slate-600">{{ $ts?->subject?->name ?? 'N/A' }}</span>
+                                <span class="text-xs font-bold text-slate-600">{{ $ts?->subject?->name ?? 'N/A' }}</span>
                             </div>
                             <div class="flex items-center justify-between">
                                 <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tight">Max Marks</span>
-                                <span class="px-2 py-1 bg-slate-50 rounded-lg text-xs font-black text-slate-700">{{ $test->max_marks }}</span>
+                                <span class="px-2 py-1 bg-slate-50 rounded-lg text-xs font-bold text-slate-700">{{ $test->max_marks }}</span>
                             </div>
                              <div class="flex items-center justify-between">
                                 <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tight">Status</span>
-                                <span class="text-[10px] font-black uppercase {{ $submitted ? 'text-teal-600' : 'text-slate-400 italic' }}">
+                                <span class="text-[10px] font-bold uppercase {{ $submitted ? 'text-teal-600' : 'text-slate-400 italic' }}">
                                     {{ $submitted ? 'Result Submitted' : 'Pending Entry' }}
                                 </span>
                             </div>
@@ -92,7 +92,7 @@
                     <div class="w-16 h-16 rounded-full bg-slate-50 flex items-center justify-center mb-4 text-slate-300">
                         <i class="bi-journals text-3xl"></i>
                     </div>
-                    <h3 class="font-black text-slate-400 uppercase tracking-widest">No individual tests found</h3>
+                    <h3 class="font-bold text-slate-400 uppercase tracking-widest">No individual tests found</h3>
                     <p class="text-slate-400 text-xs mt-2 italic">Start by creating your first subject-specific test</p>
                 </div>
             @endforelse

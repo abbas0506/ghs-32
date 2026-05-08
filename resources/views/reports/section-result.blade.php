@@ -118,7 +118,7 @@
 
                             @foreach ($subjects as $subject)
                                 <td>
-                                    {{ $row['subjects'][$subject->id] > 0 ? $row['subjects'][$subject->id] : '-' }}
+                                    {{ $row['subjects'][$subject->id] ?? '-' }}
                                 </td>
                             @endforeach
 

@@ -9,7 +9,7 @@
                     <i class="bi-calendar-check text-xl"></i>
                 </div>
                 <div class="overflow-hidden">
-                    <h1 class="text-xl font-bold text-slate-800 leading-tight truncate">Attendance Summary</h1>
+                    <h2 class="text-lg font-bold text-slate-800 leading-tight truncate">Attendance Summary</h2>
                     <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest truncate">
                         {{ \Carbon\Carbon::parse($date)->format('l, d M Y') }}</p>
                 </div>
@@ -54,7 +54,7 @@
                 <div class="absolute -right-4 -bottom-4 w-20 h-20 bg-white/10 rounded-full"></div>
                 <div class="relative z-10">
                     <p class="text-[9px] font-semibold text-teal-100 uppercase tracking-widest mb-1">Total Presence</p>
-                    <p class="text-lg font-bold leading-none">{{ $overallPresenceCount }}<span class="text-teal-200 font-bold">/{{ $overallAttendanceCount }}</span></p>
+                    <p class="text-lg font-bold leading-none">{{ $overallPresenceCount }}<span class="text-teal-200 font-bold"> / {{ $overallAttendanceCount }}</span></p>
                 </div>
                 <div class="text-right relative z-10">
                     <h2 class="text-lg font-bold text-white">{{ $percentage }}%</h2>
@@ -65,7 +65,7 @@
                 <div>
                     <p class="text-[9px] font-semibold text-slate-400 uppercase tracking-widest mb-1">Reporting Status</p>
                     <h2 class="text-xl font-bold text-slate-800">{{ $sectionsMarked }}<span
-                            class="text-slate-200">/{{ $sections->count() }}</span></h2>
+                            class="text-slate-200"> /{{ $sections->count() }}</span></h2>
                 </div>
                 <div class="w-12 h-12 rounded-full border-4 border-slate-50 flex items-center justify-center">
                     <span class="text-xs font-bold text-slate-400">{{ $markedPercentage }}%</span>

@@ -60,11 +60,12 @@ class SectionAttendanceController extends Controller
         $this->authorize('viewSummary', Attendance::class);
         $sections = Auth::user()->accessibleSections();
         
-        $selectedSectionId = $request->get('class_id', $sections->first()->id ?? null);
+        $selectedSectionId = $request->get('class_id');
         
         $weeklyData = [];
         $monthlyData = [];
         $selectedSection = null;
+        $averageRate = 0;
         
         if ($selectedSectionId) {
             $selectedSection = Section::find($selectedSectionId);
@@ -83,10 +84,18 @@ class SectionAttendanceController extends Controller
                 $total = $att->count();
                 $present = $att->where('status', 1)->count();
                 $weeklyData[] = [
-                    'date' => \Carbon\Carbon::parse($d)->format('l, M d'),
+                    'date' => \Carbon\Carbon::parse($d)->format('M d'),
                     'percentage' => $total > 0 ? round(($present / $total) * 100, 1) : 0
                 ];
             }
+
+            // Calculate overall average for selected section
+            $allAtt = Attendance::whereHas('student', function($q) use ($selectedSectionId) {
+                $q->where('section_id', $selectedSectionId);
+            })->get();
+            $overallTotal = $allAtt->count();
+            $overallPresent = $allAtt->where('status', 1)->count();
+            $averageRate = $overallTotal > 0 ? round(($overallPresent / $overallTotal) * 100, 1) : 0;
 
             // Monthly Data (Session Averages from April to March)
             $currentDate = \Carbon\Carbon::now();
@@ -111,7 +120,7 @@ class SectionAttendanceController extends Controller
             }
         }
 
-        return view('attendance.analytics', compact('sections', 'selectedSectionId', 'selectedSection', 'weeklyData', 'monthlyData'));
+        return view('attendance.analytics', compact('sections', 'selectedSectionId', 'selectedSection', 'weeklyData', 'monthlyData', 'averageRate'));
     }
 
     public function habitualStudents()
@@ -171,7 +180,7 @@ class SectionAttendanceController extends Controller
                 return $student;
             })
             ->filter(function ($student) {
-                return $student->absence_count > 0;
+                return $student->absence_rate > 75;
             })
             ->values();
 
@@ -330,45 +339,6 @@ class SectionAttendanceController extends Controller
         $sessionDays = $sessionAttendances->count();
         $sessionAttendancePercentage = $sessionDays > 0 ? round(($sessionPresence / $sessionDays) * 100, 1) : 0;
 
-        return view('attendance.show', compact(
-            'section',
-            'student',
-            'monthPresence',
-            'monthDays',
-            'monthAttendancePercentage',
-            'sessionPresence',
-            'sessionDays',
-            'sessionAttendancePercentage',
-            'sessionAbsences',
-            'sessionStart',
-            'currentDate',
-            'attendance'
-        ));
-    }
-
-    public function studentAnalytics($id, $attendanceId)
-    {
-        $attendance = Attendance::find($attendanceId);
-        $this->authorize('view', $attendance);
-
-        $section = Section::find($id);
-        $student = $attendance->student;
-
-        // Weekly Data
-        $weeklyData = [];
-        $weeklyDates = collect();
-        for ($i = 14; $i >= 0; $i--) {
-            $weeklyDates->push(now()->subDays($i)->toDateString());
-        }
-
-        foreach ($weeklyDates as $d) {
-            $att = $student->attendances()->whereDate('date', $d)->first();
-            $weeklyData[] = [
-                'date' => \Carbon\Carbon::parse($d)->format('l, M d'),
-                'status' => $att ? $att->status : -1 // -1 means unmarked
-            ];
-        }
-
         // Monthly Data (Session Averages)
         $monthlyData = [];
         $currentDate = \Carbon\Carbon::now();
@@ -390,8 +360,31 @@ class SectionAttendanceController extends Controller
             ];
         }
 
-        return view('attendance.student_analytics', compact('section', 'student', 'attendance', 'weeklyData', 'monthlyData'));
+        
+        
+        
+        $sessionAttendanceMap = $sessionAttendances->pluck('status', 'date')->mapWithKeys(function ($status, $date) {
+            return [\Carbon\Carbon::parse($date)->toDateString() => $status];
+        });
+
+        return view('attendance.show', compact(
+            'section',
+            'student',
+            'monthPresence',
+            'monthDays',
+            'monthAttendancePercentage',
+            'sessionPresence',
+            'sessionDays',
+            'sessionAttendancePercentage',
+            'sessionAbsences',
+            'sessionStart',
+            'currentDate',
+            'attendance',
+            'monthlyData',
+            'sessionAttendanceMap'
+        ));
     }
+
     /**
      * Display the specified resource.
      */

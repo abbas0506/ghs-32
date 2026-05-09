@@ -211,9 +211,9 @@
     <div class="sheet">
         <div class="hero">
             <div class="eyebrow">Attendance Intelligence</div>
-            <div class="title">Top 3 Habitual Students From Each Class</div>
+            <div class="title">Habitual Absentees Report</div>
             <div class="subtitle">
-                Contact-first print view for the highest-risk attendance profiles in each class from
+                Students with an absence rate above 75% from
                 {{ $sessionStart->format('d M Y') }}
                 to {{ $reportDate->format('d M Y') }}.
             </div>
@@ -222,26 +222,14 @@
                 <tr>
                     <td>
                         <div class="stat-box">
-                            <div class="stat-label">Students listed</div>
-                            <div class="stat-value">{{ $highlightedStudents }}</div>
+                            <div class="stat-label">Habitual / Total Students</div>
+                            <div class="stat-value">{{ $highlightedStudents }} <span class="muted" style="font-size: 10px;">/ {{ $studentsWithAttendance }}</span></div>
                         </div>
                     </td>
                     <td>
                         <div class="stat-box">
-                            <div class="stat-label">Classes covered</div>
-                            <div class="stat-value">{{ $sectionsCount }}</div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="stat-box">
-                            <div class="stat-label">Classes flagged</div>
-                            <div class="stat-value">{{ $classesWithStudents }}</div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="stat-box">
-                            <div class="stat-label">Marked students</div>
-                            <div class="stat-value">{{ $studentsWithAttendance }}</div>
+                            <div class="stat-label">Flagged / Total Classes</div>
+                            <div class="stat-value">{{ $classesWithStudents }} <span class="muted" style="font-size: 10px;">/ {{ $sectionsCount }}</span></div>
                         </div>
                     </td>
                 </tr>
@@ -250,68 +238,60 @@
 
         <div class="content">
             @if ($highlightedStudents === 0)
-                <div class="empty">No student has recorded absences in the selected session window.</div>
+                <div class="empty">No student has recorded critical absences (>75%) in the selected session window.</div>
             @else
-                @foreach ($sectionsReport as $item)
-                    <div class="section-card">
-                        <div class="section-top">
-                            <div class="section-label">Class</div>
-                            <div class="section-title">{{ $item['class_label'] }}</div>
-                            <div class="muted">Top 3 ranked students for this class</div>
-                        </div>
-
-                        @if ($item['students']->isEmpty())
-                            <div class="empty">No student with recorded absences in this class during the selected
-                                window.</div>
-                        @else
-                            <table class="student-table">
-                                <thead>
+                <div class="section-card">
+                    <table class="student-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 30px;">#</th>
+                                <th style="width: 25%;">Student</th>
+                                <th style="width: 15%;">Class</th>
+                                <th style="width: 15%;">Contact</th>
+                                <th style="width: 15%;">Attendance</th>
+                                <th style="width: 30%;">Address</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @php $globalIndex = 1; @endphp
+                            @foreach ($sectionsReport as $item)
+                                @foreach ($item['students'] as $student)
                                     <tr>
-                                        <th style="width: 36px;">#</th>
-                                        <th style="width: 26%;">Student</th>
-                                        <th style="width: 16%;">Contact</th>
-                                        <th style="width: 16%;">Class / Roll</th>
-                                        <th style="width: 18%;">Attendance</th>
-                                        <th style="width: 24%;">Address</th>
+                                        <td class="rank">{{ $globalIndex++ }}</td>
+                                        <td>
+                                            <div class="student-name">{{ $student->name }}</div>
+                                            <div class="muted">Father: {{ $student->father_name ?: '---' }}</div>
+                                            <span class="pill red">{{ $student->absence_count }} absences</span>
+                                            <span class="pill blue">{{ $student->absence_rate }}% rate</span>
+                                        </td>
+                                        <td>
+                                            <div style="font-weight: 700;">{{ $item['class_label'] }}</div>
+                                            <div class="muted">Roll: {{ $student->rollno ?: 'N/A' }}</div>
+                                        </td>
+                                        <td>
+                                            <div class="muted">Phone:</div>
+                                            <div>{{ $student->phone ?: '---' }}</div>
+                                        </td>
+                                        <td>
+                                            <div>{{ $student->attendance_count }} days</div>
+                                            <div class="muted">Total Marked</div>
+                                        </td>
+                                        <td>
+                                            <div class="muted">Address:</div>
+                                            <div style="font-size: 8px;">{{ $student->address ?: 'Not provided' }}</div>
+                                        </td>
                                     </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($item['students'] as $index => $student)
-                                        <tr>
-                                            <td class="rank">{{ $index + 1 }}</td>
-                                            <td>
-                                                <div class="student-name">{{ $student->name }}</div>
-                                                <div class="muted">Father:
-                                                    {{ $student->father_name ?: 'Not provided' }}</div>
-                                                <span class="pill red">{{ $student->absence_count }} absences</span>
-                                                <span class="pill blue">{{ $student->absence_rate }}% rate</span>
-                                            </td>
-                                            <td>
-                                                <div>{{ $student->phone ?: 'Not provided' }}</div>
-                                            </td>
-                                            <td>
-                                                <div>{{ $item['class_label'] }}</div>
-                                                <div class="muted">Roll: {{ $student->rollno ?: 'N/A' }}</div>
-                                            </td>
-                                            <td>
-                                                <div>{{ $student->attendance_count }} marked days</div>
-                                                <div class="muted">Report: {{ $reportDate->format('d M Y') }}</div>
-                                            </td>
-                                            <td>{{ $student->address ?: 'Not provided' }}</td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        @endif
-                    </div>
-                @endforeach
+                                @endforeach
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
             @endif
 
             <div class="summary">
                 <strong>Summary:</strong>
                 Reporting window {{ $sessionStart->format('d M Y') }} to {{ $reportDate->format('d M Y') }}.
-                Marked students {{ $studentsWithAttendance }}.
-                Absences in highlighted students {{ $totalAbsences }}.
+                A total of {{ $highlightedStudents }} students from {{ $classesWithStudents }} classes identified.
             </div>
 
             <div class="footer">Generated on {{ now()->format('d M Y') }}</div>

@@ -64,7 +64,7 @@
                                 <div class="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-lg md:rounded-xl bg-white group-hover/btn:bg-indigo-500/20 mb-2 md:mb-3 transition-colors">
                                     <i class="bi bi-award-fill text-xl md:text-2xl group-hover/btn:scale-110 transition-transform"></i>
                                 </div>
-                                <span class="text-[9px] md:text-xs font-bold uppercase tracking-tight">Assessment</span>
+                                <span class="text-[9px] md:text-[9px] font-bold uppercase tracking-tight">Assessment</span>
                             </a>
 
                             <!-- Lesson Plan Action -->
@@ -73,7 +73,7 @@
                                 <div class="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-lg md:rounded-xl bg-white group-hover/btn:bg-emerald-500/20 mb-2 md:mb-3 transition-colors">
                                     <i class="bi bi-journal-richtext text-xl md:text-2xl group-hover/btn:scale-110 transition-transform"></i>
                                 </div>
-                                <span class="text-[9px] md:text-xs font-bold uppercase tracking-tight">Lesson Plan</span>
+                                <span class="text-[9px] md:text-[9px] font-bold uppercase tracking-tight">Lesson Plan</span>
                             </a>
                         </div>
                     </div>

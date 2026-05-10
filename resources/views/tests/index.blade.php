@@ -4,7 +4,7 @@
         <!-- Header & Breadcrumbs -->
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 py-2">
             <div>
-                <div class="flex items-center gap-2 text-slate-400 text-[10px] uppercase tracking-[0.2em] font-bold mb-3">
+                <div class="flex items-center gap-2 text-slate-400 text-[9px] uppercase tracking-[0.1em] font-bold mb-3">
                     <a href="{{ url('/') }}" class="hover:text-teal-600 transition-colors">Home</a>
                     <i class="bi-chevron-right text-[8px]"></i>
                     <span class="text-teal-600">Assessment</span>
@@ -22,12 +22,12 @@
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <a href="{{ route('reports.combined.selector') }}" 
-                   class="flex items-center gap-2 px-6 py-3 bg-white border border-slate-200 text-slate-500 rounded-xl text-xs font-bold uppercase tracking-widest hover:text-teal-600 hover:border-teal-200 transition-all">
+                   class="flex items-center justify-center gap-2 px-6 py-3 bg-white border border-slate-200 text-slate-500 rounded-xl text-[9px] md:text-[10px] font-bold uppercase tracking-widest hover:text-teal-600 hover:border-teal-200 transition-all">
                    <i class="bi-journals"></i> Combined Report
                 </a>
                 @can('create', App\Models\Test::class)
                     <a href="{{ route('tests.create') }}" 
-                       class="flex items-center gap-2 px-6 py-3 bg-teal-600 text-white rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-teal-700 hover:shadow-lg hover:shadow-teal-100 transition-all">
+                       class="flex items-center justify-center gap-2 px-6 py-3 bg-teal-600 text-white rounded-xl text-[9px] md:text-[10px] font-bold uppercase tracking-widest hover:bg-teal-700 hover:shadow-lg hover:shadow-teal-100 transition-all">
                        <i class="bi-plus-lg"></i> New Assessment
                     </a>
                 @endcan
@@ -56,7 +56,7 @@
                     <i class="bi-graph-up-arrow text-teal-600 opacity-60"></i>
                 </div>
                 <div class="flex items-baseline gap-1">
-                    <h2 class="text-xl md:text-2xl font-bold text-slate-800">{{ $dataProgress }}%</h2>
+                    <h2 class="text-xl md:text-xl font-bold text-slate-800">{{ $dataProgress }}%</h2>
                 </div>
             </div>
         </div>
@@ -86,7 +86,10 @@
                                 <div class="w-8 h-8 shrink-0 rounded-lg bg-slate-50 text-slate-500 flex items-center justify-center group-hover:bg-teal-50 group-hover:text-teal-600 transition-colors">
                                     <i class="bi-journal-text text-base"></i>
                                 </div>
-                                <h3 class="font-bold text-xs text-slate-800 group-hover:text-teal-700 transition-colors leading-tight line-clamp-2">{{ $test->title }}</h3>
+                                <div class="flex flex-col">
+                                    <h3 class="font-bold text-xs text-slate-800 group-hover:text-teal-700 transition-colors leading-tight">{{ $test->title }}</h3>
+                                    <span class="text-[8px] font-bold text-slate-400 uppercase tracking-tighter">{{ \Carbon\Carbon::parse($test->created_at)->format('d M Y') }}</span>
+                                </div>
                             </div>
                             <div class="flex items-center">
                                 @if($isOpen)
@@ -108,11 +111,6 @@
                                    <i class="bi-check-circle-fill text-xs text-green-500"></i>    
                                 </div>
                             @endif
-                        </div>
-
-                        <div class="mt-auto pt-3 border-t border-slate-50 flex items-center justify-between">
-                            <span class="text-[8px] font-bold text-slate-400 uppercase tracking-tighter">{{ \Carbon\Carbon::parse($test->created_at)->format('d M Y') }}</span>
-                            <i class="bi-arrow-right text-[10px] text-teal-500 opacity-0 group-hover:opacity-100 transition-all"></i>
                         </div>
                     </div>
                 </a>

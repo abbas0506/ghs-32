@@ -91,7 +91,7 @@
                 </div>
 
                 <div class="p-6 border-t border-slate-50 bg-slate-50/30 flex items-center justify-end gap-3">
-                   <button type="submit" class="flex items-center gap-2 px-8 py-3 bg-teal-600 text-white rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-teal-700 hover:shadow-lg hover:shadow-teal-100 transition-all active:scale-95">
+                   <button type="submit" class="flex items-center gap-2 px-8 py-3 bg-teal-600 text-white rounded-xl text-[9px] font-bold uppercase tracking-widest hover:bg-teal-700 hover:shadow-lg hover:shadow-teal-100 transition-all active:scale-95">
                         <i class="bi-check2-circle text-lg"></i> Submit Attendance
                     </button>
                 </div>

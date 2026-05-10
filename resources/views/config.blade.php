@@ -5,7 +5,7 @@
         <!-- Header & Breadcrumbs -->
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 py-2 mb-2">
             <div>
-                <div class="flex items-center gap-2 text-slate-400 text-[10px] uppercase tracking-[0.2em] font-bold mb-3">
+                <div class="flex items-center gap-2 text-slate-400 text-[9px] uppercase tracking-[0.1em] font-bold mb-3">
                     <a href="{{ url('/') }}" class="hover:text-teal-600 transition-colors">School</a>
                     <i class="bi-chevron-right text-[8px]"></i>
                     <span class="text-teal-600">Settings</span>
@@ -15,7 +15,7 @@
                         <i class="bi-sliders text-xl"></i>
                     </div>
                     <div>
-                        <h1 class="text-2xl font-bold text-slate-800 leading-none mb-1">Configuration</h1>
+                        <h1 class="text-xl font-bold text-slate-800 leading-none mb-1">Configuration</h1>
                         <p class="text-slate-400 text-xs font-medium italic">Manage system settings, users, and core academic parameters</p>
                     </div>
                 </div>

@@ -4,7 +4,7 @@
         <!-- Header -->
         <div class="flex items-center gap-4 py-2">
             <div>
-                <div class="flex items-center gap-2 text-slate-400 text-[10px] uppercase tracking-[0.2em] font-bold mb-3">
+                <div class="flex items-center gap-2 text-slate-400 text-[9px] uppercase tracking-[0.1em] font-bold mb-3">
                     <a href="{{ route('tests.index') }}" class="hover:text-teal-600 transition-colors">Assessment</a>
                     <i class="bi-chevron-right text-[8px]"></i>
                     <span class="text-teal-600 uppercase">Create Assessment</span>
@@ -107,7 +107,7 @@
 
                     <div class="pt-6">
                         <button type="submit" 
-                                class="w-full flex items-center justify-center gap-3 py-5 bg-teal-600 text-white rounded-[1.5rem] text-xs font-bold uppercase tracking-[0.2em] hover:bg-teal-700 shadow-xl shadow-teal-100 hover:shadow-teal-200 transition-all group">
+                                class="w-full flex items-center justify-center gap-3 py-5 bg-teal-600 text-white rounded-[1.5rem] text-[9px] font-bold uppercase tracking-[0.2em] hover:bg-teal-700 shadow-xl shadow-teal-100 hover:shadow-teal-200 transition-all group">
                             <i class="bi-lightning-charge-fill group-hover:rotate-12 transition-transform"></i> 
                             <span>Initialize Assessment</span>
                         </button>

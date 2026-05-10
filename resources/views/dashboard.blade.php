@@ -13,7 +13,7 @@
 
             <div class="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-6">
                 <div class="max-w-2xl">
-                    <h1 class="text-lg md:text-xl font-semibold text-black mb-2 tracking-tight leading-tight">
+                    <h1 class="text-xl font-black mb-2 tracking-tight leading-tight">
                         Welcome back, <span class="text-teal-300">{{ Auth::user()->profile->short_name }}!</span>
                     </h1>
                     <p class="text-teal-50/80 text-sm leading-relaxed mb-5 font-light">
@@ -33,9 +33,9 @@
         </div>
 
         <!-- Metric Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6">
             <!-- Students -->
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-all group">
+            <div class="bg-white p-4 md:p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-all group">
                 <div class="flex items-center justify-between mb-3">
                     <div class="w-10 h-10 bg-teal-50 text-teal-600 rounded-xl flex items-center justify-center text-lg group-hover:scale-110 transition-transform">
                         <i class="bi bi-people-fill"></i>
@@ -44,12 +44,12 @@
                         +{{ $newAdmissions->count() }} new
                     </span>
                 </div>
-                <h3 class="text-slate-500 text-[10px] font-semibold uppercase tracking-wider mb-1">Total Students</h3>
-                <p class="text-2xl font-bold text-slate-800">{{ number_format($students->count()) }}</p>
+                <h3 class="text-slate-500  text-[9px] font-semibold uppercase tracking-wider mb-1">Total Students</h3>
+                <p class="text-xl font-bold text-slate-800">{{ number_format($students->count()) }}</p>
             </div>
 
             <!-- Attendance -->
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-all group">
+            <div class="bg-white p-4 md:p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-all group">
                 <div class="flex items-center justify-between mb-3">
                     <div class="w-10 h-10 bg-teal-50 text-teal-600 rounded-xl flex items-center justify-center text-lg group-hover:scale-110 transition-transform">
                         <i class="bi bi-calendar-check-fill"></i>
@@ -58,8 +58,8 @@
                         {{ $highestAttenancePercentage }}% max
                     </span>
                 </div>
-                <h3 class="text-slate-500 text-[10px] font-semibold uppercase tracking-wider mb-1">Today's Attendance</h3>
-                <p class="text-2xl font-bold text-slate-800">
+                <h3 class="text-slate-500 text-[9px] font-semibold uppercase tracking-wider mb-1">Today's Attendance</h3>
+                <p class="text-xl font-bold text-slate-800">
                     @php
                         $todayPerc = $students->count() > 0 ? round(($attendances->count() / $students->count()) * 100, 0) : 0;
                     @endphp
@@ -68,7 +68,7 @@
             </div>
 
             <!-- Assessments -->
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-all group">
+            <div class="bg-white p-4 md:p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-all group">
                 <div class="flex items-center justify-between mb-3">
                     <div class="w-10 h-10 bg-teal-50 text-teal-600 rounded-xl flex items-center justify-center text-lg group-hover:scale-110 transition-transform">
                         <i class="bi bi-clipboard2-data-fill"></i>
@@ -77,12 +77,12 @@
                         {{ $tests->open()->count() }} Active
                     </span>
                 </div>
-                <h3 class="text-slate-500 text-[10px] font-semibold uppercase tracking-wider mb-1">Assessments</h3>
-                <p class="text-2xl font-bold text-slate-800">{{ $tests->count() }}</p>
+                <h3 class="text-slate-500 text-[9px] font-semibold uppercase tracking-wider mb-1">Assessments</h3>
+                <p class="text-xl font-bold text-slate-800">{{ $tests->count() }}</p>
             </div>
 
             <!-- My Schedule -->
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-all group">
+            <div class="bg-white p-4 md:p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-all group">
                 <div class="flex items-center justify-between mb-3">
                     <div class="w-10 h-10 bg-teal-50 text-teal-600 rounded-xl flex items-center justify-center text-lg group-hover:scale-110 transition-transform">
                         <i class="bi bi-journal-bookmark-fill"></i>
@@ -91,8 +91,8 @@
                         Weekly
                     </span>
                 </div>
-                <h3 class="text-slate-500 text-[10px] font-semibold uppercase tracking-wider mb-1">My Subjects</h3>
-                <p class="text-2xl font-bold text-slate-800">{{ $myAllocationsCount }}</p>
+                <h3 class="text-slate-500 text-[9px] font-semibold uppercase tracking-wider mb-1">My Subjects</h3>
+                <p class="text-xl font-bold text-slate-800">{{ $myAllocationsCount }}</p>
             </div>
         </div>
 

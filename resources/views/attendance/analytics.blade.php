@@ -4,7 +4,7 @@
         <!-- Header -->
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 py-2">
             <div>
-                <div class="flex items-center gap-2 text-slate-400 text-[10px] uppercase tracking-[0.2em] font-bold mb-3">
+                <div class="flex items-center gap-2 text-slate-400 text-[9px] uppercase tracking-[0.1em] font-bold mb-3">
                     <a href="{{ route('attendance.summary') }}" class="hover:text-teal-600 transition-colors">Attendance</a>
                     <i class="bi-chevron-right text-[8px]"></i>
                     <span class="text-teal-600 uppercase">Analytics</span>
@@ -26,7 +26,7 @@
                 @foreach($sections as $section)
                     <label class="cursor-pointer shrink-0">
                         <input type="radio" name="class_id" value="{{ $section->id }}" class="sr-only peer" {{ $selectedSectionId == $section->id ? 'checked' : '' }} onchange="this.form.submit()">
-                        <div class="p-3 rounded-xl border border-slate-100 bg-white text-[9px] md:text-xs font-bold uppercase text-slate-500 transition-all hover:border-teal-200 hover:bg-slate-50 peer-checked:bg-teal-600 peer-checked:text-white peer-checked:border-teal-600 peer-checked:shadow-xl peer-checked:shadow-teal-100 flex items-center justify-center min-w-[120px]">
+                        <div class="p-3 rounded-xl border border-slate-100 bg-white text-[9px] md:text-[9px] font-bold uppercase text-slate-500 transition-all hover:border-teal-200 hover:bg-slate-50 peer-checked:bg-teal-600 peer-checked:text-white peer-checked:border-teal-600 peer-checked:shadow-xl peer-checked:shadow-teal-100 flex items-center justify-center min-w-[120px]">
                             {{ $section->name }}
                         </div>
                     </label>

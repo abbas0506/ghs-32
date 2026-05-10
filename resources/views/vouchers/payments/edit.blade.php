@@ -29,7 +29,7 @@
             </div>
 
             <div class="mt-8 flex justify-end space-x-2">
-                <a href="{{ route('voucher.section.payments.index', [$voucher, $section]) }}" class="px-6 py-2 text-slate-400 text-xs font-bold uppercase">Cancel</a>
+                <a href="{{ route('voucher.section.payments.index', [$voucher, $section]) }}" class="px-6 py-2 text-slate-400 text-[9px] font-bold uppercase">Cancel</a>
                 <button type="submit" class="bg-teal-600 text-white px-8 py-2 rounded-xl font-bold uppercase text-xs hover:bg-teal-700 transition-all">
                     Update Payment
                 </button>

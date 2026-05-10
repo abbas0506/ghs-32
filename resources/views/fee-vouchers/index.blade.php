@@ -4,7 +4,7 @@
         <!-- Header & Breadcrumbs -->
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 py-2">
             <div>
-                <div class="flex items-center gap-2 text-slate-400 text-[10px] uppercase tracking-[0.2em] font-bold mb-3">
+                <div class="flex items-center gap-2 text-slate-400 text-[9px] uppercase tracking-[0.1em] font-bold mb-3">
                     <a href="{{ url('/') }}" class="hover:text-teal-600 transition-colors">Home Dashboard</a>
                     <i class="bi-chevron-right text-[8px]"></i>
                     <span class="text-teal-600 uppercase">Fee Vouchers</span>
@@ -22,7 +22,7 @@
 
             @role('head')
                 <a href="{{ route('fee-vouchers.create') }}" 
-                   class="flex items-center gap-2 px-6 py-3 bg-teal-600 text-white rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-teal-700 hover:shadow-lg hover:shadow-teal-100 transition-all">
+                   class="flex items-center gap-2 px-6 py-3 bg-teal-600 text-white rounded-xl text-[9px] font-bold uppercase tracking-widest hover:bg-teal-700 hover:shadow-lg hover:shadow-teal-100 transition-all">
                    <i class="bi-plus-lg"></i> Create Voucher
                 </a>
             @endrole
@@ -50,7 +50,7 @@
             <div class="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm flex items-center justify-between">
                 <div>
                     <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Active Vouchers</p>
-                    <h2 class="text-2xl font-bold text-slate-800">{{ $feeVouchers->count() }}</h2>
+                    <h2 class="text-xl font-bold text-slate-800">{{ $feeVouchers->count() }}</h2>
                 </div>
                 <div class="w-10 h-10 rounded-xl bg-slate-50 text-slate-400 flex items-center justify-center">
                     <i class="bi-clipboard-check"></i>

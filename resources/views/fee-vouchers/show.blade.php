@@ -16,7 +16,7 @@
                         <i class="bi-receipt text-2xl"></i>
                     </div>
                     <div>
-                        <h1 class="text-2xl font-bold text-slate-800 leading-tight">{{ $feeVoucher->name }}</h1>
+                        <h1 class="text-xl font-bold text-slate-800 leading-tight">{{ $feeVoucher->name }}</h1>
                         <p class="text-slate-400 text-sm font-medium">Month: {{ date('F', mktime(0, 0, 0, $feeVoucher->month, 10)) }} {{ $feeVoucher->year }} | Due: {{ $feeVoucher->due_date->format('d M, Y') }}</p>
                     </div>
                 </div>
@@ -69,7 +69,7 @@
                 <div class="absolute -right-4 -top-4 w-24 h-24 bg-teal-50 rounded-full opacity-50 group-hover:scale-110 transition-transform"></div>
                 <div class="relative">
                     <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Total Expected</p>
-                    <h3 class="text-3xl font-bold text-slate-800">Rs. {{ number_format($payable) }}</h3>
+                    <h3 class="text-xl font-bold text-slate-800">Rs. {{ number_format($payable) }}</h3>
                     <div class="mt-4 flex items-center gap-2">
                         <span class="text-[10px] font-bold text-teal-600 bg-teal-50 px-2 py-0.5 rounded-lg">Target Revenue</span>
                     </div>
@@ -97,7 +97,7 @@
                 <div class="absolute -right-4 -top-4 w-24 h-24 bg-orange-50 rounded-full opacity-50 group-hover:scale-110 transition-transform"></div>
                 <div class="relative">
                     <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Pending Amount</p>
-                    <h3 class="text-2xl font-bold text-slate-800">Rs. {{ number_format($pending) }}</h3>
+                    <h3 class="text-xl font-bold text-slate-800">Rs. {{ number_format($pending) }}</h3>
                     <div class="mt-4 flex items-center gap-2">
                         <i class="bi-exclamation-circle-fill text-orange-400 text-xs"></i>
                         <span class="text-[10px] font-bold text-orange-600 italic">Needs Attention</span>

@@ -4,7 +4,7 @@
         <!-- Header & Breadcrumbs -->
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 py-2 mb-2">
             <div>
-                <div class="flex items-center gap-2 text-slate-400 text-[10px] uppercase tracking-[0.2em] font-bold mb-3">
+                <div class="flex items-center gap-2 text-slate-400 text-[9px] uppercase tracking-[0.1em] font-bold mb-3">
                     <a href="{{ url('/') }}" class="hover:text-teal-600 transition-colors">School</a>
                     <i class="bi-chevron-right text-[8px]"></i>
                     <a href="{{ route('section.lecture.schedule.index', [0, 0]) }}" class="hover:text-teal-600 transition-colors">Allocations</a>
@@ -16,12 +16,12 @@
                         <i class="bi-journal-plus text-xl"></i>
                     </div>
                     <div>
-                        <h1 class="text-2xl font-bold text-slate-800 leading-none mb-1">New Allocation</h1>
+                        <h1 class="text-xl font-bold text-slate-800 leading-none mb-1">New Allocation</h1>
                         <p class="text-slate-400 text-xs font-medium italic">Assign a subject and teacher for a specific period</p>
                     </div>
                 </div>
             </div>
-            <a href="{{ route('section.lecture.schedule.index', [0, 0]) }}" class="flex items-center gap-2 px-4 py-2 bg-white text-slate-600 rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-slate-50 border border-slate-200 transition-all shadow-sm">
+            <a href="{{ route('section.lecture.schedule.index', [0, 0]) }}" class="flex items-center gap-2 px-4 py-2 bg-white text-slate-600 rounded-xl text-[9px] font-bold uppercase tracking-widest hover:bg-slate-50 border border-slate-200 transition-all shadow-sm">
                 <i class="bi-arrow-left"></i> Back to Schedule
             </a>
         </div>
@@ -48,7 +48,7 @@
                             </div>
                             <div class="overflow-hidden">
                                 <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">Target Class</p>
-                                <h2 class="text-xl md:text-2xl font-bold text-slate-800 truncate">{{ $section->name }}</h2>
+                                <h2 class="text-xl md:text-xl font-bold text-slate-800 truncate">{{ $section->name }}</h2>
                             </div>
                         </div>
                         <div class="h-10 w-px bg-slate-200 hidden md:block shrink-0"></div>
@@ -137,7 +137,7 @@
 
                 <div class="bg-slate-50 border-t border-slate-100 -mx-5 md:-mx-8 -mb-5 md:-mb-8 p-5 md:p-8 flex flex-col md:flex-row items-center justify-between gap-4">
                     <p class="text-xs font-medium text-slate-400 italic">Verify your assignment selections before proceeding.</p>
-                    <button type="submit" class="w-full md:w-auto flex items-center justify-center gap-2 px-8 py-3.5 bg-teal-600 text-white rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-teal-700 hover:shadow-xl hover:shadow-teal-100 transition-all group">
+                    <button type="submit" class="w-full md:w-auto flex items-center justify-center gap-2 px-8 py-3.5 bg-teal-600 text-white rounded-xl text-[9px] font-bold uppercase tracking-widest hover:bg-teal-700 hover:shadow-xl hover:shadow-teal-100 transition-all group">
                         Create Allocation <i class="bi-arrow-right group-hover:translate-x-1 transition-transform"></i>
                     </button>
                 </div>

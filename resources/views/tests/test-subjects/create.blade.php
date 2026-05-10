@@ -5,7 +5,7 @@
         {{-- ── Header ── --}}
         <div class="flex flex-col md:flex-row md:items-start justify-between gap-4 py-2">
             <div>
-                <div class="flex items-center gap-2 text-slate-400 text-[10px] uppercase tracking-[0.2em] font-bold mb-3 flex-wrap">
+                <div class="flex items-center gap-2 text-slate-400 text-[9px] uppercase tracking-[0.1em] font-bold mb-3 flex-wrap">
                     <a href="{{ route('tests.index') }}" class="hover:text-teal-600 transition-colors">Assessment</a>
                     <i class="bi-chevron-right text-[8px]"></i>
                     <a href="{{ route('tests.show', $test) }}" class="hover:text-teal-600 transition-colors">{{ $test->title }}</a>
@@ -17,7 +17,7 @@
                         <i class="bi-plus-circle-fill text-2xl"></i>
                     </div>
                     <div>
-                        <h1 class="text-2xl font-bold text-slate-800 leading-none mb-2">Subject Allocation</h1>
+                        <h1 class="text-xl font-bold text-slate-800 leading-none mb-2">Subject Allocation</h1>
                         <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-teal-50 text-teal-700 text-[9px] font-bold uppercase tracking-widest rounded-full border border-teal-100">
                             <i class="bi-journal-check text-[8px]"></i> {{ $test->title }}
                         </span>
@@ -25,7 +25,7 @@
                 </div>
             </div>
             <a href="{{ route('tests.show', $test) }}"
-               class="flex items-center gap-2 px-4 py-2.5 bg-white border border-slate-200 text-slate-500 rounded-xl text-xs font-bold uppercase tracking-widest hover:text-teal-600 hover:border-teal-200 transition-all self-start shrink-0">
+               class="flex items-center gap-2 px-4 py-2.5 bg-white border border-slate-200 text-slate-500 rounded-xl text-[9px] font-bold uppercase tracking-widest hover:text-teal-600 hover:border-teal-200 transition-all self-start shrink-0">
                 <i class="bi-arrow-left"></i> Back
             </a>
         </div>
@@ -80,7 +80,7 @@
 
                 <div class="sticky bottom-6 pt-4">
                     <button type="submit" 
-                            class="w-full flex items-center justify-center gap-3 py-5 bg-teal-600 text-white rounded-[1.5rem] text-xs font-bold uppercase tracking-[0.2em] hover:bg-teal-700 shadow-xl shadow-teal-100 hover:shadow-teal-200 transition-all border-4 border-white group">
+                            class="w-full flex items-center justify-center gap-3 py-5 bg-teal-600 text-white rounded-[1.5rem] text-[9px] font-bold uppercase tracking-[0.2em] hover:bg-teal-700 shadow-xl shadow-teal-100 hover:shadow-teal-200 transition-all border-4 border-white group">
                         <i class="bi-check2-circle text-lg group-hover:scale-110 transition-transform"></i> 
                         <span>Confirm & Add Selected Subjects</span>
                     </button>

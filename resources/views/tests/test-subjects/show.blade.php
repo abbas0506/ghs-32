@@ -15,7 +15,7 @@
         {{-- ── Breadcrumb & Header ── --}}
         <div class="flex flex-col md:flex-row md:items-start justify-between gap-4 py-2">
             <div>
-                <div class="flex items-center gap-2 text-slate-400 text-[10px] uppercase tracking-[0.2em] font-bold mb-3 flex-wrap">
+                <div class="flex items-center gap-2 text-slate-400 text-[9px] uppercase tracking-[0.1em] font-bold mb-3 flex-wrap">
                     <a href="{{ route('tests.index') }}" class="hover:text-teal-600 transition-colors">Assessment</a>
                     <i class="bi-chevron-right text-[8px]"></i>
                     <a href="{{ route('tests.show', $testSubject->test) }}" class="hover:text-teal-600 transition-colors">{{ $testSubject->test->title }}</a>
@@ -26,8 +26,8 @@
                     <div class="w-14 h-14 rounded-2xl bg-teal-600 text-white flex items-center justify-center shadow-lg shadow-teal-100 shrink-0">
                         <i class="bi-journal-text text-2xl"></i>
                     </div>
-                    <div>
-                        <h1 class="text-2xl font-bold text-slate-800 leading-none mb-2">
+                    <div class="overflow-hidden">
+                        <h1 class="text-xl font-bold text-slate-800 leading-none mb-2 truncate">
                             {{ $testSubject->subject->name }}
                         </h1>
                         <div class="flex items-center gap-2 flex-wrap">
@@ -43,7 +43,7 @@
                                 </span>
                             @else
                                 <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-amber-50 text-amber-700 text-[9px] font-bold uppercase tracking-widest rounded-full border border-amber-100">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span> Awaiting Submission
+                                    <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span> Pending
                                 </span>
                             @endif
                             @if($testSubject->test_date)
@@ -59,7 +59,7 @@
             {{-- ── Action Buttons ── --}}
             <div class="flex items-center gap-2 shrink-0 flex-wrap">
                 <a href="{{ route('subject-result', $testSubject) }}" target="_blank"
-                   class="flex items-center gap-2 px-4 py-2.5 bg-white border border-slate-200 text-slate-600 rounded-xl text-xs font-bold uppercase tracking-widest hover:text-rose-600 hover:border-rose-200 transition-all"
+                   class="flex items-center gap-2 px-4 py-2.5 bg-white border border-slate-200 text-slate-600 rounded-xl text-[9px] font-bold uppercase tracking-widest hover:text-rose-600 hover:border-rose-200 transition-all"
                    title="Print Result Sheet">
                     <i class="bi-printer"></i> Print
                 </a>
@@ -69,25 +69,25 @@
                         <form action="{{ route('test-subject.unlock', $testSubject) }}" method="post">
                             @csrf @method('patch')
                             <button type="submit"
-                                class="flex items-center gap-2 px-4 py-2.5 bg-amber-500 text-white rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-amber-600 transition-all">
+                                class="flex items-center gap-2 px-4 py-2.5 bg-amber-500 text-white rounded-xl text-[9px] font-bold uppercase tracking-widest hover:bg-amber-600 transition-all">
                                 <i class="bi-unlock-fill"></i> Reopen
                             </button>
                         </form>
                     @else
-                        <button disabled class="flex items-center gap-2 px-4 py-2.5 bg-slate-100 text-slate-400 rounded-xl text-xs font-bold uppercase tracking-widest cursor-not-allowed">
+                        <button disabled class="flex items-center gap-2 px-4 py-2.5 bg-slate-100 text-slate-400 rounded-xl text-[9px] font-bold uppercase tracking-widest cursor-not-allowed">
                             <i class="bi-lock-fill"></i> Locked
                         </button>
                     @endcan
                 @else
                     {{-- Import students --}}
                     <a href="{{ route('test-subject.import.index', $testSubject) }}"
-                       class="flex items-center gap-2 px-4 py-2.5 bg-white border border-slate-200 text-slate-600 rounded-xl text-xs font-bold uppercase tracking-widest hover:text-indigo-600 hover:border-indigo-200 transition-all"
+                       class="flex items-center gap-2 px-4 py-2.5 bg-white border border-slate-200 text-slate-600 rounded-xl text-[9px] font-bold uppercase tracking-widest hover:text-indigo-600 hover:border-indigo-200 transition-all"
                        title="Import Students">
                         <i class="bi-person-plus"></i> Import
                     </a>
                     @if($studentCount)
                         <a href="{{ route('test-subject.results.edit', [$testSubject, 0]) }}"
-                           class="flex items-center gap-2 px-4 py-2.5 bg-teal-600 text-white rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-teal-700 hover:shadow-lg hover:shadow-teal-100 transition-all">
+                           class="flex items-center gap-2 px-4 py-2.5 bg-teal-600 text-white rounded-xl text-[9px] font-bold uppercase tracking-widest hover:bg-teal-700 hover:shadow-lg hover:shadow-teal-100 transition-all">
                             <i class="bi-pencil-square"></i> Enter Marks
                         </a>
                     @endif
@@ -96,8 +96,8 @@
                               method="POST" onsubmit="confirmDel(event)">
                             @csrf @method('DELETE')
                             <button type="submit"
-                                class="w-10 h-10 flex items-center justify-center bg-white border border-slate-200 text-rose-500 rounded-xl hover:bg-rose-50 hover:border-rose-200 transition-all">
-                                <i class="bi-trash3"></i>
+                                class="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center bg-white border border-slate-200 text-rose-500 rounded-xl hover:bg-rose-50 hover:border-rose-200 transition-all">
+                                <i class="bi-trash3 text-xs"></i>
                             </button>
                         </form>
                     @endcan
@@ -114,47 +114,47 @@
         {{-- ── Stat Strip ── --}}
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
             {{-- Students --}}
-            <div class="bg-teal-600 rounded-3xl p-6 text-white shadow-xl shadow-teal-100 relative overflow-hidden flex flex-col justify-between">
+            <div class="bg-teal-600 rounded-2xl p-4 text-white shadow-xl shadow-teal-100 relative overflow-hidden flex flex-col justify-between">
                 <div class="absolute -right-5 -bottom-5 w-20 h-20 bg-white/10 rounded-full"></div>
                 <div class="w-9 h-9 rounded-2xl bg-white/20 flex items-center justify-center mb-4">
                     <i class="bi-people-fill text-white text-lg"></i>
                 </div>
                 <div>
                     <p class="text-[9px] font-bold text-teal-200 uppercase tracking-widest mb-1">Students</p>
-                    <p class="text-3xl font-bold leading-none">{{ $studentCount }}</p>
+                    <p class="text-xl font-bold leading-none">{{ $studentCount }}</p>
                 </div>
             </div>
 
             {{-- Max Marks --}}
-            <div class="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm flex flex-col justify-between">
+            <div class="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm flex flex-col justify-between">
                 <div class="w-9 h-9 rounded-2xl bg-teal-50 flex items-center justify-center mb-4">
                     <i class="bi-award-fill text-teal-500 text-lg"></i>
                 </div>
                 <div>
                     <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Max Marks</p>
-                    <p class="text-3xl font-bold text-slate-800 leading-none">{{ $maxMarks }}</p>
+                    <p class="text-xl font-bold text-slate-800 leading-none">{{ $maxMarks }}</p>
                 </div>
             </div>
 
             {{-- Class Average --}}
-            <div class="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm flex flex-col justify-between">
+            <div class="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm flex flex-col justify-between">
                 <div class="w-9 h-9 rounded-2xl bg-indigo-50 flex items-center justify-center mb-4">
                     <i class="bi-bar-chart-fill text-indigo-500 text-lg"></i>
                 </div>
                 <div>
                     <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Class Avg</p>
-                    <p class="text-3xl font-bold text-slate-800 leading-none">{{ $classAvg }}<span class="text-slate-400 text-base font-bold"> / {{ $maxMarks }}</span></p>
+                    <p class="text-xl font-bold text-slate-800 leading-none">{{ $classAvg }}<span class="text-slate-400 text-base font-bold"> / {{ $maxMarks }}</span></p>
                 </div>
             </div>
 
             {{-- Pass Count --}}
-            <div class="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm flex flex-col justify-between">
+            <div class="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm flex flex-col justify-between">
                 <div class="w-9 h-9 rounded-2xl bg-emerald-50 flex items-center justify-center mb-4">
                     <i class="bi-check-circle-fill text-emerald-500 text-lg"></i>
                 </div>
                 <div>
                     <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Passed</p>
-                    <p class="text-3xl font-bold text-slate-800 leading-none">{{ $passCount }}<span class="text-slate-400 text-base font-bold"> / {{ $studentCount }}</span></p>
+                    <p class="text-xl font-bold text-slate-800 leading-none">{{ $passCount }}<span class="text-slate-400 text-base font-bold"> / {{ $studentCount }}</span></p>
                 </div>
             </div>
         </div>
@@ -181,13 +181,12 @@
             {{-- Results table --}}
             <div class="overflow-x-auto">
                 @if($results->count())
-                    <table class="w-full border-collapse">
+                    <table class=" table-fixed w-full border-collapse">
                         <thead>
                             <tr class="text-left border-b border-slate-50">
-                                <th class="w-16 px-6 md:px-8 py-4 text-[9px] font-bold text-slate-400 uppercase tracking-widest">Roll</th>
-                                <th class="px-3 py-4 text-[9px] font-bold text-slate-400 uppercase tracking-widest">Student</th>
-                                <th class="w-32 px-3 py-4 text-[9px] font-bold text-slate-400 uppercase tracking-widest text-center">Marks</th>
-                                <th class="w-24 px-6 md:px-8 py-4 text-[9px] font-bold text-slate-400 uppercase tracking-widest text-center">Grade</th>
+                                <th class="w-12 md:px-8 py-4 text-[9px] font-bold text-slate-400 uppercase tracking-widest">#</th>
+                                <th class="w-32 py-4 text-[9px] font-bold text-slate-400 uppercase tracking-widest">Student</th>
+                                <th class="w-24 py-4 text-[9px] font-bold text-slate-400 uppercase tracking-widest text-center">Marks</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-50">
@@ -203,33 +202,27 @@
                                     else                { $grade = 'F';  $gradeColor = 'text-rose-700 bg-rose-50 border-rose-100'; }
                                 @endphp
                                 <tr class="tr group hover:bg-slate-50/60 transition-all">
-                                    <td class="px-6 md:px-8 py-3.5">
-                                        <div class="w-8 h-8 rounded-xl flex items-center justify-center text-[10px] font-bold
+                                    <td class="py-2 md:py-4">
+                                        <div class="w-6 h-6 md:w-8 md:h-8 mx-auto rounded-xl flex items-center justify-center text-[9px] font-bold
                                             {{ $passed ? 'bg-teal-50 text-teal-700 border border-teal-100' : 'bg-rose-50 text-rose-700 border border-rose-100' }}">
                                             {{ $result->student->rollno }}
                                         </div>
                                     </td>
-                                    <td class="px-3 py-3.5">
-                                        <p class="text-sm font-bold text-slate-800 leading-tight">{{ $result->student->name }}</p>
-                                        <p class="text-[10px] font-medium text-slate-400 mt-0.5">{{ $result->student->father_name }}</p>
+                                    <td class="py-2 md:py-4">
+                                        <p class="text-[10px] font-bold text-slate-800 leading-tight">{{ $result->student->name }}</p>
+                                        <p class="text-[9px] font-medium text-slate-400 mt-0.5">{{ $result->student->father_name }}</p>
                                     </td>
-                                    <td class="px-3 py-3.5 text-center">
+                                    <td class="py-2 md:py-4 text-center">
                                         <div class="flex flex-col items-center gap-1">
-                                            <span class="text-lg font-bold {{ $passed ? 'text-slate-800' : 'text-rose-600' }}">
+                                            <span class="text-[10px] font-bold {{ $passed ? 'text-slate-800' : 'text-rose-600' }}">
                                                 {{ $result->obtained_marks }}
                                             </span>
-                                            {{-- mini progress bar --}}
                                             <div class="w-16 h-1 rounded-full bg-slate-100 overflow-hidden">
                                                 <div class="h-full rounded-full {{ $passed ? 'bg-teal-500' : 'bg-rose-400' }}"
                                                      style="width: {{ $pct }}%"></div>
                                             </div>
                                             <span class="text-[9px] font-bold text-slate-400">{{ $pct }}%</span>
                                         </div>
-                                    </td>
-                                    <td class="px-6 md:px-8 py-3.5 text-center">
-                                        <span class="inline-block px-2.5 py-1 rounded-full border text-[10px] font-bold tracking-widest {{ $gradeColor }}">
-                                            {{ $grade }}
-                                        </span>
                                     </td>
                                 </tr>
                             @endforeach
@@ -241,7 +234,7 @@
                         <p class="text-sm font-bold text-slate-400">No students enrolled yet.</p>
                         @if(!$isSubmitted)
                             <a href="{{ route('test-subject.import.index', $testSubject) }}"
-                               class="inline-flex items-center gap-2 mt-4 px-5 py-2.5 bg-teal-600 text-white rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-teal-700 transition-all">
+                               class="inline-flex items-center gap-2 mt-4 px-5 py-2.5 bg-teal-600 text-white rounded-xl text-[9px] font-bold uppercase tracking-widest hover:bg-teal-700 transition-all">
                                 <i class="bi-person-plus"></i> Import Students
                             </a>
                         @endif
@@ -268,7 +261,7 @@
                         <form action="{{ route('test-subject.lock', $testSubject) }}" method="post" class="shrink-0">
                             @csrf @method('patch')
                             <button type="submit"
-                                class="flex items-center gap-2 px-6 py-3 bg-amber-500 text-white rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-amber-600 hover:shadow-lg hover:shadow-amber-100 transition-all whitespace-nowrap">
+                                class="flex items-center gap-2 px-6 py-3 bg-amber-500 text-white rounded-xl text-[9px] font-bold uppercase tracking-widest hover:bg-amber-600 hover:shadow-lg hover:shadow-amber-100 transition-all whitespace-nowrap">
                                 <i class="bi-lock-fill"></i> Make Final Submission
                             </button>
                         </form>

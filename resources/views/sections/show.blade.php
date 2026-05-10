@@ -5,7 +5,7 @@
         <!-- Header & Breadcrumbs -->
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 py-2">
             <div>
-                <div class="flex items-center gap-2 text-slate-400 text-[10px] uppercase tracking-[0.2em] font-bold mb-3">
+                <div class="flex items-center gap-2 text-slate-400 text-[9px] uppercase tracking-[0.1em] font-bold mb-3">
                     <a href="{{ url('/') }}" class="hover:text-teal-600 transition-colors">School</a>
                     <i class="bi-chevron-right text-[8px]"></i>
                     <a href="{{ route('sections.index') }}" class="hover:text-teal-600 transition-colors">Classes</a>
@@ -17,7 +17,7 @@
                         <span class="text-2xl font-bold">{{ substr($section->name, 0, 1) }}</span>
                     </div>
                     <div>
-                        <h1 class="text-2xl font-bold text-slate-800 leading-none mb-1">Class {{ $section->name }}</h1>
+                        <h1 class="text-xl font-bold text-slate-800 leading-none mb-1">Class {{ $section->name }}</h1>
                         <p class="text-slate-400 text-xs font-medium italic">Monitor academic class records and enrollment</p>
                     </div>
                 </div>
@@ -26,7 +26,7 @@
             <div class="flex flex-wrap items-center gap-3">
                 @can('update', $section)
                     <a href="{{ route('sections.edit', $section) }}" 
-                       class="flex items-center gap-2 px-6 py-3 bg-white border border-slate-200 text-slate-500 rounded-xl text-xs font-bold uppercase tracking-widest hover:text-teal-600 hover:border-teal-200 transition-all">
+                       class="flex items-center gap-2 px-6 py-3 bg-white border border-slate-200 text-slate-500 rounded-xl text-[9px] font-bold uppercase tracking-widest hover:text-teal-600 hover:border-teal-200 transition-all">
                        <i class="bi-pencil-square"></i> Edit
                     </a>
                 @endcan
@@ -34,7 +34,7 @@
                     <form action="{{ route('sections.destroy', $section) }}" method="POST" onsubmit="return confirmDel(event)" class="inline">
                         @csrf @method('DELETE')
                         <button type="submit" 
-                           class="flex items-center gap-2 px-6 py-3 bg-white border border-slate-200 text-slate-500 rounded-xl text-xs font-bold uppercase tracking-widest hover:text-rose-600 hover:border-rose-200 hover:bg-rose-50 transition-all">
+                           class="flex items-center gap-2 px-6 py-3 bg-white border border-slate-200 text-slate-500 rounded-xl text-[9px] font-bold uppercase tracking-widest hover:text-rose-600 hover:border-rose-200 hover:bg-rose-50 transition-all">
                            <i class="bi-trash3"></i> Delete
                         </button>
                     </form>
@@ -68,7 +68,7 @@
                     <i class="bi bi-calendar-check text-teal-600 opacity-60"></i>
                 </div>
                 <div class="flex items-baseline gap-1">
-                    <h2 class="text-xl md:text-2xl font-bold text-slate-800">{{ $section->attendanceMarked() }}</h2>
+                    <h2 class="text-xl md:text-xl font-bold text-slate-800">{{ $section->attendanceMarked() }}</h2>
                     <span class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">Students</span>
                 </div>
             </div>
@@ -80,7 +80,7 @@
                     <i class="bi bi-graph-up text-emerald-500 opacity-60"></i>
                 </div>
                 <div class="flex items-baseline gap-1">
-                    <h2 class="text-xl md:text-2xl font-bold text-slate-800">{{ $section->averageAttendance() }}%</h2>
+                    <h2 class="text-xl md:text-xl font-bold text-slate-800">{{ $section->averageAttendance() }}%</h2>
                     <span class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">Rate</span>
                 </div>
             </div>
@@ -92,28 +92,28 @@
                 <div class="w-10 h-10 bg-teal-50 text-teal-600 rounded-xl flex items-center justify-center mx-auto mb-3 group-hover:bg-teal-600 group-hover:text-white transition-all">
                     <i class="bi bi-person-plus text-lg"></i>
                 </div>
-                <span class="text-xs font-bold uppercase tracking-widest text-slate-500 group-hover:text-teal-700 transition-colors">Add Student</span>
+                <span class="text-[9px] font-bold uppercase tracking-widest text-slate-500 group-hover:text-teal-700 transition-colors">Add Student</span>
             </a>
 
             <a href="{{ route('sections.export', $section) }}" class="group bg-white p-4 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md hover:border-teal-100 transition-all text-center">
                 <div class="w-10 h-10 bg-teal-50 text-teal-600 rounded-xl flex items-center justify-center mx-auto mb-3 group-hover:bg-teal-600 group-hover:text-white transition-all">
                     <i class="bi bi-cloud-arrow-down text-lg"></i>
                 </div>
-                <span class="text-xs font-bold uppercase tracking-widest text-slate-500 group-hover:text-teal-700 transition-colors">Export Data</span>
+                <span class="text-[9px] font-bold uppercase tracking-widest text-slate-500 group-hover:text-teal-700 transition-colors">Export Data</span>
             </a>
 
             <a href="{{ route('section.cards.index', $section) }}" class="group bg-white p-4 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md hover:border-teal-100 transition-all text-center">
                 <div class="w-10 h-10 bg-teal-50 text-teal-600 rounded-xl flex items-center justify-center mx-auto mb-3 group-hover:bg-teal-600 group-hover:text-white transition-all">
                     <i class="bi bi-person-badge text-lg"></i>
                 </div>
-                <span class="text-xs font-bold uppercase tracking-widest text-slate-500 group-hover:text-teal-700 transition-colors">ID Cards</span>
+                <span class="text-[9px] font-bold uppercase tracking-widest text-slate-500 group-hover:text-teal-700 transition-colors">ID Cards</span>
             </a>
 
             <a href="{{ route('sections.list.print', $section) }}" class="group bg-white p-4 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md hover:border-teal-100 transition-all text-center">
                 <div class="w-10 h-10 bg-teal-50 text-teal-600 rounded-xl flex items-center justify-center mx-auto mb-3 group-hover:bg-teal-600 group-hover:text-white transition-all">
                     <i class="bi bi-printer text-lg"></i>
                 </div>
-                <span class="text-xs font-bold uppercase tracking-widest text-slate-500 group-hover:text-teal-700 transition-colors">Attendance</span>
+                <span class="text-[9px] font-bold uppercase tracking-widest text-slate-500 group-hover:text-teal-700 transition-colors">Attendance</span>
             </a>
 
             @can('clean', $section)
@@ -121,7 +121,7 @@
                     <div class="w-10 h-10 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center mx-auto mb-3 group-hover:bg-amber-600 group-hover:text-white transition-all">
                         <i class="bi bi-stars text-lg"></i>
                     </div>
-                    <span class="text-xs font-bold uppercase tracking-widest text-slate-500 group-hover:text-amber-700 transition-colors">Clean Data</span>
+                    <span class="text-[9px] font-bold uppercase tracking-widest text-slate-500 group-hover:text-amber-700 transition-colors">Clean Data</span>
                 </a>
             @endcan
 
@@ -129,7 +129,7 @@
                 <div class="w-10 h-10 bg-rose-50 text-rose-600 rounded-xl flex items-center justify-center mx-auto mb-3 group-hover:bg-rose-600 group-hover:text-white transition-all">
                     <i class="bi bi-arrow-counterclockwise text-lg"></i>
                 </div>
-                <span class="text-xs font-bold uppercase tracking-widest text-slate-500 group-hover:text-rose-700 transition-colors">Reset Class</span>
+                <span class="text-[9px] font-bold uppercase tracking-widest text-slate-500 group-hover:text-rose-700 transition-colors">Reset Class</span>
             </a>
         </div>
 
@@ -184,7 +184,7 @@
                                     @endif
                                 </td>
                                 <td class="px-8 py-5 text-right">
-                                    <a href="{{ route('section.students.show', [$section, $student]) }}" class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-slate-400 hover:text-teal-600 transition-colors">
+                                    <a href="{{ route('section.students.show', [$section, $student]) }}" class="inline-flex items-center gap-2 text-[9px] font-bold uppercase tracking-widest text-slate-400 hover:text-teal-600 transition-colors">
                                         View Profile <i class="bi bi-chevron-right text-[10px]"></i>
                                     </a>
                                 </td>

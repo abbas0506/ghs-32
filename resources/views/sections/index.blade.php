@@ -5,7 +5,7 @@
         <!-- Header & Breadcrumbs -->
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 py-2 mb-2">
             <div>
-                <div class="flex items-center gap-2 text-slate-400 text-[10px] uppercase tracking-[0.2em] font-bold mb-3">
+                <div class="flex items-center gap-2 text-slate-400 text-[9px] uppercase tracking-[0.1em] font-bold mb-3">
                     <a href="{{ url('/') }}" class="hover:text-teal-600 transition-colors">School</a>
                     <i class="bi-chevron-right text-[8px]"></i>
                     <span class="text-teal-600">Classes</span>
@@ -15,7 +15,7 @@
                         <i class="bi-mortarboard text-xl"></i>
                     </div>
                     <div>
-                        <h1 class="text-2xl font-bold text-slate-800 leading-none mb-1">Academic Classes</h1>
+                        <h1 class="text-xl font-bold text-slate-800 leading-none mb-1">Academic Classes</h1>
                         <p class="text-slate-400 text-xs font-medium italic">Manage academic sections and enrollments</p>
                     </div>
                 </div>
@@ -24,7 +24,7 @@
             <div class="flex items-center gap-3">
                 @can('create', App\Models\Section::class)
                     <a href="{{ route('sections.create') }}" 
-                       class="flex items-center gap-2 px-6 py-3 bg-teal-600 text-white rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-teal-700 hover:shadow-lg hover:shadow-teal-100 transition-all">
+                       class="flex items-center gap-2 px-6 py-3 bg-teal-600 text-white rounded-xl text-[9px] font-bold uppercase tracking-widest hover:bg-teal-700 hover:shadow-lg hover:shadow-teal-100 transition-all">
                        <i class="bi-plus-lg"></i> New Class
                     </a>
                 @endcan
@@ -53,7 +53,7 @@
                     <i class="bi bi-people text-teal-600 opacity-60"></i>
                 </div>
                 <div class="flex items-baseline gap-1">
-                    <h2 class="text-xl md:text-2xl font-bold text-slate-800">{{ number_format($studentsCount) }}</h2>
+                    <h2 class="text-xl md:text-xl font-bold text-slate-800">{{ number_format($studentsCount) }}</h2>
                     <span class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">Enrolled</span>
                 </div>
             </div>

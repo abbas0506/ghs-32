@@ -119,7 +119,7 @@
 
                     <div class="flex items-center justify-end gap-3 pt-4">
                         <a href="{{ route('fee-vouchers.show', $feeVoucher) }}" class="px-6 py-3 rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-100 transition-all uppercase tracking-widest">Cancel</a>
-                        <button type="submit" class="px-8 py-3 rounded-xl bg-teal-600 text-white text-xs font-bold uppercase tracking-widest hover:bg-teal-700 hover:shadow-xl hover:shadow-teal-100 transition-all">
+                        <button type="submit" class="px-8 py-3 rounded-xl bg-teal-600 text-white text-[9px] font-bold uppercase tracking-widest hover:bg-teal-700 hover:shadow-xl hover:shadow-teal-100 transition-all">
                             Save Changes <i class="bi-check2-all ml-2"></i>
                         </button>
                     </div>

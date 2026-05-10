@@ -59,7 +59,7 @@
             <div class="bg-white rounded-[1rem] md:rounded-[1.5rem] p-4 md:p-6 border border-slate-100 shadow-sm flex items-center justify-between">
                 <div>
                     <p class="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-1">Present</p>
-                    <h2 class="text-lg md:text-2xl font-bold text-slate-800 leading-none">
+                    <h2 class="text-lg md:text-xl font-bold text-slate-800 leading-none">
                         {{ $presentCount }}
                     </h2>
                 </div>
@@ -92,9 +92,9 @@
             <!-- Table Controls -->
             <div class="p-4 md:p-6 bg-slate-50/50 border-b border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div class="flex items-center flex-wrap gap-1 bg-white p-1 w-full md:w-auto">
-                    <button onclick="filterBy('all')" class="flex-1 md:flex-none px-3 md:px-5 py-2 rounded-lg text-[10px] md:text-xs font-bold uppercase tracking-widest cursor-pointer hover:bg-slate-50 transition-all text-slate-600 flex items-center justify-center gap-1.5"><i class="bi-layers text-sm"></i> All</button>
-                    <button onclick="filterBy('present')" class="flex-1 md:flex-none px-3 md:px-5 py-2 rounded-lg text-[10px] md:text-xs font-bold uppercase tracking-widest cursor-pointer bg-teal-50 text-teal-700 hover:bg-teal-100 transition-all flex items-center justify-center gap-1.5"><i class="bi-person-check text-sm block -mt-0.5"></i> P</button>
-                    <button onclick="filterBy('absent')" class="flex-1 md:flex-none px-3 md:px-5 py-2 rounded-lg text-[10px] md:text-xs font-bold uppercase tracking-widest cursor-pointer bg-rose-50 text-rose-700 hover:bg-rose-100 transition-all flex items-center justify-center gap-1.5"><i class="bi-person-x text-sm block -mt-0.5"></i> A</button>
+                    <button onclick="filterBy('all')" class="flex-1 md:flex-none px-3 md:px-5 py-2 rounded-lg text-[10px] md:text-[9px] font-bold uppercase tracking-widest cursor-pointer hover:bg-slate-50 transition-all text-slate-600 flex items-center justify-center gap-1.5"><i class="bi-layers text-sm"></i> All</button>
+                    <button onclick="filterBy('present')" class="flex-1 md:flex-none px-3 md:px-5 py-2 rounded-lg text-[10px] md:text-[9px] font-bold uppercase tracking-widest cursor-pointer bg-teal-50 text-teal-700 hover:bg-teal-100 transition-all flex items-center justify-center gap-1.5"><i class="bi-person-check text-sm block -mt-0.5"></i> P</button>
+                    <button onclick="filterBy('absent')" class="flex-1 md:flex-none px-3 md:px-5 py-2 rounded-lg text-[10px] md:text-[9px] font-bold uppercase tracking-widest cursor-pointer bg-rose-50 text-rose-700 hover:bg-rose-100 transition-all flex items-center justify-center gap-1.5"><i class="bi-person-x text-sm block -mt-0.5"></i> A</button>
                 </div>
                 <div class="relative w-full md:w-80 group">
                     <input type="text" id='searchby' placeholder="Search by name or roll..." oninput="search(event)"
@@ -117,7 +117,7 @@
                             @php $isStudentPresent = $attendance->status == 1; @endphp
                             <tr class="tr group hover:bg-slate-50/80 transition-all {{ $isStudentPresent ? 'present' : 'absent' }}">
                                 <td class="py-2">
-                                    <div class="w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center mx-auto justify-center text-xs font-bold uppercase transition-all shadow-sm border {{ $isStudentPresent ? 'bg-teal-50 text-teal-700 border-teal-100 group-hover:bg-teal-100' : 'bg-rose-50 text-rose-700 border-rose-100 group-hover:bg-rose-100' }}">
+                                    <div class="w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center mx-auto justify-center text-[9px] font-bold uppercase transition-all shadow-sm border {{ $isStudentPresent ? 'bg-teal-50 text-teal-700 border-teal-100 group-hover:bg-teal-100' : 'bg-rose-50 text-rose-700 border-rose-100 group-hover:bg-rose-100' }}">
                                         {{ $attendance->student->rollno }}
                                     </div>
                                 </td>

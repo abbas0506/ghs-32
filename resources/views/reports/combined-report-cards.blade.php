@@ -31,7 +31,7 @@
         .signature-line { border-top: 1px solid #ccc; width: 100px; margin: 0 auto 3px; }
         .signature-label { font-size: 8px; font-weight: bold; text-transform: uppercase; color: #666; }
         
-        .watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-45deg); font-size: 50px; color: rgba(13, 148, 136, 0.03); font-weight: 900; z-index: -1; pointer-events: none; }
+        .watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-45deg); font-size: 50px; color: rgba(16, 107, 99, 0.03); font-weight: 900; z-index: -1; pointer-events: none; }
         .page-break { page-break-after: always; }
     </style>
 </head>

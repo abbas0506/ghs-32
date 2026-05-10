@@ -109,7 +109,8 @@
                 </div>
                 <div>
                     <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Max Marks</p>
-                    <p class="text-xl font-bold text-slate-800 leading-none">{{ $testSubject->max_marks }}</p>
+                    <input type="hidden" id="max_marks" name="max_marks" value="{{ $testSubject->max_marks }}">
+                    <p id="max-marks-display" class="text-xl font-bold text-slate-800 leading-none">{{ $testSubject->max_marks }}</p>
                 </div>
             </div>
 

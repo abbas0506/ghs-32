@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Schedule;
+use App\Models\Section;
 use App\Models\Test;
 use App\Models\TestSubject;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class TestSubjectController extends Controller
@@ -31,6 +33,12 @@ class TestSubjectController extends Controller
         $test = Test::findOrFail($id);
         $u = Auth::user();
 
+        // Get existing section-subject pairs to exclude
+        $existing = $test->testSubjects()
+            ->select('section_id', 'subject_id')
+            ->get()
+            ->map(fn($ts) => $ts->section_id . '-' . $ts->subject_id);
+
         if ($u->hasAnyRole(['admin', 'head'])) {
             $sections = Section::join('grades', 'sections.grade_id', '=', 'grades.id')
                 ->select('sections.*')
@@ -39,6 +47,13 @@ class TestSubjectController extends Controller
                 ->orderBy('grades.grade_no')
                 ->orderBy('sections.name')
                 ->get();
+
+            // Filter subjects for admins
+            $sections->each(function ($section) use ($existing) {
+                $section->display_subjects = $section->grade->subjects->reject(function ($subject) use ($section, $existing) {
+                    return $existing->contains($section->id . '-' . $subject->id);
+                });
+            });
         } else {
             // Teachers only see sections they are assigned to
             $sections = Section::join('grades', 'sections.grade_id', '=', 'grades.id')
@@ -53,9 +68,13 @@ class TestSubjectController extends Controller
                 ->orderBy('sections.name')
                 ->get();
 
-            // Filter subjects to only show what the teacher teaches
-            $sections->each(function ($section) {
-                $section->display_subjects = $section->schedules->pluck('subject')->unique('id');
+            // Filter subjects to only show what the teacher teaches AND not already added
+            $sections->each(function ($section) use ($existing) {
+                $section->display_subjects = $section->schedules->pluck('subject')
+                    ->unique('id')
+                    ->reject(function ($subject) use ($section, $existing) {
+                        return $existing->contains($section->id . '-' . $subject->id);
+                    });
             });
         }
 

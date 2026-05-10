@@ -5,25 +5,25 @@
     <style>
         @page { margin: 30px; }
         body { font-family: sans-serif; font-size: 10px; color: #333; line-height: 1.3; }
-        .card { border: 2px solid #0d9488; padding: 20px; margin-bottom: 20px; border-radius: 12px; position: relative; overflow: hidden; height: 450px; }
-        .header { text-align: center; border-bottom: 1px solid #eee; padding-bottom: 8px; margin-bottom: 12px; }
-        .school-name { font-size: 15px; font-weight: 800; color: #0d9488; text-transform: uppercase; margin: 0; }
-        .school-info { font-size: 8px; color: #666; font-style: italic; margin: 1px 0 0; }
-        .report-title { font-size: 11px; font-weight: 900; background: #0d9488; color: white; display: inline-block; padding: 3px 15px; border-radius: 50px; margin-top: 5px; }
+        .card { border: 2px solid #0d9488; padding: 10px; margin-bottom: 10px; border-radius: 12px; position: relative; overflow: hidden; height: 420px; }
+        .header { text-align: center; border-bottom: 1px solid #eee; padding-bottom: 4px; margin-bottom: 8px; }
+        .school-name { font-size: 14px; font-weight: 800; color: #0d9488; text-transform: uppercase; margin: 0; }
+        .school-info { font-size: 7px; color: #666; font-style: italic; margin: 1px 0 0; }
+        .report-title { font-size: 10px; font-weight: 900; background: #0d9488; color: white; display: inline-block; padding: 2px 12px; border-radius: 50px; margin-top: 3px; }
         
-        .student-box { display: table; width: 100%; margin-bottom: 12px; background: #f0fdfa; padding: 10px; border-radius: 8px; }
+        .student-box { display: table; width: 100%; margin-bottom: 8px; background: #f0fdfa; padding: 6px; border-radius: 8px; }
         .student-info { display: table-cell; vertical-align: middle; }
-        .student-info p { margin: 1px 0; }
+        .student-info p { margin: 1px 0; font-size: 9px; }
         .stat-badge { display: table-cell; vertical-align: middle; text-align: right; }
-        .position-badge { background: #0d9488; color: white; padding: 6px 12px; border-radius: 10px; display: inline-block; }
-        .position-badge .rank { font-size: 16px; font-weight: 900; display: block; line-height: 1; }
-        .position-badge .label { font-size: 7px; text-transform: uppercase; font-weight: bold; }
+        .position-badge { background: #0d9488; color: white; padding: 4px 10px; border-radius: 10px; display: inline-block; }
+        .position-badge .rank { font-size: 14px; font-weight: 900; display: block; line-height: 1; }
+        .position-badge .label { font-size: 6px; text-transform: uppercase; font-weight: bold; }
 
-        table { width: 100%; border-collapse: collapse; margin: 10px 0; }
-        th, td { border: 1px solid #e2e8f0; padding: 6px 5px; text-align: center; }
-        th { background: #f8fafc; color: #475569; font-weight: bold; text-transform: uppercase; font-size: 8px; }
+        table { width: 100%; border-collapse: collapse; margin: 5px 0; }
+        th, td { border: 1px solid #e2e8f0; padding: 3px 4px; text-align: center; font-size: 8px; }
+        th { background: #f8fafc; color: #475569; font-weight: bold; text-transform: uppercase; font-size: 7px; }
         
-        .test-title { text-align: left; padding-left: 10px; font-weight: bold; color: #1e293b; }
+        .test-title { text-align: left; padding-left: 8px; font-weight: bold; color: #1e293b; }
         .total-row { background: #f1f5f9; font-weight: bold; font-size: 9px; }
         
         .footer-grid { display: table; width: 100%; margin-top: 20px; }
@@ -94,7 +94,7 @@
                     <tr class="total-row">
                         <td style="text-align: left; padding-left: 10px;">GRAND AGGREGATE</td>
                         @foreach($tests as $test)
-                            <td></td>
+                            <td>{{ $row['test_totals'][$test->id] ?? 0 }}</td>
                         @endforeach
                         <td style="color: #0d9488;">{{ $row['total_obtained'] }}</td>
                         <td>{{ $row['total_max'] }}</td>
@@ -102,11 +102,11 @@
                         <td style="color: #0d9488;" colspan="2">
                             @php
                                 $finalP = $row['percentage'];
-                                if($finalP >= 90) $grade = 'A+';
-                                elseif($finalP >= 80) $grade = 'A';
-                                elseif($finalP >= 70) $grade = 'B';
-                                elseif($finalP >= 60) $grade = 'C';
-                                elseif($finalP >= 50) $grade = 'D';
+                                if($finalP >= 80) $grade = 'A+';
+                                elseif($finalP >= 70) $grade = 'A';
+                                elseif($finalP >= 60) $grade = 'B';
+                                elseif($finalP >= 45) $grade = 'C';
+                                elseif($finalP >= 33) $grade = 'D';
                                 else $grade = 'F';
                             @endphp
                             Grade: {{ $grade }}

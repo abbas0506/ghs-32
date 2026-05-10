@@ -244,53 +244,94 @@ class ReportController extends Controller
     {
         set_time_limit(120);
 
-        $test = Test::find($testId);
-        $section = Section::find($sectionId);
-        $students = Student::with('results.testSubject')
-            ->whereHas('results.testSubject', function ($query) use ($testId) {
+        $test = Test::findOrFail($testId);
+        $section = Section::findOrFail($sectionId);
+        
+        // 1. Fetch all students in the section (not just those with results)
+        $students = Student::where('section_id', $sectionId)->orderBy('rollno')->get();
+        $studentIds = $students->pluck('id');
+
+        // 2. Fetch expected subjects for this section for this test
+        $sectionTestSubjects = TestSubject::where('test_id', $testId)
+            ->where('section_id', $sectionId)
+            ->with('subject')
+            ->get();
+        
+        $testMaxMarks = $sectionTestSubjects->sum('max_marks');
+
+        // 3. Fetch all results for these students and this test
+        $allResults = Result::whereIn('student_id', $studentIds)
+            ->whereHas('testSubject', function ($query) use ($testId) {
                 $query->where('test_id', $testId);
             })
-            ->where('section_id', $sectionId)
-            ->get();
+            ->with('testSubject.subject')
+            ->get()
+            ->groupBy('student_id');
 
-        $studentPercentages = $students->map(function ($student) {
-            $obtained_marks = $student->results->sum('obtained_marks');
-            $total = $student->results->sum(function ($result) {
-                return $result->testSubject->max_marks;
-            });
+        // 4. Calculate Aggregates for Ranking
+        $studentPercentages = $students->map(function ($student) use ($allResults, $testMaxMarks) {
+            $obtained = 0;
+            if (isset($allResults[$student->id])) {
+                $obtained = $allResults[$student->id]->sum('obtained_marks');
+            }
 
-            // Avoid division by zero
-            $percentage = $total > 0 ? ($obtained_marks / $total) * 100 : 0;
+            $percentage = $testMaxMarks > 0 ? ($obtained / $testMaxMarks) * 100 : 0;
+
+            // Updated Grade Scale
+            $percentage = round($percentage, 0);
+            if ($percentage >= 80) $grade = 'A+';
+            elseif ($percentage >= 70) $grade = 'A';
+            elseif ($percentage >= 60) $grade = 'B';
+            elseif ($percentage >= 45) $grade = 'C';
+            elseif ($percentage >= 33) $grade = 'D';
+            else $grade = 'F';
 
             return [
                 'id' => $student->id,
                 'rollno' => $student->rollno,
                 'name' => $student->name,
-                'max_marks' => $total,
-                'obtained_marks' => $obtained_marks,
-                'percentage' => round($percentage, 0),
+                'max_marks' => $testMaxMarks,
+                'obtained_marks' => $obtained,
+                'percentage' => $percentage,
             ];
         });
 
         // Sort by percentage descending
-        $sortedPercentages = $studentPercentages->sortByDesc('percentage');
+        $sortedResult = $studentPercentages->sortByDesc('percentage')->values()->map(function($item, $index) {
+            $item['position'] = $index + 1;
+            return $item;
+        });
 
-        $sortedResult = collect();
-        $i = 0;
-        foreach ($sortedPercentages as $sortedPercentage) {
-            $sortedResult->push([
-                'id' => $sortedPercentage['id'],
-                'rollno' => $sortedPercentage['rollno'],
-                'name' => $sortedPercentage['name'],
-                'max_marks' => $sortedPercentage['max_marks'],
-                'obtained_marks' => $sortedPercentage['obtained_marks'],
-                'percentage' => $sortedPercentage['percentage'],
-                'position' => ++$i,
-            ]);
-        }
+        // 5. Prepare final data for the view
+        $data = $students->map(function($student) use ($allResults, $sortedResult, $sectionTestSubjects, $testMaxMarks) {
+            $ranking = $sortedResult->where('id', $student->id)->first();
+            
+            $results = isset($allResults[$student->id]) ? $allResults[$student->id] : collect();
+            
+            // Map results to subjects (ensuring ONLY subjects with results are shown)
+            $subjectResults = $sectionTestSubjects->map(function($ts) use ($results) {
+                $res = $results->where('test_subject_id', $ts->id)->first();
+                if (!$res) return null; // Filter later
 
+                return [
+                    'subject_name' => $ts->subject->name,
+                    'max_marks' => $ts->max_marks,
+                    'obtained_marks' => $res->obtained_marks,
+                    'has_result' => true
+                ];
+            })->filter(); // Remove nulls
 
-        $pdf = PDF::loadview('reports.report-cards', compact('test', 'section', 'sortedResult'))->setPaper('a4', 'portrait');
+            return [
+                'student' => $student,
+                'obtained' => $ranking['obtained_marks'],
+                'total' => $testMaxMarks,
+                'percentage' => $ranking['percentage'],
+                'position' => $ranking['position'],
+                'subject_results' => $subjectResults,
+            ];
+        });
+
+        $pdf = PDF::loadview('reports.report-cards', compact('test', 'section', 'data', 'sortedResult'))->setPaper('a4', 'portrait');
         $pdf->set_option("isPhpEnabled", true);
         $file = "report-cards" . "-" . rand(1, 100) . ".pdf";
         return $pdf->stream($file);
@@ -298,7 +339,10 @@ class ReportController extends Controller
 
     public function combinedSelector()
     {
-        $tests = Test::where('is_open', false)->latest()->get();
+        $tests = Test::where('is_open', false)->latest()->with('testSubjects')->get()->map(function($test) {
+            $test->section_ids = $test->testSubjects->pluck('section_id')->unique()->values();
+            return $test;
+        });
         $sections = Section::all();
         return view('reports.combined-selector', compact('tests', 'sections'));
     }
@@ -306,15 +350,37 @@ class ReportController extends Controller
     public function combinedResult(\Illuminate\Http\Request $request)
     {
         $section = Section::findOrFail($request->section_id);
-        $tests = Test::whereIn('id', $request->test_ids)
-            ->with(['testSubjects' => function ($query) use ($section) {
-                $query->where('section_id', $section->id)->with('results');
-            }])
+        $tests = Test::whereIn('id', $request->test_ids)->get();
+        $students = Student::where('section_id', $section->id)->orderBy('rollno')->get();
+        $studentIds = $students->pluck('id');
+
+        // 1. Pre-calculate max marks per test for this section (expected subjects)
+        $sectionTestSubjects = TestSubject::whereIn('test_id', $request->test_ids)
+            ->where('section_id', $section->id)
+            ->get()
+            ->groupBy('test_id');
+
+        // Attach section-specific total marks to tests for use in the view
+        $tests->each(function($test) use ($sectionTestSubjects) {
+            $test->section_total_marks = $sectionTestSubjects->has($test->id) 
+                ? $sectionTestSubjects->get($test->id)->sum('max_marks') 
+                : 0;
+        });
+
+        // 2. Fetch all results for these students and these tests (robust against section movement)
+        $allResults = Result::whereIn('student_id', $studentIds)
+            ->whereHas('testSubject', function ($query) use ($request) {
+                $query->whereIn('test_id', $request->test_ids);
+            })
+            ->with('testSubject')
             ->get();
 
-        $students = Student::where('section_id', $section->id)->orderBy('rollno')->get();
+        $resultsByStudentAndTest = [];
+        foreach ($allResults as $res) {
+            $resultsByStudentAndTest[$res->student_id][$res->testSubject->test_id][] = $res;
+        }
 
-        $data = $students->map(function ($student) use ($tests) {
+        $data = $students->map(function ($student) use ($tests, $sectionTestSubjects, $resultsByStudentAndTest) {
             $studentResults = [
                 'rollno' => $student->rollno,
                 'name' => $student->name,
@@ -325,14 +391,12 @@ class ReportController extends Controller
 
             foreach ($tests as $test) {
                 $testObt = 0;
-                $testMax = 0;
+                $testMax = $sectionTestSubjects->has($test->id) ? $sectionTestSubjects->get($test->id)->sum('max_marks') : 0;
                 $hasResult = false;
 
-                foreach ($test->testSubjects as $ts) {
-                    $result = $ts->results->where('student_id', $student->id)->first();
-                    if ($result) {
-                        $testObt += $result->obtained_marks;
-                        $testMax += $ts->max_marks;
+                if (isset($resultsByStudentAndTest[$student->id][$test->id])) {
+                    foreach ($resultsByStudentAndTest[$student->id][$test->id] as $res) {
+                        $testObt += $res->obtained_marks;
                         $hasResult = true;
                     }
                 }
@@ -344,13 +408,13 @@ class ReportController extends Controller
 
             $percentage = $studentResults['total'] > 0 ? ($studentResults['obtained'] / $studentResults['total']) * 100 : 0;
             $studentResults['percentage'] = round($percentage, 1);
-            
-            // Grade Logic
-            if ($percentage >= 90) $grade = 'A+';
-            elseif ($percentage >= 80) $grade = 'A';
-            elseif ($percentage >= 70) $grade = 'B';
-            elseif ($percentage >= 60) $grade = 'C';
-            elseif ($percentage >= 50) $grade = 'D';
+
+            // Grade Logic (Updated scale)
+            if ($percentage >= 80) $grade = 'A+';
+            elseif ($percentage >= 70) $grade = 'A';
+            elseif ($percentage >= 60) $grade = 'B';
+            elseif ($percentage >= 45) $grade = 'C';
+            elseif ($percentage >= 33) $grade = 'D';
             else $grade = 'F';
 
             $studentResults['grade'] = $grade;
@@ -367,27 +431,55 @@ class ReportController extends Controller
     public function combinedReportCards(\Illuminate\Http\Request $request)
     {
         $section = Section::findOrFail($request->section_id);
-        $tests = Test::whereIn('id', $request->test_ids)
-            ->with(['testSubjects' => function ($query) use ($section) {
-                $query->where('section_id', $section->id)->with('results');
-            }])
+        $tests = Test::whereIn('id', $request->test_ids)->get();
+        $students = Student::where('section_id', $section->id)->orderBy('rollno')->get();
+        $studentIds = $students->pluck('id');
+
+        // 1. Fetch all results for these students and these tests (robust against section movement)
+        $allResults = Result::whereIn('student_id', $studentIds)
+            ->whereHas('testSubject', function ($query) use ($request) {
+                $query->whereIn('test_id', $request->test_ids);
+            })
+            ->with(['testSubject.subject'])
             ->get();
 
-        $students = Student::where('section_id', $section->id)->orderBy('rollno')->get();
+        $resultsByStudentAndTest = [];
+        foreach ($allResults as $res) {
+            $resultsByStudentAndTest[$res->student_id][$res->testSubject->test_id][] = $res;
+        }
 
-        // 1. Calculate Aggregates for Raking
-        $aggregates = $students->map(function ($student) use ($tests) {
+        // 2. Fetch expected subjects for this section across selected tests
+        $sectionTestSubjects = TestSubject::whereIn('test_id', $request->test_ids)
+            ->where('section_id', $section->id)
+            ->with('subject')
+            ->get();
+
+        // 3. Collect all subjects that either belong to the section OR have results for these students
+        $subjects = $sectionTestSubjects->mapWithKeys(fn($ts) => [$ts->subject_id => $ts->subject]);
+        foreach ($allResults as $res) {
+            if ($res->testSubject && $res->testSubject->subject) {
+                $subjects->put($res->testSubject->subject_id, $res->testSubject->subject);
+            }
+        }
+        $subjects = $subjects->sortBy('name');
+
+        // 4. Calculate Aggregates for Ranking
+        $aggregates = $students->map(function ($student) use ($tests, $resultsByStudentAndTest, $sectionTestSubjects) {
             $obtained = 0;
             $total = 0;
-            foreach ($tests as $test) {
-                foreach ($test->testSubjects as $ts) {
-                    $result = $ts->results->where('student_id', $student->id)->first();
-                    if ($result) {
-                        $obtained += $result->obtained_marks;
-                        $total += $ts->max_marks;
+            
+            // For ranking, we sum marks of the tests selected
+            if (isset($resultsByStudentAndTest[$student->id])) {
+                foreach ($resultsByStudentAndTest[$student->id] as $testId => $results) {
+                    foreach ($results as $res) {
+                        $obtained += $res->obtained_marks;
                     }
                 }
             }
+            
+            // Total marks should be based on expected subjects for the section
+            $total = $sectionTestSubjects->sum('max_marks');
+
             return [
                 'student_id' => $student->id,
                 'obtained' => $obtained,
@@ -395,7 +487,7 @@ class ReportController extends Controller
             ];
         });
 
-        // 2. Determine Positions (Rank)
+        // 5. Determine Positions (Rank)
         $sorted = $aggregates->sortByDesc('obtained')->values();
         $ranks = [];
         $rank = 1;
@@ -408,24 +500,15 @@ class ReportController extends Controller
             $prevObtained = $item['obtained'];
         }
 
-        // 3. Prepare Final Data for View (Subject-wise)
-        $subjects = collect();
-        foreach ($tests as $t) {
-            foreach ($t->testSubjects as $ts) {
-                if (!$subjects->has($ts->subject_id)) {
-                    $subjects->put($ts->subject_id, $ts->subject);
-                }
-            }
-        }
-        $subjects = $subjects->sortBy('name');
-
-        $data = $students->map(function ($student) use ($tests, $ranks, $subjects) {
+        // 6. Prepare Final Data for View
+        $data = $students->map(function ($student) use ($tests, $ranks, $subjects, $resultsByStudentAndTest, $sectionTestSubjects) {
             $studentData = [
                 'student' => $student,
                 'subject_results' => [],
+                'test_totals' => [],
                 'total_obtained' => 0,
                 'total_max' => 0,
-                'rank' => $ranks[$student->id],
+                'rank' => $ranks[$student->id] ?? 0,
             ];
 
             foreach ($subjects as $sid => $subject) {
@@ -435,28 +518,42 @@ class ReportController extends Controller
                 $hasAny = false;
 
                 foreach ($tests as $test) {
-                    $ts = $test->testSubjects->where('subject_id', $sid)->first();
                     $marks = '-';
-                    if ($ts) {
-                        $result = $ts->results->where('student_id', $student->id)->first();
-                        if ($result) {
-                            $marks = $result->obtained_marks;
-                            $subObtained += $marks;
-                            $subMax += $ts->max_marks;
-                            $hasAny = true;
+                    if (!isset($studentData['test_totals'][$test->id])) {
+                        $studentData['test_totals'][$test->id] = 0;
+                    }
+
+                    // Find if student has result for this subject and test
+                    if (isset($resultsByStudentAndTest[$student->id][$test->id])) {
+                        foreach ($resultsByStudentAndTest[$student->id][$test->id] as $res) {
+                            if ($res->testSubject->subject_id == $sid) {
+                                if ($marks === '-') $marks = 0;
+                                $marks += $res->obtained_marks;
+                                $subObtained += $res->obtained_marks;
+                                $studentData['test_totals'][$test->id] += $res->obtained_marks;
+                                $hasAny = true;
+                            }
                         }
                     }
+                    
+                    // Always add max marks from the section's definition
+                    $tsForSection = $sectionTestSubjects->where('test_id', $test->id)->where('subject_id', $sid)->first();
+                    if ($tsForSection) {
+                        $subMax += $tsForSection->max_marks;
+                    }
+                    
                     $testMarks[$test->id] = $marks;
                 }
 
                 if ($hasAny) {
                     $p = $subMax > 0 ? ($subObtained / $subMax) * 100 : 0;
                     
-                    if ($p >= 90) $g = 'A+';
-                    elseif ($p >= 80) $g = 'A';
-                    elseif ($p >= 70) $g = 'B';
-                    elseif ($p >= 60) $g = 'C';
-                    elseif ($p >= 50) $g = 'D';
+                    // Updated Grade Scale
+                    if ($p >= 80) $g = 'A+';
+                    elseif ($p >= 70) $g = 'A';
+                    elseif ($p >= 60) $g = 'B';
+                    elseif ($p >= 45) $g = 'C';
+                    elseif ($p >= 33) $g = 'D';
                     else $g = 'F';
 
                     $studentData['subject_results'][] = [
@@ -466,7 +563,7 @@ class ReportController extends Controller
                         'max' => $subMax,
                         'percentage' => round($p, 1),
                         'grade' => $g,
-                        'status' => $p >= 40 ? 'Pass' : 'Fail' // Using 40 as passing threshold for subjects
+                        'status' => $p >= 33 ? 'Pass' : 'Fail'
                     ];
 
                     $studentData['total_obtained'] += $subObtained;

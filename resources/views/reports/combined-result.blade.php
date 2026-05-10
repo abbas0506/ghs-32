@@ -34,7 +34,10 @@
                 <th style="width: 30px;">Sr</th>
                 <th style="text-align: left; padding-left: 8px;">Student Name</th>
                 @foreach($tests as $test)
-                    <th>{{ $test->title }}</th>
+                    <th>
+                        <div style="font-size: 8px;">{{ $test->title }}</div>
+                        <div style="font-size: 7px; color: #64748b; font-weight: normal; margin-top: 2px;">(Total: {{ $test->section_total_marks }})</div>
+                    </th>
                 @endforeach
                 <th style="background-color: #f0fdfa;">Obt.</th>
                 <th style="background-color: #f0fdfa;">Total</th>

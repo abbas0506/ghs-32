@@ -27,9 +27,8 @@
 
         .data tr th,
         .data tr td {
-            font-size: 10px;
-            padding-left: 4px;
-            padding-right: 4px;
+            font-size: 8px;
+            padding: 2px 4px;
             /* text-align: left; */
         }
 
@@ -48,7 +47,15 @@
         <div class="container">
             <!-- front page ... section gazzet -->
 
-            @foreach ($section->students as $student)
+            @foreach ($data as $row)
+                @php
+                    $student = $row['student'];
+                    $obtained = $row['obtained'];
+                    $total = $row['total'];
+                    $presences = $student->attendances->where('status', 1)->count();
+                    $attendances = $student->attendances->count();
+                @endphp
+
                 @if (($loop->index + 1) % 2 == 0)
                     <div class="mt-16"></div>
                 @endif
@@ -68,13 +75,6 @@
                         </tbody>
                     </table>
                 </div>
-                @php
-                    $obtained = $student->results()->test($test->id)->get()->sum('obtained_marks');
-                    $total = $student->maximumMarks($test->id);
-                    $presences = $student->attendances->where('status', 1)->count();
-                    $attendances = $student->attendances->count();
-                    //$attendanceBonus = round(($presences / $attendances) * 10, 1);
-                @endphp
 
                 <table class="table-auto w-full mt-4" cellspacing="0">
                     <thead>
@@ -98,11 +98,11 @@
                                         {{ $attendances }}
                                     </div>
                                     <div><span class="font-bold">Obtained:</span> {{ $obtained }} /
-                                        {{ $total }} = {{ round(($obtained / $total) * 100, 2) }} %
+                                        {{ $total }} = {{ $row['percentage'] }} %
                                     </div>
                                     <div> <span class="font-bold w-24">Position:</span>
-                                        {{ $student->testRank($sortedResult) }} /
-                                        {{ $student->section->students->count() }}
+                                        {{ $row['position'] }} /
+                                        {{ $section->students->count() }}
                                     </div>
                                 @endif
                             </td>
@@ -133,17 +133,17 @@
                     </thead>
                     <tbody class="data">
 
-                        @foreach ($student->results()->test($test->id)->get() as $result)
+                        @foreach ($row['subject_results'] as $result)
                             <tr class="border">
-                                <td>{{ $loop->index + 1 }}</td>
-                                <td class="text-left">{{ $result->testSubject->subject->name }}</td>
-                                <td>{{ $result->testSubject->max_marks }}</td>
-                                <td>{{ $result->obtained_marks }}</td>
+                                <td>{{ $loop->iteration }}</td>
+                                <td class="text-left">{{ $result['subject_name'] }}</td>
+                                <td>{{ $result['max_marks'] }}</td>
+                                <td>{{ $result['obtained_marks'] }}</td>
                                 @php
-                                    $percentage = round(
-                                        ($result->obtained_marks / $result->testSubject->max_marks) * 100,
+                                    $percentage = $result['max_marks'] > 0 ? round(
+                                        ($result['obtained_marks'] / $result['max_marks']) * 100,
                                         2,
-                                    );
+                                    ) : 0;
 
                                     if ($percentage >= 80) {
                                         $grade = 'A+';
@@ -171,7 +171,7 @@
                             </tr>
                         @endforeach
                         @php
-                            $overallPercentage = $total > 0 ? round(($obtained / $total) * 100, 2) : 0;
+                            $overallPercentage = $row['percentage'];
                             if ($overallPercentage >= 80) {
                                 $overallGrade = 'A+';
                             } elseif ($overallPercentage >= 70) {

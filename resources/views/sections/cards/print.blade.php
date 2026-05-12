@@ -35,7 +35,7 @@
             position: absolute;
             top: 140px;
             /* Adjust based on where you want the image */
-            left: 40px;
+            left: 48px;
             width: 130px;
             opacity: 0.25;
         }
@@ -128,7 +128,7 @@
                                                         alt="" width="32px" height="32px">
                                                     <span
                                                         style="display: block; border-top: 1px solid #000; width: 80px; margin-top: 5px;"></span>
-                                                    <span>Principal</span>
+                                                    <span>Sr. Headmaster</span>
                                                 </div>
                                             </td>
                                         </tr>

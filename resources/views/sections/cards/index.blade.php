@@ -1,46 +1,47 @@
 @extends('layouts.app')
 @section('page-content')
     <div class="custom-container">
-        <!-- Title     -->
-        <h1>Student Cards</h1>
-        <div class="flex flex-wrap items-center gap-2">
-            <div class="flex-1">
-                <div class="bread-crumb">
-                    <a href="{{ url('/') }}">Home</a>
-                    <div>/</div>
-                    <a href="{{ route('sections.index') }}">Sections</a>
-                    <div>/</div>
-                    <a href="{{ route('sections.show', $section) }}">{{ $section->name }}</a>
-                    <div>/</div>
-                    <div>Cards</div>
-                </div>
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 py-2 mb-6">
+        <div>
+            <div class="flex items-center gap-2 text-slate-400 text-[9px] uppercase tracking-[0.1em] font-bold mb-3">
+                <a href="{{ url('/') }}" class="hover:text-teal-600 transition-colors">School</a>
+                <i class="bi-chevron-right text-[8px]"></i>
+                <a href="{{ route('sections.index') }}" class="hover:text-teal-600 transition-colors">Classes</a>
+                <i class="bi-chevron-right text-[8px]"></i>
+                <a href="{{ route('sections.show', $section) }}" class="hover:text-teal-600 transition-colors">{{ $section->name }}</a>
+                <i class="bi-chevron-right text-[8px]"></i>
+                <span class="text-teal-600">ID Cards</span>
             </div>
+            <h2 class="text-base font-bold text-gray-800 leading-none">Generate ID Cards</h2>
         </div>
+    </div>
 
-        <div class="w-full md:w-4/5 mx-auto rounded border-[1px] p-4 md:px-8 mt-8">
-            <div class="">
-                <h1> <i class="ri-group-line"></i> {{ $section->name }} </h1>
-                <div class="text-slate-600 text-xs md:text-sm">{{ $section->students->count() }} Students
-                    found
-                </div>
+        <div class="w-full md:w-4/5 mx-auto bg-white rounded-[2rem] shadow-sm border border-slate-100 overflow-hidden mt-8">
+            <div class="p-6 border-b border-slate-50">
+                <h3 class="text-sm font-bold text-slate-800 flex items-center gap-2">
+                    <i class="ri-group-line text-teal-600"></i> Class {{ $section->name }}
+                </h3>
+                <p class="text-slate-400 text-[10px] uppercase font-bold tracking-widest mt-1">
+                    {{ $section->students->count() }} Students Enrolled
+                </p>
             </div>
 
             <form action="{{ route('section.cards.store', $section) }}" method="post">
                 @csrf
-                <div class="flex mt-4">
-                    <!-- search -->
-                    <div class="flex relative w-full md:w-1/3">
-                        <input type="text" id='searchby' placeholder="Search ..." class="custom-search w-full"
-                            oninput="search(event)">
-                        <i class="bx bx-search absolute top-2 right-2"></i>
-                    </div>
-                    <div class="flex justify-end w-full">
-                        <div
-                            class="flex w-12 h-12 items-center justify-center rounded-full bg-orange-100 hover:bg-orange-200">
-                            <button type="submit"><i class="bi-printer"></i></button>
-                        </div>
+                <div class="flex items-center justify-between gap-4">
+                    <div class="relative w-full md:w-64 group">
+                        <i class="bi bi-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-teal-500 transition-colors"></i>
+                        <input type="text" 
+                            id="searchby" 
+                            placeholder="Search students..." 
+                            class="w-full pl-11 pr-4 py-2.5 bg-slate-50 border-none rounded-xl text-xs font-bold focus:ring-4 focus:ring-teal-500/10 focus:bg-white transition-all outline-none"
+                            oninput="search(event)"
+                        >
                     </div>
 
+                    <button type="submit" class="w-10 h-10 bg-teal-50 text-teal-600 rounded-xl flex items-center justify-center hover:bg-teal-600 hover:text-white transition-all shadow-sm">
+                        <i class="bi bi-printer text-lg"></i>
+                    </button>
                 </div>
                 <!-- page message -->
                 @if ($errors->any())
@@ -51,33 +52,43 @@
 
                 <div class="overflow-x-auto w-full mt-8">
 
-                    <table class="table-fixed borderless w-full">
+                    <table class="w-full text-left border-collapse">
                         <thead>
-                            <tr class="">
-                                <th class="w-8">#</th>
-                                <th class="w-48 text-left">Student</th>
-                                <th class="w-16">Photo</th>
-                                <th class="w-8 py-2"><input type="checkbox" id='chkAll' class="rounded"
-                                        onclick="checkAll()">
+                            <tr class="bg-slate-50/50">
+                                <th class="w-10 text-[10px] font-bold uppercase tracking-widest text-slate-400 w-16">Roll</th>
+                                <th class="text-[10px] font-bold uppercase tracking-widest text-slate-400 text-left">Student Info</th>
+                                <th class="text-[10px] font-bold uppercase tracking-widest text-slate-400 w-20 text-center">Photo</th>
+                                <th class="text-right w-16">
+                                    <input type="checkbox" id="chkAll" class="w-4 h-4 rounded border-slate-300 text-teal-600 focus:ring-teal-500" onclick="checkAll()">
                                 </th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="studentsTableBody">
                             @foreach ($section->students as $student)
-                                <tr class="tr text-sm border-b">
-                                    <td>
-                                        <div class="ico pink mx-auto">
+                                <tr class="tr group hover:bg-teal-50/30 transition-colors border-b border-slate-50">
+                                    <td class="px-3 py-2">
+                                        <span class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-teal-50 text-teal-700 text-[10px] font-bold">
                                             {{ $student->rollno }}
-                                        </div>
+                                        </span>
                                     </td>
                                     <td class="text-left">
-                                        {{ $student->name }}<br><span
-                                            class="text-slate-400 text-xs">{{ $student->father_name }}</span>
+                                        <div class="flex flex-col">
+                                            <span class="text-[10px] font-bold text-slate-700">{{ $student->name }}</span>
+                                            <span class="text-[9px] text-slate-400 uppercase tracking-wide mt-0.5">{{ $student->father_name }}</span>
+                                        </div>
                                     </td>
-                                    <td><img src="{{ asset('storage/' . $student->photo) }}" alt="photo"
-                                            class="rounded mx-auto w-8 h-8"></td>
-                                    <td><input type="checkbox" class="w-4 h-4 rounded" name="student_ids_array[]"
-                                            value="{{ $student->id }}"></td>
+                                    <td class="text-center">
+                                        @if($student->photo)
+                                            <img src="{{ asset('storage/' . $student->photo) }}" alt="photo" class="w-8 h-8 rounded-lg object-cover mx-auto shadow-sm ring-2 ring-white">
+                                        @else
+                                            <div class="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center mx-auto">
+                                                <i class="ri-user-line text-slate-300 text-xs"></i>
+                                            </div>
+                                        @endif
+                                    </td>
+                                    <td class="text-right">
+                                        <input type="checkbox" class="w-4 h-4 rounded border-slate-300 text-teal-600 focus:ring-teal-500 transition-all" name="student_ids_array[]" value="{{ $student->id }}">
+                                    </td>
                                 </tr>
                             @endforeach
                         </tbody>

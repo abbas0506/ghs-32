@@ -67,7 +67,7 @@
                     id="classSearch"
                     onkeyup="searchClasses(event)"
                     placeholder="Search by class name..." 
-                    class="w-full pl-12 pr-4 py-3.5 bg-white border border-slate-200 rounded-2xl text-slate-600 font-medium focus:ring-4 focus:ring-teal-500/10 focus:border-teal-500 transition-all outline-none"
+                    class="w-full pl-12 pr-4 py-3.5 text-sm bg-white border border-slate-200 rounded-2xl text-slate-600 font-medium focus:ring-4 focus:ring-teal-500/10 focus:border-teal-500 transition-all outline-none"
                 >
             </div>
         </div>
@@ -79,15 +79,10 @@
                     <a href="{{ route('sections.show', $section) }}" class="block">
                         <div class="bg-white rounded-[1.25rem] border border-slate-100 p-4 hover:shadow-xl hover:shadow-teal-900/5 hover:border-teal-200 transition-all duration-300 relative hover:-translate-y-1 flex items-center gap-4 w-full">
                             
-                            <!-- Class Initial Avatar -->
-                            <div class="w-14 h-14 bg-slate-50 text-slate-400 rounded-xl flex items-center justify-center text-2xl group-hover:bg-teal-50 group-hover:text-teal-600 transition-colors font-bold shrink-0">
-                                {{ substr($section->name, 0, 1) }}
-                            </div>
-                            
                             <!-- Primary Info -->
                             <div class="flex-1 min-w-0">
-                                <h3 class="text-base font-bold text-slate-800 group-hover:text-teal-700 transition-colors leading-none mb-1.5 truncate">{{ $section->name }}</h3>
-                                <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400 truncate">
+                                <h3 class="text-sm font-bold text-slate-800 group-hover:text-teal-700 transition-colors leading-none mb-1.5 truncate">{{ $section->name }}</h3>
+                                <p class="text-[9px] font-bold uppercase tracking-widest text-slate-400 truncate">
                                     {{ $section->students->count() }} Enrolled
                                 </p>
                             </div>

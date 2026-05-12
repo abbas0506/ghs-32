@@ -137,8 +137,8 @@
         <div class="bg-white rounded-[2.5rem] shadow-sm border border-slate-100 overflow-hidden">
             <div class="p-8 border-b border-slate-50 flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div>
-                    <h2 class="text-xl font-bold text-slate-800">Student Directory</h2>
-                    <p class="text-slate-400 text-sm">Managing records for {{ $section->students->count() }} enrolled students</p>
+                    <h2 class="text-base font-bold text-slate-800">Student Directory</h2>
+                    <p class="text-slate-400 text-xs">Managing records for {{ $section->students->count() }} enrolled students</p>
                 </div>
 
                 <div class="relative w-full md:w-80 group">
@@ -146,52 +146,50 @@
                     <input type="text" 
                         id="studentSearch" 
                         placeholder="Search name or roll no..." 
-                        class="w-full pl-11 pr-4 py-3 bg-slate-50 border-none rounded-2xl text-sm font-medium focus:ring-4 focus:ring-teal-500/10 focus:bg-white transition-all outline-none"
+                        class="w-full pl-11 pr-4 py-3 bg-slate-50 border-none rounded-2xl text-xs md:text-sm font-medium focus:ring-4 focus:ring-teal-500/10 focus:bg-white transition-all outline-none"
                         oninput="searchStudents(event)"
                     >
                 </div>
             </div>
 
             <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse">
+                <table class="table-fixed w-full text-left border-collapse">
                     <thead>
                         <tr class="bg-slate-50/50">
-                            <th class="px-8 py-4 text-[10px] font-bold uppercase tracking-widest text-slate-400">Roll No</th>
-                            <th class="px-8 py-4 text-[10px] font-bold uppercase tracking-widest text-slate-400">Student Information</th>
-                            <th class="px-8 py-4 text-[10px] font-bold uppercase tracking-widest text-slate-400">Status</th>
-                            <th class="px-8 py-4 text-right overflow-hidden"></th>
+                            <th class="w-10 text-[10px] font-bold uppercase tracking-widest text-slate-400">#</th>
+                            <th class="w-32 text-[10px] font-bold uppercase tracking-widest text-slate-400">Student</th>
+                            <th class="w-6 text-right overflow-hidden"></th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-50" id="studentsTableBody">
                         @forelse ($section->students->sortBy('rollno') as $student)
-                            <tr class="student-row group hover:bg-teal-50/30 transition-colors">
-                                <td class="px-8 py-5">
-                                    <span class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-teal-50 text-teal-700 text-xs font-bold ring-4 ring-teal-50/50">
+                            <tr class="student-row group hover:bg-teal-50/30 transition-all cursor-pointer" 
+                                onclick="window.location.href='{{ route('section.students.show', [$section, $student]) }}'">
+                                <td class="px-4 py-2 border-none">
+                                    <span class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-teal-50 text-teal-700 text-[9px] font-bold ring-4 ring-teal-50/50">
                                         {{ $student->rollno }}
                                     </span>
                                 </td>
-                                <td class="px-8 py-5">
+                                <td class="px-4 py-2 border-none">
                                     <div class="flex flex-col">
-                                        <span class="text-sm font-bold text-slate-700 group-hover:text-teal-900 transition-colors">{{ $student->name }}</span>
-                                        <span class="text-xs text-slate-400 mt-0.5">{{ $student->father_name }}</span>
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-[10px] font-bold text-slate-700 group-hover:text-teal-900 transition-colors">{{ $student->name }}</span>
+                                            @if ($student->hasBeenCreatedThisWeek())
+                                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" title="New Admission"></span>
+                                            @endif
+                                        </div>
+                                        <span class="text-[9px] text-slate-400 mt-0.2 text-left">{{ $student->father_name }}</span>
                                     </div>
                                 </td>
-                                <td class="px-8 py-5">
-                                    @if ($student->hasBeenCreatedThisWeek())
-                                        <span class="bg-emerald-50 text-emerald-600 text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-md">New Admission</span>
-                                    @else
-                                        <span class="text-slate-300 text-[10px] font-bold uppercase tracking-widest">Enrolled</span>
-                                    @endif
-                                </td>
-                                <td class="px-8 py-5 text-right">
-                                    <a href="{{ route('section.students.show', [$section, $student]) }}" class="inline-flex items-center gap-2 text-[9px] font-bold uppercase tracking-widest text-slate-400 hover:text-teal-600 transition-colors">
-                                        View Profile <i class="bi bi-chevron-right text-[10px]"></i>
-                                    </a>
+                                <td class="px-4 py-2 text-right border-none">
+                                    <div class="inline-flex items-center gap-2 text-[9px] font-bold uppercase tracking-widest text-slate-400 group-hover:text-teal-600 transition-colors">
+                                       <i class="bi bi-chevron-right text-[10px]"></i>
+                                    </div>
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="4" class="px-8 py-20 text-center">
+                                <td colspan="3" class="px-8 py-20 text-center">
                                     <div class="w-16 h-16 bg-slate-50 text-slate-300 rounded-full flex items-center justify-center mx-auto mb-4">
                                         <i class="bi bi-people text-3xl"></i>
                                     </div>

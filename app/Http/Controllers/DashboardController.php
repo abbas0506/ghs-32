@@ -46,6 +46,8 @@ class DashboardController extends Controller
             ];
         }
 
+        $pendingAlumniCount = \App\Models\Alumni::where('is_approved', false)->count();
+
         return view('dashboard', compact(
             'students', 
             'tests', 
@@ -56,7 +58,8 @@ class DashboardController extends Controller
             'tasksDue', 
             'pendingTasks', 
             'myAllocationsCount',
-            'attendanceTrends'
+            'attendanceTrends',
+            'pendingAlumniCount'
         ));
     }
 

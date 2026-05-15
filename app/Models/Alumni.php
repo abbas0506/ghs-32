@@ -17,5 +17,11 @@ class Alumni extends Model
         'introduction',
         'photo',
         'display_order',
+        'is_approved',
     ];
+
+    public function scopeApproved($query)
+    {
+        return $query->where('is_approved', true);
+    }
 }

@@ -43,6 +43,7 @@
                 <th style="background-color: #f0fdfa;">Total</th>
                 <th style="background-color: #f0fdfa;">%</th>
                 <th style="background-color: #f0fdfa;">Grade</th>
+                <th style="background-color: #f0fdfa;">Pos.</th>
                 <th style="background-color: #f0fdfa;">Status</th>
             </tr>
         </thead>
@@ -58,6 +59,7 @@
                     <td style="background-color: #f0fdfa;">{{ $row['total'] }}</td>
                     <td style="background-color: #f0fdfa; font-weight: bold;">{{ $row['percentage'] }}%</td>
                     <td style="background-color: #f0fdfa;">{{ $row['grade'] }}</td>
+                    <td style="background-color: #f0fdfa; font-weight: bold;">{{ $row['position'] }}</td>
                     <td style="background-color: #f0fdfa;">
                         <span class="{{ strtolower($row['status']) }}">{{ $row['status'] }}</span>
                     </td>

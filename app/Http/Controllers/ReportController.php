@@ -269,13 +269,17 @@ class ReportController extends Controller
             ->groupBy('student_id');
 
         // 4. Calculate Aggregates for Ranking
-        $studentPercentages = $students->map(function ($student) use ($allResults, $testMaxMarks) {
+        $studentPercentages = $students->map(function ($student) use ($allResults) {
             $obtained = 0;
+            $appearedMax = 0;
             if (isset($allResults[$student->id])) {
                 $obtained = $allResults[$student->id]->sum('obtained_marks');
+                $appearedMax = $allResults[$student->id]->sum(function($res) {
+                    return $res->testSubject->max_marks;
+                });
             }
 
-            $percentage = $testMaxMarks > 0 ? ($obtained / $testMaxMarks) * 100 : 0;
+            $percentage = $appearedMax > 0 ? ($obtained / $appearedMax) * 100 : 0;
 
             // Updated Grade Scale
             $percentage = round($percentage, 0);
@@ -290,7 +294,7 @@ class ReportController extends Controller
                 'id' => $student->id,
                 'rollno' => $student->rollno,
                 'name' => $student->name,
-                'max_marks' => $testMaxMarks,
+                'max_marks' => $appearedMax,
                 'obtained_marks' => $obtained,
                 'percentage' => $percentage,
             ];
@@ -391,19 +395,20 @@ class ReportController extends Controller
 
             foreach ($tests as $test) {
                 $testObt = 0;
-                $testMax = $sectionTestSubjects->has($test->id) ? $sectionTestSubjects->get($test->id)->sum('max_marks') : 0;
+                $testAppearedMax = 0;
                 $hasResult = false;
 
                 if (isset($resultsByStudentAndTest[$student->id][$test->id])) {
                     foreach ($resultsByStudentAndTest[$student->id][$test->id] as $res) {
                         $testObt += $res->obtained_marks;
+                        $testAppearedMax += $res->testSubject->max_marks;
                         $hasResult = true;
                     }
                 }
 
                 $studentResults['test_marks'][$test->id] = $hasResult ? $testObt : '-';
                 $studentResults['obtained'] += $testObt;
-                $studentResults['total'] += $testMax;
+                $studentResults['total'] += $testAppearedMax;
             }
 
             $percentage = $studentResults['total'] > 0 ? ($studentResults['obtained'] / $studentResults['total']) * 100 : 0;
@@ -422,6 +427,30 @@ class ReportController extends Controller
 
             return $studentResults;
         });
+
+        // ── Ranking (ties handled same as sectionResult) ──────────────────
+        $sorted = $data->sortByDesc('obtained')->values();
+
+        $rank      = 1;
+        $prevMarks = null;
+        $sameRank  = 0;
+
+        foreach ($sorted as $index => $item) {
+
+            if ($prevMarks !== null && $item['obtained'] == $prevMarks) {
+                $sameRank++;
+            } else {
+                $rank     = $index + 1;
+                $sameRank = 0;
+            }
+
+            $item['position'] = $rank;
+            $prevMarks        = $item['obtained'];
+            $sorted[$index]   = $item;
+        }
+
+        // ── Restore roll-no order for main table ──────────────────────────
+        $data = $sorted->sortBy('rollno')->values();
 
         $pdf = PDF::loadview('reports.combined-result', compact('tests', 'section', 'data'))->setPaper('a4', 'landscape');
         $pdf->set_option("isPhpEnabled", true);
@@ -464,7 +493,7 @@ class ReportController extends Controller
         $subjects = $subjects->sortBy('name');
 
         // 4. Calculate Aggregates for Ranking
-        $aggregates = $students->map(function ($student) use ($tests, $resultsByStudentAndTest, $sectionTestSubjects) {
+        $aggregates = $students->map(function ($student) use ($tests, $resultsByStudentAndTest) {
             $obtained = 0;
             $total = 0;
             
@@ -473,12 +502,10 @@ class ReportController extends Controller
                 foreach ($resultsByStudentAndTest[$student->id] as $testId => $results) {
                     foreach ($results as $res) {
                         $obtained += $res->obtained_marks;
+                        $total += $res->testSubject->max_marks;
                     }
                 }
             }
-            
-            // Total marks should be based on expected subjects for the section
-            $total = $sectionTestSubjects->sum('max_marks');
 
             return [
                 'student_id' => $student->id,

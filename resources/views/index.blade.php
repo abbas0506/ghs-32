@@ -3,192 +3,198 @@
 @section('header')
     <x-header></x-header>
 @endsection
+
 @section('style')
     <style>
-        /* Container holds both button and floating pointer */
-        .button-container {
-            position: relative;
-            display: inline-block;
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
         }
 
-        /* Button styling */
-        .click-demo-button {
-            padding: 0.25rem 1rem;
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #0d9488;
-            background-color: transparent;
-            border: 2px solid #0d9488;
-            border-radius: 9999px;
-            cursor: pointer;
-            overflow: hidden;
-            transition: background-color 0.3s ease;
-            position: relative;
-            z-index: 1;
+        .hero-gradient {
+            background: radial-gradient(circle at top right, rgba(20, 184, 166, 0.05), transparent 40%),
+                        radial-gradient(circle at bottom left, rgba(59, 130, 246, 0.05), transparent 40%);
         }
 
-        .click-demo-button:hover {
-            background-color: rgba(13, 148, 136, 0.1);
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
         }
 
-        /* Pointer icon absolutely positioned OVER the button */
-        .pointer-icon {
-            position: absolute;
-            font-size: 24px;
-            color: #0d9488;
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .feature-card {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        .btn-premium {
+            background: linear-gradient(135deg, #0d9488 0%, #06b6d4 100%);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(13, 148, 136, 0.3);
+        }
+
+        .btn-premium:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(13, 148, 136, 0.4);
+        }
+
+        .section-reveal {
             opacity: 0;
-            z-index: 10;
-            animation: flyClick 3s ease-in-out infinite;
-
-            left: 100%;
-            top: 100%;
-            transform: rotate(-90deg);
+            transform: translateY(30px);
+            transition: all 0.8s ease-out;
         }
 
-        @keyframes flyClick {
-            0% {
-                opacity: 0;
-                transform: translate(40px, 40px) rotate(-90deg);
-            }
-
-            20% {
-                opacity: 1;
-                transform: translate(-300%, -100%) rotate(-90deg);
-            }
-
-            40% {
-                transform: translate(-300%, -100%) scale(0.9) rotate(-90deg);
-            }
-
-            45% {
-                transform: translate(-300%, -100%) scale(1) rotate(-90deg);
-            }
-
-            50% {
-                transform: translate(-300%, -100%) scale(0.9) rotate(-90deg);
-            }
-
-            55% {
-                transform: translate(-300%, -100%) scale(1) rotate(-90deg);
-            }
-
-            80% {
-                opacity: 1;
-            }
-
-            100% {
-                opacity: 0;
-                transform: translate(40px, 40px) rotate(-90deg);
-            }
+        .section-reveal.active {
+            opacity: 1;
+            transform: translateY(0);
         }
     </style>
 @endsection
 
 @section('body')
-    <!-- Bootstrap Icons CDN -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-    <section class="w-screen h-screen">
-        <div class="flex flex-col md:flex-row-reverse justify-between items-center px-5 md:px-24 h-full pt-16">
-            <div class="flex flex-1 justify-end items-center">
-                <img src="{{ url(asset('images/small/education.png')) }}" alt="student" class="w-32 h-32 md:w-96 md:h-96">
-
-            </div>
-
-            <div class="flex flex-col flex-1 gap-y-2 justify-center">
-                <p>Discover</p>
-                <h2 class="text-2xl md:text-4xl font-bold">Quality Education</h2>
-                <p class="text-slate-600 text-sm md:text-lg leading-relaxed mt-4"> We have highly skilled teaching staff who
-                    focus on activity based teaching.
-                    Our institution provides a state of the art environment where your kids' dreams become reality.
-                    Join us as we can lead your kid to destination </p>
-                <a href="">
-                    <button class="btn-teal mt-5 rounded py-2">Join Us <i class="bi-arrow-right"></i></button>
-                </a>
-            </div>
-
-        </div>
-    </section>
-
-    <!-- features section -->
-    <section id='features' class="md:mt-24 px-4 md:px-24 mt-12">
-        <h2 class="text-2xl md:text-4xl text-center">WELCOME TO</h2>
-        <p class="text-center text-sm md:text-lg mt-3">Government High School 32/2L, District
-            Okara</p>
-        <div class="h-1 w-24 bg-teal-800 mx-auto mt-6"></div>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
-            <div class="feature-box hover:border-pink-300 hover:bg-pink-50">
-                <div class="flex items-center justify-center bg-pink-100 rounded-full w-16 h-16">
-                    <i class="bi-book text-2xl text-pink-400"></i>
+    <!-- Hero Section -->
+    <section class="relative min-h-screen flex items-center overflow-hidden hero-gradient pt-16">
+        <div class="container mx-auto px-6 md:px-24 flex flex-col md:flex-row items-center gap-12">
+            <div class="flex-1 space-y-6 md:space-y-8 text-center md:text-left z-10">
+                <div class="inline-block px-4 py-1.5 bg-teal-50 text-teal-600 rounded-full text-sm font-semibold tracking-wide uppercase mb-2">
+                    Discover Your Potential
                 </div>
-                <h3 class="mt-3 text-lg">Quality Education</h3>
-                <p class="text-sm text-center">We provide quality education from nursery to 10<sup>th</sup>
-                    class.</p>
+                <h1 class="heading-section">
+                    Nurturing <span class="text-transparent bg-clip-text bg-gradient-to-r from-teal-600 to-cyan-500">Excellence</span> <br class="hidden md:block"> Through Quality Education
+                </h1>
+                <p class="text-slate-600 text-sm md:text-base leading-relaxed max-w-2xl mx-auto md:mx-0">
+                    We provide a state-of-the-art environment where skilled educators and activity-based learning transform dreams into reality. Join our community of lifelong learners.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center md:justify-start pt-4">
+                    <a href="#" class="btn-premium px-6 py-3 rounded-xl text-white font-bold flex items-center justify-center gap-2">
+                        Get Started <i class="bi bi-arrow-right text-lg"></i>
+                    </a>
+                    </div>
             </div>
-
-            <div class="feature-box hover:border-teal-300 hover:bg-teal-50">
-                <div class="flex items-center justify-center bg-teal-100 rounded-full w-16 h-16">
-                    <i class="bx bx-run text-2xl text-teal-400"></i>
-                </div>
-                <h3 class="mt-3 text-lg">Activity Based</h3>
-                <p class="text-sm text-center">We focus on activity based teaching and interactive teaching </p>
-            </div>
-            <div class="feature-box hover:border-blue-200 hover:bg-blue-50">
-                <div class="flex items-center justify-center bg-blue-100 rounded-full w-16 h-16">
-                    <i class="bx bx-run text-2xl text-blue-400"></i>
-                </div>
-                <h3 class="mt-3 text-lg">Social Development</h3>
-                <p class="text-sm text-center">We build healthy social habits to make your kid a socially responsible
-                    citizen </p>
+            <div class="flex-1 relative">
+                <div class="absolute -top-20 -right-20 w-64 h-64 bg-teal-100 rounded-full blur-3xl opacity-50"></div>
+                <div class="absolute -bottom-20 -left-20 w-64 h-64 bg-blue-100 rounded-full blur-3xl opacity-50"></div>
+                <img src="{{ asset('images/hero_student.png') }}" alt="Education" class="relative z-10 w-full max-w-md mx-auto md:max-w-xl animate-float">
             </div>
         </div>
     </section>
 
-    <!-- distinction -->
-    <section>
-        <div class="mt-24 bg-slate-100">
-            <div class="grid gap-4 md:w-3/4 mx-auto p-4 md:p-8 md:text-base text-sm text-center">
-                <h2 class="text-2xl md:text-3xl">Extra-Curricular Achievements</h2>
-                <p>We engage our learners in extra-curricular activites on regular basis.
-                    We undertand that extra-curricular activites bring healthy changes in students life </p>
+    <!-- Welcome Section -->
+    <section id="features" class="py-16 px-6 md:px-24 bg-white section-reveal">
+        <div class="text-center max-w-2xl mx-auto mb-12">
+            <h2 class="heading-label">Welcome to our School</h2>
+            <h3 class="heading-subtitle">Government High School 32/2L, District Okara</h3>
+            <div class="h-1 w-20 bg-teal-600 mx-auto rounded-full"></div>
+        </div>
 
-            </div>
-        </div>
-        </div>
-    </section>
-
-    <section class="pt-0" data-aos="fade-up">
-        <div class="mt-24 px-4 md:px-16 md:w-3/4 mx-auto">
-            <h2 class="text-2xl md:text-4xl text-center">Message</h2>
-            <div class="h-1 w-24 bg-teal-800 mx-auto mt-6"></div>
-        </div>
-        <div class="w-full md:w-3/4 mx-auto mt-12">
-            <div class="flex justify-center items-center flex-col">
-                <img src="{{ asset('images/default.png') }}" class="w-48 h-48 rounded-full" alt="">
-                <h2 class="mt-3 font-bold text-lg">Muhammad Abbas</h2>
-                <h2>Senior Headmaster</h2>
-                <p class="mt-3 text-sm md:text-lg text-center p-5">
-                    <i class="bx bxs-quote-alt-left quote-icon-left"></i>
-                    We are committed to achieve academic excellence, character education, and inclusive community
-                    engagement. we empower our students to become lifelong learners, compassionate leaders, and contributors
-                    to a globally connected society.
-                    <i class="bx bxs-quote-alt-right quote-icon-right"></i>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
+            <!-- Feature 1 -->
+            <div class="feature-card glass-card p-6 rounded-3xl group">
+                <div class="w-14 h-14 bg-pink-50 rounded-2xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
+                    <i class="bi bi-journal-text text-2xl text-pink-500"></i>
+                </div>
+                <h4 class="text-lg font-bold text-slate-900 mb-3">Quality Education</h4>
+                <p class="text-slate-600 text-xs leading-relaxed">
+                    Comprehensive educational programs from Nursery to 10th class, designed to meet modern academic standards.
                 </p>
             </div>
 
+            <!-- Feature 2 -->
+            <div class="feature-card glass-card p-6 rounded-3xl group">
+                <div class="w-14 h-14 bg-teal-50 rounded-2xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
+                    <i class="bx bx-run text-2xl text-teal-500"></i>
+                </div>
+                <h4 class="text-lg font-bold text-slate-900 mb-3">Activity Based</h4>
+                <p class="text-slate-600 text-xs leading-relaxed">
+                    Engaging interactive teaching methods that encourage students to learn through doing and exploring.
+                </p>
+            </div>
 
+            <!-- Feature 3 -->
+            <div class="feature-card glass-card p-6 rounded-3xl group">
+                <div class="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
+                    <i class="bi bi-people text-2xl text-blue-500"></i>
+                </div>
+                <h4 class="text-lg font-bold text-slate-900 mb-3">Social Development</h4>
+                <p class="text-slate-600 text-xs leading-relaxed">
+                    Fostering healthy social habits and leadership skills to create responsible and conscious citizens of tomorrow.
+                </p>
+            </div>
         </div>
+    </section>
 
-
-    </section><!-- End Ttstimonials Section -->
-
-    <section class="mt-12 md:px-24 p-5">
-        <div class="overflow-x-hidden">
-            <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3148.1450523610893!2d73.52741423705822!3d30.73508993913517!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39180624c19cb001%3A0x4eb6e3a38a104dbe!2sGovt%20Boys%20High%20School!5e0!3m2!1sen!2s!4v1768930968653!5m2!1sen!2s"
-                class="w-full" height="320" style="border:0;" allowfullscreen="" loading="lazy"
-                referrerpolicy="no-referrer-when-downgrade"></iframe>
+    <!-- Achievements Section -->
+    <section class="py-20 bg-slate-50 overflow-hidden section-reveal">
+        <div class="container mx-auto px-6 md:px-24">
+            <div class="bg-gradient-to-br from-teal-700 to-teal-900 rounded-[2.5rem] p-6 md:p-12 text-center text-white relative shadow-2xl">
+                <div class="absolute top-0 left-0 w-full h-full overflow-hidden opacity-10 pointer-events-none">
+                    <div class="absolute -top-10 -left-10 w-40 h-40 bg-white rounded-full"></div>
+                    <div class="absolute top-1/2 left-1/4 w-20 h-20 bg-white rounded-full"></div>
+                    <div class="absolute bottom-1/4 right-1/4 w-32 h-32 bg-white rounded-full"></div>
+                </div>
+                <h2 class="text-xl md:text-3xl font-bold mb-6">Extra-Curricular Achievements</h2>
+                <p class="text-teal-50 text-sm md:text-base max-w-3xl mx-auto leading-relaxed opacity-90">
+                    We believe that education extends beyond the classroom. Our students engage in diverse extra-curricular activities that build character, teamwork, and healthy lifestyle habits.
+                </p>
+            </div>
         </div>
+    </section>
 
+    <!-- Message Section -->
+    <section class="py-16 px-6 md:px-24 section-reveal">
+        <div class="max-w-5xl mx-auto">
+            <div class="text-center mb-10">
+                <h2 class="text-xl md:text-3xl font-bold text-slate-900 mb-4">Headmaster's Message</h2>
+                <div class="h-1 w-20 bg-teal-600 mx-auto rounded-full"></div>
+            </div>
+            
+            <div class="glass-card p-6 md:p-12 rounded-[2.5rem] relative flex flex-col md:flex-row items-center gap-10">
+                <div class="absolute top-10 right-10 opacity-5 hidden md:block">
+                    <i class="bx bxs-quote-right text-9xl text-teal-900"></i>
+                </div>
+                
+                <div class="w-full md:w-1/3 flex flex-col items-center">
+                    <div class="relative">
+                        <div class="absolute inset-0 bg-teal-400 rounded-full blur opacity-20 animate-pulse"></div>
+                        <img src="{{ asset('images/default.png') }}" class="relative w-48 h-48 md:w-64 md:h-64 rounded-3xl object-cover shadow-xl rotate-3 hover:rotate-0 transition-transform duration-500" alt="Headmaster">
+                    </div>
+                    <h3 class="mt-8 text-2xl font-bold text-slate-900">Muhammad Abbas</h3>
+                    <p class="text-teal-600 font-semibold tracking-wide uppercase">Senior Headmaster</p>
+                </div>
+                
+                <div class="w-full md:w-2/3">
+                    <i class="bx bxs-quote-left text-2xl text-teal-400 mb-3"></i>
+                    <p class="text-base md:text-lg text-slate-700 leading-relaxed italic">
+                        "We are committed to achieving academic excellence, character education, and inclusive community engagement. We empower our students to become lifelong learners, compassionate leaders, and contributors to a globally connected society."
+                    </p>
+                    <div class="mt-6 flex items-center gap-4">
+                        <div class="w-8 h-px bg-slate-300"></div>
+                        <span class="text-[10px] text-slate-400 font-medium uppercase tracking-wider">Dedication to Excellence</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Map Section -->
+    <section class="py-12 section-reveal">
+        <div class="container mx-auto px-6 md:px-24">
+            <div class="rounded-[2rem] overflow-hidden shadow-2xl border-8 border-white">
+                <iframe
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3148.1450523610893!2d73.52741423705822!3d30.73508993913517!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39180624c19cb001%3A0x4eb6e3a38a104dbe!2sGovt%20Boys%20High%20School!5e0!3m2!1sen!2s!4v1768930968653!5m2!1sen!2s"
+                    class="w-full" height="350" style="border:0;" allowfullscreen="" loading="lazy"
+                    referrerpolicy="no-referrer-when-downgrade"></iframe>
+            </div>
+        </div>
     </section>
 
     <!-- footer -->
@@ -197,30 +203,22 @@
 
 @section('script')
     <script>
-        let slideIndex = 0;
-        const slides = document.querySelectorAll('.slides img');
-        const totalSlides = slides.length;
+        // Reveal sections on scroll
+        const reveals = document.querySelectorAll(".section-reveal");
 
-        function changeSlide(n) {
-            slideIndex += n;
-            if (slideIndex >= totalSlides) {
-                slideIndex = 0;
-            } else if (slideIndex < 0) {
-                slideIndex = totalSlides - 1;
-            }
-            updateSlides();
-        }
-
-        function updateSlides() {
-            slides.forEach((slide, index) => {
-                if (index === slideIndex) {
-                    slide.classList.remove('hidden');
-                } else {
-                    slide.classList.add('hidden');
+        function reveal() {
+            for (let i = 0; i < reveals.length; i++) {
+                let windowHeight = window.innerHeight;
+                let elementTop = reveals[i].getBoundingClientRect().top;
+                let elementVisible = 150;
+                if (elementTop < windowHeight - elementVisible) {
+                    reveals[i].classList.add("active");
                 }
-            });
+            }
         }
 
-        updateSlides();
+        window.addEventListener("scroll", reveal);
+        // Trigger once on load
+        reveal();
     </script>
 @endsection

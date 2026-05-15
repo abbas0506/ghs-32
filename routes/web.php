@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AlumniController;
 use App\Http\Controllers\AssignmentController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BulkInvoiceController;
@@ -67,8 +68,11 @@ Route::get('/', function () {
 // Route::view('/', 'index');
 Route::view('about', 'about');
 Route::view('contact', 'contact');
-Route::get('faculty', [FacultyController::class, 'index']);
-Route::get('gallary', [GallaryController::class, 'index']);
+Route::resource('faculty', FacultyController::class);
+Route::resource('gallary', GallaryController::class);
+Route::get('alumni', [AlumniController::class, 'index'])->name('alumni.index');
+Route::get('alumni/create', [AlumniController::class, 'create'])->name('alumni.create');
+Route::post('alumni', [AlumniController::class, 'store'])->name('alumni.store');
 
 Route::view('login', 'login');
 Route::get('switch/as/{role}', [UserController::class, 'switchAs']);
@@ -191,6 +195,12 @@ Route::group(['middleware' => ['auth']], function () {
     // Tasks
     Route::resource('tasks', TaskController::class);
     Route::resource('task.task-lines', TaskLineController::class);
+    Route::resource('alumni', AlumniController::class)->except(['index', 'create', 'store'])->parameters([
+        'alumni' => 'alumni'
+    ]);
+    Route::patch('alumni/{alumni}/approve', [AlumniController::class, 'approve'])->name('alumni.approve');
+    Route::patch('faculty/{faculty}/approve', [FacultyController::class, 'approve'])->name('faculty.approve');
+
 
     // Reports
     Route::get('reports/tests/combined', [ReportController::class, 'combinedSelector'])->name('reports.combined.selector');

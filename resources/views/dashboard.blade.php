@@ -18,6 +18,12 @@
                     </h1>
                     <p class="text-teal-50/80 text-sm leading-relaxed mb-5 font-light">
                         You have <span class="text-white">{{ $pendingTasks->count() }} pending tasks</span> and <span class="text-white">{{ $tests->open()->count() }} active assessments</span>.
+                        @if($pendingAlumniCount > 0)
+                            <br>
+                            <span class="inline-flex items-center gap-1.5 mt-2 bg-amber-400/20 text-amber-200 px-3 py-1 rounded-lg text-xs font-bold border border-amber-400/30">
+                                <i class="bi bi-exclamation-circle"></i> {{ $pendingAlumniCount }} Alumni profiles awaiting approval
+                            </span>
+                        @endif
                     </p>
                     
                     <div class="flex flex-wrap gap-2.5 ">
@@ -189,6 +195,19 @@
                             <i class="bi bi-sliders text-xl"></i>
                         </div>
                         <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500 group-hover:text-teal-700">Settings</span>
+                    </a>
+
+                    <a href="{{ route('alumni.index') }}" class="group flex flex-col items-center justify-center bg-slate-50 hover:bg-teal-50/50 p-6 rounded-2xl transition-all border border-transparent hover:border-teal-100 w-full relative">
+                        @if($pendingAlumniCount > 0)
+                            <span class="absolute top-2 right-2 flex h-3 w-3">
+                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                                <span class="relative inline-flex rounded-full h-3 w-3 bg-amber-500"></span>
+                            </span>
+                        @endif
+                        <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm mb-3 group-hover:scale-110 transition-transform group-hover:shadow text-teal-600">
+                            <i class="bi bi-people text-xl"></i>
+                        </div>
+                        <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500 group-hover:text-teal-700">Alumni</span>
                     </a>
                 </div>
             </div>

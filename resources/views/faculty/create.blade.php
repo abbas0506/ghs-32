@@ -46,7 +46,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
                     <div class="space-y-3">
                         <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] ml-1">Prefix & Full Name *</label>
-                        <div class="flex gap-2">
+                        <div class="flex gap-2 flex-wrap">
                             <input type="text" name="prefix" class="w-24 px-4 py-3 bg-slate-50/50 border border-slate-200 rounded-2xl text-xs focus:ring-4 focus:ring-teal-500/10 focus:border-teal-500 transition-all outline-none placeholder:text-slate-300" placeholder="Mr." value="{{ old('prefix') }}">
                             <input type="text" name="name" class="flex-1 px-4 py-3 bg-slate-50/50 border border-slate-200 rounded-2xl text-xs focus:ring-4 focus:ring-teal-500/10 focus:border-teal-500 transition-all outline-none placeholder:text-slate-300" placeholder="Enter full name" value="{{ old('name') }}" required>
                         </div>

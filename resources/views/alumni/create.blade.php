@@ -24,7 +24,7 @@
                 </a>
                 <div>
                     <h1 class="text-xl font-bold text-slate-800 tracking-tight">Add New <span class="text-teal-600">Alumni</span></h1>
-                    <p class="text-[10px] text-slate-400 uppercase tracking-widest font-semibold mt-0.5">Register a distinguished graduate</p>
+                    <p class="text-[10px] text-slate-400 uppercase tracking-widest font-semibold mt-0.5">Register yourself as an Alumni</p>
                 </div>
             </div>
 
@@ -58,19 +58,19 @@
                         <input type="text" name="phone" class="w-full px-4 py-3 bg-slate-50/50 border border-slate-200 rounded-2xl text-xs focus:ring-4 focus:ring-teal-500/10 focus:border-teal-500 transition-all outline-none placeholder:text-slate-300" placeholder="e.g. 0300-1234567" value="{{ old('phone') }}">
                     </div>
                     <div class="space-y-2">
-                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Graduation Session (Year)</label>
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Pass out Session (Year)</label>
                         <input type="number" name="session" class="w-full px-4 py-3 bg-slate-50/50 border border-slate-200 rounded-2xl text-xs focus:ring-4 focus:ring-teal-500/10 focus:border-teal-500 transition-all outline-none placeholder:text-slate-300" placeholder="e.g. 2015" value="{{ old('session', date('Y')) }}">
                     </div>
                 </div>
 
                 <div class="space-y-2">
-                    <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Current Address / Workplace</label>
+                    <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Current Address</label>
                     <input type="text" name="address" class="w-full px-4 py-3 bg-slate-50/50 border border-slate-200 rounded-2xl text-xs focus:ring-4 focus:ring-teal-500/10 focus:border-teal-500 transition-all outline-none placeholder:text-slate-300" placeholder="Current location or organization" value="{{ old('address') }}">
                 </div>
 
                 <div class="space-y-2">
                     <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Short Introduction</label>
-                    <textarea name="introduction" rows="3" class="w-full px-4 py-3 bg-slate-50/50 border border-slate-200 rounded-2xl text-xs focus:ring-4 focus:ring-teal-500/10 focus:border-teal-500 transition-all outline-none placeholder:text-slate-300 resize-none" placeholder="A brief about their achievements or current role...">{{ old('introduction') }}</textarea>
+                    <textarea name="introduction" rows="3" class="w-full px-4 py-3 bg-slate-50/50 border border-slate-200 rounded-2xl text-xs focus:ring-4 focus:ring-teal-500/10 focus:border-teal-500 transition-all outline-none placeholder:text-slate-300 resize-none" placeholder="A brief description of your success story" >{{ old('introduction') }}</textarea>
                 </div>
 
                 <div class="flex flex-col md:flex-row items-center gap-8 bg-slate-50/50 p-6 rounded-[1.5rem] border border-slate-100">
@@ -100,9 +100,9 @@
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-                    <div class="space-y-2">
-                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Display Order</label>
-                        <input type="number" name="display_order" class="w-32 px-4 py-3 bg-slate-50/50 border border-slate-200 rounded-2xl text-xs focus:ring-4 focus:ring-teal-500/10 focus:border-teal-500 transition-all outline-none" value="{{ old('display_order', 1000) }}">
+                    <!-- add go back chevron button -->
+                    <div>
+                        
                     </div>
                     <div class="pt-4 md:pt-6">
                         <button type="submit" class="w-full bg-teal-600 text-white py-4 rounded-2xl text-xs font-bold uppercase tracking-[0.2em] shadow-xl shadow-teal-600/20 hover:bg-teal-700 hover:-translate-y-1 active:translate-y-0 transition-all duration-300">

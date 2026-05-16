@@ -69,8 +69,8 @@
                 </div>
 
                 <div class="space-y-2">
-                    <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Short Introduction</label>
-                    <textarea name="introduction" rows="3" class="w-full px-4 py-3 bg-slate-50/50 border border-slate-200 rounded-2xl text-xs focus:ring-4 focus:ring-teal-500/10 focus:border-teal-500 transition-all outline-none placeholder:text-slate-300 resize-none" placeholder="A brief description of your success story" >{{ old('introduction') }}</textarea>
+                    <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Brief Introduction (Workplace & Designation) </label>
+                    <textarea name="introduction" rows="3" class="w-full px-4 py-3 bg-slate-50/50 border border-slate-200 rounded-2xl text-xs focus:ring-4 focus:ring-teal-500/10 focus:border-teal-500 transition-all outline-none placeholder:text-slate-300 resize-none" placeholder="Mention your work place like Manager, HBL Okara, Principal DPS Tandlianwala, Inspector Police Lahore, etc." >{{ old('introduction') }}</textarea>
                 </div>
 
                 <div class="flex flex-col md:flex-row items-center gap-8 bg-slate-50/50 p-6 rounded-[1.5rem] border border-slate-100">

@@ -83,7 +83,7 @@
             <div class="flex-1 relative">
                 <div class="absolute -top-20 -right-20 w-64 h-64 bg-teal-100 rounded-full blur-3xl opacity-50"></div>
                 <div class="absolute -bottom-20 -left-20 w-64 h-64 bg-blue-100 rounded-full blur-3xl opacity-50"></div>
-                <img src="{{ asset('images/hero_student.png') }}" alt="Education" class="relative z-10 w-full max-w-md mx-auto md:max-w-xl animate-float">
+                <img src="{{ asset('images/small/hero_student.png') }}" alt="Education" class="relative z-10 w-full max-w-md mx-auto md:max-w-xl animate-float">
             </div>
         </div>
     </section>

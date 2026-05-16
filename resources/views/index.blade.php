@@ -65,7 +65,7 @@
     <section class="relative min-h-screen flex items-center overflow-hidden hero-gradient pt-16">
         <div class="container mx-auto px-6 md:px-24 flex flex-col md:flex-row items-center gap-12">
             <div class="flex-1 space-y-6 md:space-y-8 text-center md:text-left z-10">
-                <div class="inline-block px-4 py-1.5 bg-teal-50 text-teal-600 rounded-full text-sm font-semibold tracking-wide uppercase mb-2">
+                <div class="inline-block px-4 py-1.5 bg-teal-50 text-teal-600 rounded-full text-sm font-semibold tracking-wide uppercase mb-2 mt-16">
                     Discover Your Potential
                 </div>
                 <h1 class="heading-section">

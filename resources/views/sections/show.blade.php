@@ -133,6 +133,11 @@
             </a>
         </div>
 
+         @if ($errors->any())
+            <x-message :errors='$errors'></x-message>
+        @else
+            <x-message></x-message>
+        @endif
         <!-- Student List Table -->
         <div class="bg-white rounded-[2.5rem] shadow-sm border border-slate-100 overflow-hidden">
             <div class="p-8 border-b border-slate-50 flex flex-col md:flex-row md:items-center justify-between gap-6">

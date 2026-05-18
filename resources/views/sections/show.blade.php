@@ -156,34 +156,43 @@
                 <table class="table-fixed w-full text-left border-collapse">
                     <thead>
                         <tr class="bg-slate-50/50">
-                            <th class="w-10 text-[10px] font-bold uppercase tracking-widest text-slate-400">#</th>
-                            <th class="w-32 text-[10px] font-bold uppercase tracking-widest text-slate-400">Student</th>
-                            <th class="w-6 text-right overflow-hidden"></th>
+                            <th class="px-3 py-2 w-12 md:w-16 text-[9px] md:text-[10px] font-bold uppercase tracking-widest text-slate-400 text-left">#</th>
+                            <th class="px-3 py-2 text-[9px] md:text-[10px] font-bold uppercase tracking-widest text-slate-400 text-left">Student</th>
+                            <th class="px-3 py-2 w-10 text-right overflow-hidden"></th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-50" id="studentsTableBody">
                         @forelse ($section->students->sortBy('rollno') as $student)
                             <tr class="student-row group hover:bg-teal-50/30 transition-all cursor-pointer" 
                                 onclick="window.location.href='{{ route('section.students.show', [$section, $student]) }}'">
-                                <td class="px-4 py-2 border-none">
-                                    <span class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-teal-50 text-teal-700 text-[9px] font-bold ring-4 ring-teal-50/50">
+                                <td class="px-3 py-2 border-none w-12 md:w-16">
+                                    <span class="inline-flex items-center justify-center w-7 h-7 md:w-8 md:h-8 rounded-lg bg-teal-50 text-teal-700 text-[10px] md:text-[11px] font-bold ring-4 ring-teal-50/50">
                                         {{ $student->rollno }}
                                     </span>
                                 </td>
-                                <td class="px-4 py-2 border-none">
-                                    <div class="flex flex-col">
-                                        <div class="flex items-center gap-2">
-                                            <span class="text-[10px] font-bold text-slate-700 group-hover:text-teal-900 transition-colors">{{ $student->name }}</span>
-                                            @if ($student->hasBeenCreatedThisWeek())
-                                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" title="New Admission"></span>
+                                <td class="px-3 py-2 border-none">
+                                    <div class="flex items-center gap-2.5">
+                                        <div class="w-8 h-8 rounded-lg overflow-hidden shrink-0 border border-slate-100 shadow-sm bg-slate-50 flex items-center justify-center text-slate-300">
+                                            @if ($student->photo)
+                                                <img src="{{ asset('storage/' . $student->photo) }}" alt="{{ $student->name }}" class="w-full h-full object-cover">
+                                            @else
+                                                <i class="bi bi-person text-sm"></i>
                                             @endif
                                         </div>
-                                        <span class="text-[9px] text-slate-400 mt-0.2 text-left">{{ $student->father_name }}</span>
+                                        <div class="flex flex-col min-w-0">
+                                            <div class="flex items-center gap-1.5 flex-wrap">
+                                                <span class="text-[10px] md:text-[12px] font-semibold text-slate-700 group-hover:text-teal-900 transition-colors truncate">{{ $student->name }}</span>
+                                                @if ($student->hasBeenCreatedThisWeek())
+                                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)] shrink-0" title="New Admission"></span>
+                                                @endif
+                                            </div>
+                                            <span class="text-[9px] md:text-[11px] text-slate-400 text-left truncate">{{ $student->father_name }}</span>
+                                        </div>
                                     </div>
                                 </td>
-                                <td class="px-4 py-2 text-right border-none">
-                                    <div class="inline-flex items-center gap-2 text-[9px] font-bold uppercase tracking-widest text-slate-400 group-hover:text-teal-600 transition-colors">
-                                       <i class="bi bi-chevron-right text-[10px]"></i>
+                                <td class="px-3 py-2 border-none w-10">
+                                    <div class="inline-flex justify-center items-center gap-2 text-[8px] md:text-[9px] font-bold uppercase tracking-widest text-slate-400 group-hover:text-teal-600 transition-colors">
+                                       <i class="bi bi-chevron-right text-[9px] md:text-[10px]"></i>
                                     </div>
                                 </td>
                             </tr>

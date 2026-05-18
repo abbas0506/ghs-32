@@ -51,11 +51,6 @@
                            title="Add Subject">
                             <i class="bi-plus-lg"></i> Add Subject
                         </a>
-                        <a href="{{ route('tests.edit', $test) }}"
-                           class="w-10 h-10 flex items-center justify-center bg-white border border-slate-200 text-slate-500 rounded-xl hover:text-teal-600 hover:border-teal-200 transition-all"
-                           title="Edit Test">
-                            <i class="bi-pencil-square text-sm"></i>
-                        </a>
                         @can('lock', $test)
                             <form action="{{ route('test.lock', $test) }}" method="post">
                                 @csrf @method('patch')
@@ -63,16 +58,6 @@
                                     class="w-10 h-10 flex items-center justify-center bg-white border border-slate-200 text-amber-500 rounded-xl hover:bg-amber-50 hover:border-amber-200 transition-all"
                                     title="Lock Assessment">
                                     <i class="bi-unlock font-bold text-sm"></i>
-                                </button>
-                            </form>
-                        @endcan
-                        @can('delete', $test)
-                            <form action="{{ route('tests.destroy', $test) }}" method="POST" onsubmit="confirmDel(event)">
-                                @csrf @method('DELETE')
-                                <button type="submit"
-                                    class="w-10 h-10 flex items-center justify-center bg-white border border-slate-200 text-rose-500 rounded-xl hover:bg-rose-50 hover:border-rose-200 transition-all"
-                                    title="Delete">
-                                    <i class="bi-trash3 text-sm"></i>
                                 </button>
                             </form>
                         @endcan

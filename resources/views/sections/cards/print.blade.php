@@ -97,9 +97,10 @@
 
                                 <!-- Foreground Content -->
                                 <div class="card-content">
-                                    <div><img src="{{ public_path('images/logo/ghs-32.png') }}" alt=""
-                                            width="36px" height="36px"></div>
-                                    <p class="text-xs mt-2">Govt. High School 32/2L, Okara</p>
+                                    <!-- <div><img src="{{ public_path('images/logo/ghs-32.png') }}" alt=""
+                                            width="36px" height="36px"></div> -->
+                                    <h4>Government High School 32/2L, Okara</h4>
+                                    <!-- <p class="text-xs">District Education Authority, Okara</p> -->
 
                                     <div class="w-24 h-24 m-auto mt-3">
                                         @if ($student->photo)

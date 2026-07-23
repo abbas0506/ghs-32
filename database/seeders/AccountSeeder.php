@@ -83,6 +83,12 @@ class AccountSeeder extends Seeder
                 'type' => 'liability',
                 'parent_id' => $liability->id,
             ],
+            [
+                'code' => '2003',
+                'name' => 'Tax Withheld Payable',
+                'type' => 'liability',
+                'parent_id' => $liability->id,
+            ],
         ]);
 
         // ===== EQUITY =====

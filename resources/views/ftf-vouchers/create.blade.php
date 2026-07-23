@@ -4,7 +4,7 @@
     <div class="bread-crumb">
         <a href="/">Home</a>
         <div>/</div>
-        <a href="{{ route('fee-vouchers.index') }}">Fee Vouchers</a>
+        <a href="{{ route('ftf-vouchers.index') }}">Fee Vouchers</a>
         <div>/</div>
         <div>New</div>
     </div>
@@ -28,7 +28,7 @@
         @else
             <x-message></x-message>
         @endif
-        <form action="{{ route('fee-vouchers.store') }}" method='post' class="w-full grid gap-6"
+        <form action="{{ route('ftf-vouchers.store') }}" method='post' class="w-full grid gap-6"
             onsubmit="return validate(event)">
             @csrf
             <div class="grid md:grid-cols-2 gap-3">

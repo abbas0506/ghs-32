@@ -5,11 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class FeePayment extends Model
+class FtfPayment extends Model
 {
     use HasFactory;
+    
+    protected $table = 'ftf_payments';
+
     protected $fillable = [
-        'fee_voucher_id',
+        'ftf_voucher_id',
         'student_id',
         'payment_date',
     ];
@@ -18,9 +21,14 @@ class FeePayment extends Model
         'payment_date' => 'date',
     ];
 
+    public function ftfVoucher()
+    {
+        return $this->belongsTo(FtfVoucher::class, 'ftf_voucher_id');
+    }
+
     public function feeVoucher()
     {
-        return $this->belongsTo(FeeVoucher::class);
+        return $this->ftfVoucher();
     }
 
     public function student()

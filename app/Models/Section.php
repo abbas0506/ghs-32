@@ -33,7 +33,14 @@ class Section extends Model
     }
     public function schedules()
     {
-        return $this->hasMany(Schedule::class);
+        $query = $this->hasMany(Schedule::class);
+
+        $session = \App\Models\AcademicSession::current();
+        if ($session) {
+            $query->where('start_date', '<=', $session->end_date->toDateString())
+                  ->where('end_date', '>=', $session->start_date->toDateString());
+        }
+        return $query;
     }
     public function testSubjects()
     {
@@ -59,9 +66,14 @@ class Section extends Model
     {
         return $this->hasManyThrough(Attendance::class, Student::class);
     }
+    public function ftfVouchers()
+    {
+        return $this->hasManyThrough(FtfVoucher::class, Student::class);
+    }
+
     public function feeInvoices()
     {
-        return $this->hasManyThrough(FeeVoucher::class, Student::class);
+        return $this->ftfVouchers();
     }
     public function attendanceMarked()
     {

@@ -25,12 +25,19 @@ class DatabaseSeeder extends Seeder
             RoleSeeder::class,
             UserSeeder::class,
             GradeSeeder::class,
+            SectionSeeder::class,
+            StudentSeeder::class,
             SubjectSeeder::class,
             GradeSubjectSeeder::class,
             LectureTimingSeeder::class,
             AccountSeeder::class,
             BookDomainSeeder::class,
             BookReturnPolicySeeder::class,
+            AcademicSessionSeeder::class,
+            StudentFeeSeeder::class,
+            NsbReceiptSeeder::class,
+            SpecialGrantSeeder::class,
+            ExpenseSeeder::class,
         ]);
     }
 }

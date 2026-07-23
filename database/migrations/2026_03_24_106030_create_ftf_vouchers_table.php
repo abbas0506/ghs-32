@@ -8,14 +8,15 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
+     * Session scoping is done by checking due_date falls within a session's start_date–end_date.
      */
     public function up(): void
     {
-        Schema::create('fee_vouchers', function (Blueprint $table) {
+        Schema::create('ftf_vouchers', function (Blueprint $table) {
             $table->id();
             $table->unsignedInteger('year');
-            $table->unsignedTinyInteger('month'); //required only if tution fee
-            $table->unsignedInteger('amount')->nullable(); //required only if tution fee
+            $table->unsignedTinyInteger('month');
+            $table->unsignedInteger('amount')->nullable();
             $table->date('due_date');
             $table->string('description');
             $table->timestamps();
@@ -27,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('fee_vouchers');
+        Schema::dropIfExists('ftf_vouchers');
     }
 };

@@ -8,6 +8,7 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
+     * Schedules are scoped to a session by their start_date/end_date overlapping the session range.
      */
     public function up(): void
     {
@@ -24,6 +25,8 @@ return new class extends Migration
             $table->boolean('day5')->default(true);
             $table->boolean('day6')->default(true);
             $table->unsignedTinyInteger('room_no')->nullable();
+            $table->date('start_date');  // When this schedule assignment became active
+            $table->date('end_date');    // When this schedule assignment ended (session end)
             $table->timestamps();
         });
     }

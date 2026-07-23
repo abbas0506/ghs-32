@@ -50,9 +50,14 @@ class Student extends Model
         return $this->hasMany(Fee::class);
     }
 
+    public function ftfPayments()
+    {
+        return $this->hasMany(FtfPayment::class);
+    }
+
     public function feePayments()
     {
-        return $this->hasMany(FeePayment::class);
+        return $this->ftfPayments();
     }
 
 

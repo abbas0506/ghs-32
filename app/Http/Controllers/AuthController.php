@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use App\Models\User;
+use App\Models\AcademicSession;
 use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
@@ -38,6 +39,18 @@ class AuthController extends Controller
             session([
                 'role' => $role,
             ]);
+
+            // Auto-activate academic session matching current date
+            $today = now()->toDateString();
+            $activeSession = AcademicSession::where('start_date', '<=', $today)
+                ->where('end_date', '>=', $today)
+                ->first();
+
+            if ($activeSession && !$activeSession->is_current) {
+                $activeSession->update(['is_current' => true]);
+            }
+
+            session(['academic_session_id' => $activeSession?->id]);
 
             // go to related dashboard
             return redirect("/");

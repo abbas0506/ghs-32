@@ -59,6 +59,29 @@
                 </div>
             </div>
             @endif
+
+            {{-- Session Switcher --}}
+            @php
+                $allSessions = \App\Models\AcademicSession::orderBy('start_date', 'desc')->get();
+                $currentSession = \App\Models\AcademicSession::current();
+            @endphp
+            @if($allSessions->count() > 0)
+            <div class="space-y-1 mt-2 pt-2 border-t border-slate-100">
+                <p class="text-[9px] uppercase tracking-tighter text-slate-400 font-bold mb-1">Session</p>
+                <div class="flex flex-wrap gap-1">
+                    @foreach ($allSessions as $sess)
+                        @php $isActiveSession = ($currentSession && $currentSession->id == $sess->id); @endphp
+                        <form action="{{ route('academic-sessions.switch', $sess->id) }}" method="POST" class="inline">
+                            @csrf
+                            <button type="submit"
+                                class="px-2 py-1 rounded text-[10px] font-bold transition-all {{ $isActiveSession ? 'bg-emerald-600 text-white' : 'bg-white text-slate-600 hover:bg-slate-200 border border-slate-200' }}">
+                                {{ $sess->name }}
+                            </button>
+                        </form>
+                    @endforeach
+                </div>
+            </div>
+            @endif
         </div>
     </div>
 
@@ -110,11 +133,25 @@
                     <span>Gallery</span>
                 </a>
 
-                <!-- Fee -->
-                <a href="{{ route('fee-vouchers.index') }}"
-                    class="group flex items-center px-4 py-2 rounded-xl font-semibold text-sm transition-all duration-200 relative {{ request()->routeIs('fee-vouchers.*') || request()->routeIs('bulk-invoices.*') ? 'bg-indigo-50 text-indigo-700' : 'text-slate-600 hover:bg-slate-50' }}">
+                <!-- FTF -->
+                <a href="{{ route('ftf-vouchers.index') }}"
+                    class="group flex items-center px-4 py-2 rounded-xl font-semibold text-sm transition-all duration-200 relative {{ request()->routeIs('ftf-vouchers.*') || request()->routeIs('bulk-invoices.*') ? 'bg-indigo-50 text-indigo-700' : 'text-slate-600 hover:bg-slate-50' }}">
                     <i class="bi-receipt text-lg mr-3"></i>
-                    <span>Fee</span>
+                    <span>FTF Vouchers</span>
+                </a>
+
+                <!-- NSB Receipts -->
+                <a href="{{ route('nsb-receipts.index') }}"
+                    class="group flex items-center px-4 py-2 rounded-xl font-semibold text-sm transition-all duration-200 relative {{ request()->routeIs('nsb-receipts.*') ? 'bg-indigo-50 text-indigo-700' : 'text-slate-600 hover:bg-slate-50' }}">
+                    <i class="bi-wallet2 text-lg mr-3"></i>
+                    <span>NSB Receipts</span>
+                </a>
+
+                <!-- Special Grants -->
+                <a href="{{ route('special-grants.index') }}"
+                    class="group flex items-center px-4 py-2 rounded-xl font-semibold text-sm transition-all duration-200 relative {{ request()->routeIs('special-grants.*') ? 'bg-indigo-50 text-indigo-700' : 'text-slate-600 hover:bg-slate-50' }}">
+                    <i class="bi-gift text-lg mr-3"></i>
+                    <span>Special Grants</span>
                 </a>
 
                 @role('head')

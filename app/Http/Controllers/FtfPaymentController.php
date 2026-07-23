@@ -2,93 +2,56 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\FeePayment;
+use App\Models\FtfPayment;
 use App\Models\Section;
 use App\Models\Student;
-use App\Models\FeeVoucher;
+use App\Models\FtfVoucher;
 use Exception;
 use Illuminate\Http\Request;
 
-class VoucherPaymentController extends Controller
+class FtfPaymentController extends Controller
 {
     public function index($voucherId, $sectionId)
     {
-        //
-        // $this->authorize('viewAny', FeePayment::class);
-
-        $voucher = FeeVoucher::findOrFail($voucherId);
+        $voucher = FtfVoucher::findOrFail($voucherId);
         $section = Section::findOrFail($sectionId);
-        $fees = FeePayment::where('fee_voucher_id', $voucherId)
+        $fees = FtfPayment::where('ftf_voucher_id', $voucherId)
             ->whereHas('student', function ($query) use ($sectionId) {
                 $query->where('section_id', $sectionId);
             })
-            ->with('student') // optional: eager load student
+            ->with('student')
             ->get();
 
-        return view('vouchers.payments.index', compact('voucher', 'section', 'fees'));
+        return view('ftf-payments.index', compact('voucher', 'section', 'fees'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create($voucherId, $feeId)
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
     public function show($voucherId, $sectionId, $studentId)
     {
-        //
         $section = Section::findOrFail($sectionId);
-        // $this->authorize('view', $section);
-
-        $voucher = FeeVoucher::findOrFail($voucherId);
+        $voucher = FtfVoucher::findOrFail($voucherId);
         $student = Student::findOrFail($studentId);
 
-        return view('vouchers.payments.show', compact('voucher', 'section', 'student'));
+        return view('ftf-payments.show', compact('voucher', 'section', 'student'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit($voucherId, $sectionId, $feeId)
     {
-        //
-        $fee = FeePayment::findOrFail($feeId);
-        // $this->authorize('update', $fee);
-
-        $voucher = FeeVoucher::findOrFail($voucherId);
+        $fee = FtfPayment::findOrFail($feeId);
+        $voucher = FtfVoucher::findOrFail($voucherId);
         $section = Section::findOrFail($sectionId);
         $student = $fee->student;
 
-        return view('vouchers.payments.edit', compact('voucher', 'section', 'student', 'fee'));
+        return view('ftf-payments.edit', compact('voucher', 'section', 'student', 'fee'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, $voucherId, $sectionId, $feeId)
     {
-        //
-        $fee = FeePayment::findOrFail($feeId);
-        // $this->authorize('update', $fee);
+        $fee = FtfPayment::findOrFail($feeId);
 
         try {
             $section = Section::findOrFail($sectionId);
-            $voucher = FeeVoucher::findOrFail($voucherId);
+            $voucher = FtfVoucher::findOrFail($voucherId);
             
-            // If payment_date is provided, use it. Otherwise if status is 1, set to today.
             if ($request->has('payment_date')) {
                 $paymentDate = $request->payment_date;
             } else {
@@ -99,24 +62,19 @@ class VoucherPaymentController extends Controller
                 'payment_date' => $paymentDate,
             ]);
 
-            return redirect()->route('voucher.section.payments.index', [$voucher, $section])->with('success', 'Successfully updated');
+            return redirect()->route('ftf-voucher.section.payments.index', [$voucher->id, $section->id])->with('success', 'Successfully updated');
         } catch (Exception $e) {
             return redirect()->back()->withErrors($e->getMessage());
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy($voucherId, $sectionId, $id)
     {
-        //
-        $fee = FeePayment::findOrFail($id);
-        // $this->authorize('delete', $fee);
+        $fee = FtfPayment::findOrFail($id);
 
         try {
             $fee->delete();
-            return redirect()->route('voucher.section.payments.index', [$voucherId, $sectionId])->with('success', 'Successfully deleted');
+            return redirect()->route('ftf-voucher.section.payments.index', [$voucherId, $sectionId])->with('success', 'Successfully deleted');
         } catch (Exception $e) {
             return redirect()->back()->withErrors($e->getMessage());
         }
@@ -124,16 +82,15 @@ class VoucherPaymentController extends Controller
 
     public function import($voucherId, $sectionId)
     {
-        $voucher = FeeVoucher::findOrFail($voucherId);
+        $voucher = FtfVoucher::findOrFail($voucherId);
         $section = Section::findOrFail($sectionId);
 
-        // missing students
         $students = Student::where('section_id', $sectionId)
-            ->whereDoesntHave('feePayments', function ($query) use ($voucherId) {
-                $query->where('fee_voucher_id', $voucherId);
+            ->whereDoesntHave('ftfPayments', function ($query) use ($voucherId) {
+                $query->where('ftf_voucher_id', $voucherId);
             })
             ->get();
-        return view('vouchers.payments.import', compact('voucher', 'section', 'students'));
+        return view('ftf-payments.import', compact('voucher', 'section', 'students'));
     }
 
     public function postImport(Request $request, $voucherId, $sectionId)
@@ -143,18 +100,18 @@ class VoucherPaymentController extends Controller
         ]);
 
         try {
-            $voucher = FeeVoucher::findOrFail($voucherId);
+            $voucher = FtfVoucher::findOrFail($voucherId);
             $section = Section::findOrFail($sectionId);
 
             $studentIdsArray = $request->student_ids_array;
             $students = Student::whereIn('id', $studentIdsArray)->get();
 
             foreach ($students as $student) {
-                $voucher->feePayments()->create([
+                $voucher->ftfPayments()->create([
                     'student_id' => $student->id,
                 ]);
             }
-            return redirect()->route('voucher.section.payments.index', [$voucherId, $sectionId])->with('success', 'Successfully imported!');
+            return redirect()->route('ftf-voucher.section.payments.index', [$voucherId, $sectionId])->with('success', 'Successfully imported!');
         } catch (Exception $e) {
             return redirect()->back()->withErrors($e->getMessage());
         }
@@ -163,7 +120,7 @@ class VoucherPaymentController extends Controller
     public function postClean($voucherId, $sectionId)
     {
         try {
-            FeePayment::where('fee_voucher_id', $voucherId)
+            FtfPayment::where('ftf_voucher_id', $voucherId)
                 ->whereHas('student', function ($query) use ($sectionId) {
                     $query->where('section_id', $sectionId);
                 })

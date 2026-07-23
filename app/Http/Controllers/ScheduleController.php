@@ -36,20 +36,23 @@ class ScheduleController extends Controller
         //
         $request->validate([
             'subject_id' => 'required',
-            'user_id' => 'required|numeric'
+            'user_id'    => 'required|numeric'
         ]);
+
+        $session = \App\Models\AcademicSession::current();
 
         try {
             Schedule::create([
                 'section_id' => $sectionId,
                 'lecture_no' => $lecture_no,
                 'subject_id' => $request->subject_id,
-                'user_id' => $request->user_id,
+                'user_id'    => $request->user_id,
+                'start_date' => $session ? $session->start_date->toDateString() : now()->toDateString(),
+                'end_date'   => $session ? $session->end_date->toDateString()   : now()->addYear()->toDateString(),
             ]);
             return redirect('class-schedule')->with('success', 'Successfully created');
         } catch (Exception $e) {
             return redirect()->back()->withErrors($e->getMessage());
-            // something went wrong
         }
     }
 

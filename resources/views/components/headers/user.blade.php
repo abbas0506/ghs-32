@@ -4,6 +4,17 @@
             <a href="{{ url('/') }}" class="flex justify-center">
                 <img alt="logo" src="{{ asset('images/logo/ghs-32.png') }}" class="w-8 h-8 md:w-10 md:h-10 md:hidden">
             </a>
+            @php
+                $currentSession = \App\Models\AcademicSession::current();
+            @endphp
+            @if($currentSession)
+                <div class="pl-1 md:pl-2">
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-emerald-50 text-emerald-700 rounded-full text-[9px] font-extrabold uppercase tracking-wider border border-emerald-100/40 shadow-sm">
+                        <span class="w-1 h-1 rounded-full bg-emerald-500 animate-pulse"></span>
+                        Session: {{ $currentSession->name }}
+                    </span>
+                </div>
+            @endif
         </div>
 
         <div class="flex items-center space-x-4">

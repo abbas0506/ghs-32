@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('fee_payments', function (Blueprint $table) {
+        Schema::create('ftf_payments', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('fee_voucher_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('ftf_voucher_id')->constrained()->cascadeOnDelete();
             $table->foreignId('student_id')->constrained()->cascadeOnDelete();
             $table->date('payment_date')->nullable();
             $table->timestamps();
@@ -25,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('fee_payments');
+        Schema::dropIfExists('ftf_payments');
     }
 };

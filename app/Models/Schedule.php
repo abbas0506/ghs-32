@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Schedule extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'section_id',
         'lecture_no',
@@ -19,8 +20,24 @@ class Schedule extends Model
         'day4',
         'day5',
         'day6',
-        'room_no'
+        'room_no',
+        'start_date',
+        'end_date',
     ];
+
+    protected $casts = [
+        'start_date' => 'date',
+        'end_date'   => 'date',
+    ];
+
+    /**
+     * Scope: schedules that overlap with a given session date range.
+     */
+    public function scopeForSession($query, $sessionStartDate, $sessionEndDate)
+    {
+        return $query->where('start_date', '<=', $sessionEndDate)
+                     ->where('end_date', '>=', $sessionStartDate);
+    }
 
     public function section()
     {
@@ -36,10 +53,12 @@ class Schedule extends Model
     {
         return $this->belongsTo(Subject::class);
     }
+
     public function user()
     {
         return $this->belongsTo(User::class);
     }
+
     public function scopeHavingLectureNo($query, $lecture_no)
     {
         return $query->where('lecture_no', $lecture_no);
@@ -48,6 +67,6 @@ class Schedule extends Model
     public function tests()
     {
         return $this->belongsToMany(Test::class, 'test_subjects', 'test_id', 'allocation_id')
-            ->withTimestamps(); // Include timestamps if present
+            ->withTimestamps();
     }
 }

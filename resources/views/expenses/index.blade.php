@@ -1,114 +1,193 @@
 @extends('layouts.app')
+
 @section('page-content')
-    <div class="custom-container">
-        <h1>Expenses</h1>
-        <div class="bread-crumb">
-            <a href="{{ url('/') }}">Home</a>
-            <div>/</div>
-            <div>Expenses</div>
-        </div>
-        <!-- search -->
-        <div class="grid md:w-4/5 mx-auto mt-6 bg-white md:p-8 p-4 rounded border">
-            <div class="flex flex-col md:flex-row justify-between">
-                <div class="flex relative w-full md:w-1/3">
-                    <input type="text" id='searchby' placeholder="Search ..." class="custom-search w-full"
-                        oninput="search(event)">
-                    <i class="bx bx-search absolute top-2 right-2"></i>
-                </div>
-                <div>
-
-                </div>
+    <div class="space-y-4 pb-6">
+        {{-- Minimal Header Section --}}
+        <div class="flex items-center justify-between py-1.5 border-b border-slate-100 pb-2">
+            <div class="flex items-center gap-2">
+                <a href="{{ route('finance.index') }}" class="text-slate-400 hover:text-teal-600 text-xs transition-colors" title="Back to Finance">
+                    <i class="bi bi-arrow-left text-sm font-bold"></i>
+                </a>
+                <span class="text-xs font-extrabold text-slate-800 tracking-tight uppercase">School Expenses</span>
             </div>
-
-            {{-- create new invoice --}}
             <a href="{{ route('expenses.create') }}"
-                class="flex w-12 h-12 justify-center items-center btn-teal rounded-full fixed right-5 bottom-5"><i
-                    class="bi-plus"></i></a>
+                class="px-2.5 py-1 text-[10px] bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-lg font-bold transition-all shadow-sm">
+                + Add Expense
+            </a>
+        </div>
 
-            <!-- page message -->
-            @if ($errors->any())
-                <x-message :errors='$errors'></x-message>
-            @else
-                <x-message></x-message>
-            @endif
+        {{-- Page Messages --}}
+        @if ($errors->any())
+            <x-message :errors='$errors'></x-message>
+        @else
+            <x-message></x-message>
+        @endif
 
-            <div class="overflow-x-auto bg-white w-full mt-8">
-
-                <table class="table-auto borderless w-full">
-                    <thead>
-                        <tr>
-                            <th class="w-8">#</th>
-                            <th class="w-48 text-left">Expense Detail</th>
-                            <th class="w-12">Date</th>
-                            <th class="w-12">Amount</th>
-                            <th class="w-12">Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($expenses as $expense)
-                            <tr class="tr">
-                                <td>{{ $loop->index + 1 }}</td>
-                                <td class="text-left">{{ $expense->expenseAccount->name }}
-                                    <br>
-                                    <span class="text-slate-400 text-xs">{{ $expense->paymentAccount->name }}</span>
-                                </td>
-                                <td>{{ $expense->created_at->format('d/m/y') }}</td>
-                                <td>{{ $expense->amount }}</td>
-                                <td>
-                                    @if ($expense->status)
-                                        <i class="bi-check text-green-800"></i>
-                                    @else
-                                        <i class="bi-question"></i>
-                                    @endif
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-
+        {{-- Search and Filter Controls (Minimal & Responsive) --}}
+        <div class="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
+            {{-- Search Input --}}
+            <div class="flex flex-1 items-center bg-white border border-slate-100 rounded-xl px-3 py-1.5 shadow-sm max-w-md">
+                <i class="bi bi-search text-slate-400 mr-2 text-xs"></i>
+                <input type="text" id="searchby" placeholder="Search expense details..." 
+                    class="w-full text-xs text-slate-800 placeholder-slate-400 bg-transparent outline-none"
+                    oninput="filterExpenses()">
             </div>
-            {{-- Pagination --}}
-            <div class="px-4 py-3 border-t mt-4">
-                {{ $expenses->withQueryString()->links() }}
+            
+            {{-- Category Filter Select --}}
+            <div class="flex items-center bg-white border border-slate-100 rounded-xl px-2 py-1 shadow-sm max-w-[220px]">
+                <i class="bi bi-funnel text-slate-400 mr-1.5 text-xs pl-1"></i>
+                <select id="category_filter" onchange="filterExpenses()"
+                    class="text-xs text-slate-700 bg-transparent outline-none border-0 pr-6 py-0.5 focus:ring-0 font-semibold cursor-pointer">
+                    <option value="all">All Funds</option>
+                    <option value="ftf">Farogh-e-Taleem Fund (FTF)</option>
+                    <option value="nsb">Non-Salary Budget (NSB)</option>
+                    <optgroup label="Special Grants">
+                        @foreach ($specialGrants as $grant)
+                            <option value="grant-{{ $grant->id }}">{{ $grant->title }}</option>
+                        @endforeach
+                    </optgroup>
+                </select>
             </div>
         </div>
 
+        {{-- Expenses Table --}}
+        <div class="bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden">
+            <div class="px-3 py-2 border-b border-slate-50 flex items-center justify-between bg-slate-50/50">
+                <h3 class="text-[9px] font-extrabold text-slate-500 uppercase tracking-wider">Cashbook Expenses</h3>
+                <span id="visible_count_badge" class="px-1.5 py-0.5 bg-slate-200/60 rounded text-[8px] font-bold text-slate-655">
+                    {{ $expenses->count() }} records
+                </span>
+            </div>
+
+            @if ($expenses->count() == 0)
+                <div class="flex flex-col items-center justify-center py-8 px-4 text-center">
+                    <i class="bi bi-receipt text-lg text-slate-400 mb-2"></i>
+                    <h4 class="text-xs font-bold text-slate-755">No Expenses Recorded</h4>
+                </div>
+            @else
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="border-b border-slate-100 bg-slate-50/20">
+                                <th class="py-2 px-3 text-[10px] font-extrabold uppercase text-slate-400 border-0 bg-transparent text-left">Details</th>
+                                <th class="py-2 px-3 text-[10px] font-extrabold uppercase text-slate-400 border-0 bg-transparent text-left">Fund</th>
+                                <th class="py-2 px-3 text-[10px] font-extrabold uppercase text-slate-400 border-0 bg-transparent text-left w-[110px] min-w-[110px]">Date</th>
+                                <th class="py-2 px-3 text-[10px] font-extrabold uppercase text-slate-400 border-0 bg-transparent text-left">Tax Details</th>
+                                <th class="py-2 px-3 text-[10px] font-extrabold uppercase text-slate-400 border-0 bg-transparent text-left">Gross</th>
+                                <th class="py-2 px-3 text-[10px] font-extrabold uppercase text-slate-400 border-0 bg-transparent text-left">Net Paid</th>
+                                <th class="py-2 px-3 text-[10px] font-extrabold uppercase text-slate-400 border-0 bg-transparent text-right">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100 text-slate-700">
+                            @foreach ($expenses as $expense)
+                                <tr class="tr hover:bg-slate-50/60 transition-colors duration-150 text-xs text-slate-655"
+                                    data-fund-type="{{ $expense->fund_type }}"
+                                    data-grant-id="{{ $expense->special_grant_id ?? '' }}">
+                                    <td class="py-2.5 px-3">
+                                        <div class="font-bold text-slate-800 text-xs">{{ $expense->expenseAccount->name }}</div>
+                                        <div class="text-[9px] text-slate-400 font-semibold mt-0.5">
+                                            Paid via {{ $expense->paymentAccount->name }}
+                                            @if ($expense->fund_type === 'special_grant' && $expense->specialGrant)
+                                                &middot; <span class="text-indigo-600">{{ $expense->specialGrant->title }}</span>
+                                            @endif
+                                        </div>
+                                    </td>
+                                    <td class="py-2.5 px-3">
+                                        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[8px] font-bold uppercase {{ $expense->fund_type == 'ftf' ? 'bg-emerald-50 text-emerald-700' : ($expense->fund_type == 'nsb' ? 'bg-amber-50 text-amber-700' : 'bg-teal-50 text-teal-700') }}">
+                                            {{ $expense->fund_type }}
+                                        </span>
+                                    </td>
+                                    <td class="py-2.5 px-3 font-semibold text-slate-600 text-[11px] w-[110px] min-w-[110px]">
+                                        {{ $expense->created_at->format('M d, Y') }}
+                                    </td>
+                                    <td class="py-2.5 px-3 text-[10px]">
+                                        @if ($expense->tax_type === 'none')
+                                            <span class="text-slate-400 italic">No Tax Deducted</span>
+                                        @else
+                                            <div class="space-y-0.5 text-[9px] font-medium text-slate-500">
+                                                @if ($expense->gst_amount > 0)
+                                                    <div>GST ({{ $expense->gst_rate }}%): <span class="font-semibold">{{ number_format($expense->gst_amount) }}</span></div>
+                                                @endif
+                                                @if ($expense->pst_amount > 0)
+                                                    <div>PST ({{ $expense->pst_rate }}%): <span class="font-semibold">{{ number_format($expense->pst_amount) }}</span></div>
+                                                @endif
+                                                @if ($expense->it_amount > 0)
+                                                    <div>IT ({{ $expense->it_rate }}%): <span class="font-semibold">{{ number_format($expense->it_amount) }}</span></div>
+                                                @endif
+                                            </div>
+                                        @endif
+                                    </td>
+                                    <td class="py-2.5 px-3 font-semibold text-slate-500 text-xs">
+                                        {{ number_format($expense->amount) }}
+                                    </td>
+                                    <td class="py-2.5 px-3 font-bold text-slate-800 text-xs">
+                                        {{ number_format($expense->net_amount ?? $expense->amount) }}
+                                    </td>
+                                    <td class="py-2.5 px-3 text-right">
+                                        @if ($expense->status)
+                                            <span class="inline-flex items-center gap-1 text-emerald-600 text-[10px] font-bold">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                                Paid
+                                            </span>
+                                        @else
+                                            <span class="inline-flex items-center gap-1 text-amber-500 text-[10px] font-bold">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
+                                                Pending
+                                            </span>
+                                        @endif
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            @endif
+        </div>
     </div>
 @endsection
+
 @section('script')
     <script>
-        function search(event) {
-            var searchtext = event.target.value.toLowerCase();
-            var str = 0;
-            $('.tr').each(function() {
-                if (!(
-                        $(this).children().eq(0).prop('outerText').toLowerCase().includes(searchtext) ||
-                        $(this).children().eq(1).prop('outerText').toLowerCase().includes(searchtext)
-                    )) {
-                    $(this).addClass('hidden');
+        function filterExpenses() {
+            const searchText = document.getElementById('searchby').value.toLowerCase();
+            const filterVal = document.getElementById('category_filter').value;
+            const rows = document.querySelectorAll('.tr');
+            
+            let visibleCount = 0;
+
+            rows.forEach(row => {
+                const detailText = row.querySelector('div').textContent.toLowerCase();
+                const rowFund = row.getAttribute('data-fund-type');
+                const rowGrant = row.getAttribute('data-grant-id');
+
+                const matchesSearch = detailText.includes(searchText);
+
+                let matchesFilter = false;
+                if (filterVal === 'all') {
+                    matchesFilter = true;
+                } else if (filterVal === 'ftf' && rowFund === 'ftf') {
+                    matchesFilter = true;
+                } else if (filterVal === 'nsb' && rowFund === 'nsb') {
+                    matchesFilter = true;
+                } else if (filterVal.startsWith('grant-')) {
+                    const grantId = filterVal.split('-')[1];
+                    if (rowFund === 'special_grant' && rowGrant === grantId) {
+                        matchesFilter = true;
+                    }
+                }
+
+                if (matchesSearch && matchesFilter) {
+                    row.classList.remove('hidden');
+                    visibleCount++;
                 } else {
-                    $(this).removeClass('hidden');
+                    row.classList.add('hidden');
                 }
             });
-        }
 
-        function confirmUpdate(event, amount) {
-            event.preventDefault(); // prevent form submit
-            var form = event.target; // storing the form
-
-            Swal.fire({
-                title: 'Are you sure?',
-                text: "Fee (" + amount + ") will be paid !",
-                type: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, accept fee!'
-            }).then((result) => {
-                if (result.value) {
-                    form.submit();
-                }
-            })
+            const badge = document.getElementById('visible_count_badge');
+            if (badge) {
+                badge.textContent = visibleCount + ' / ' + rows.length + ' visible';
+            }
         }
     </script>
 @endsection

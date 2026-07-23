@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Grade;
 use App\Models\Section;
 use Illuminate\Database\Seeder;
 
@@ -12,19 +13,27 @@ class SectionSeeder extends Seeder
      */
     public function run(): void
     {
-        //
-        Section::create(['grade_id' => 0, 'name' => 'KG']);
-        Section::create(['grade_id' => 1, 'name' => 'Nursery']);
-        Section::create(['grade_id' => 2, 'name' => 'One']);
-        Section::create(['grade_id' => 3, 'name' => 'Two']);
-        Section::create(['grade_id' => 4, 'name' => 'Three']);
-        Section::create(['grade_id' => 5, 'name' => 'Four']);
-        Section::create(['grade_id' => 6, 'name' => 'Five']);
-        Section::create(['grade_id' => 7, 'name' => 'Six']);
-        Section::create(['grade_id' => 8, 'name' => 'Seven']);
-        Section::create(['grade_id' => 9, 'name' => 'Eight']);
-        Section::create(['grade_id' => 10, 'name' => '9th A']);
-        Section::create(['grade_id' => 10, 'name' => '9th B']);
-        Section::create(['grade_id' => 11, 'name' => '10th']);
+        // Get all grades keyed by their grade_no
+        $grades = Grade::all()->keyBy('grade_no');
+
+        // Helper to get grade ID by grade_no
+        $getGradeId = function($gradeNo) use ($grades) {
+            return $grades->has($gradeNo) ? $grades->get($gradeNo)->id : null;
+        };
+
+        // Create sections using looked-up grade IDs to prevent constraint violations
+        if ($id = $getGradeId(0)) Section::create(['grade_id' => $id, 'name' => 'KG']);
+        if ($id = $getGradeId(0)) Section::create(['grade_id' => $id, 'name' => 'Nursery']);
+        if ($id = $getGradeId(1)) Section::create(['grade_id' => $id, 'name' => 'One']);
+        if ($id = $getGradeId(2)) Section::create(['grade_id' => $id, 'name' => 'Two']);
+        if ($id = $getGradeId(3)) Section::create(['grade_id' => $id, 'name' => 'Three']);
+        if ($id = $getGradeId(4)) Section::create(['grade_id' => $id, 'name' => 'Four']);
+        if ($id = $getGradeId(5)) Section::create(['grade_id' => $id, 'name' => 'Five']);
+        if ($id = $getGradeId(6)) Section::create(['grade_id' => $id, 'name' => 'Six']);
+        if ($id = $getGradeId(7)) Section::create(['grade_id' => $id, 'name' => 'Seven']);
+        if ($id = $getGradeId(8)) Section::create(['grade_id' => $id, 'name' => 'Eight']);
+        if ($id = $getGradeId(9)) Section::create(['grade_id' => $id, 'name' => '9th A']);
+        if ($id = $getGradeId(9)) Section::create(['grade_id' => $id, 'name' => '9th B']);
+        if ($id = $getGradeId(10)) Section::create(['grade_id' => $id, 'name' => '10th']);
     }
 }

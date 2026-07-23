@@ -6,10 +6,15 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BulkInvoiceController;
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\FinanceController;
+use App\Http\Controllers\AcademicSessionController;
+use App\Http\Controllers\NsbReceiptController;
+use App\Http\Controllers\SpecialGrantController;
+use App\Http\Controllers\SpecialGrantInstallmentController;
 use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\FacultyController;
 use App\Http\Controllers\FeeController;
-use App\Http\Controllers\FeeVoucherController;
+use App\Http\Controllers\FtfVoucherController;
 use App\Http\Controllers\GallaryController;
 use App\Http\Controllers\GradeSubjectController;
 use App\Http\Controllers\GradeSubjectLessonController;
@@ -38,7 +43,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserRoleController;
 use App\Http\Controllers\UserScheduleController;
 use App\Http\Controllers\VoucherController;
-use App\Http\Controllers\VoucherPaymentController;
+use App\Http\Controllers\FtfPaymentController;
 use App\Models\Event;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
@@ -90,6 +95,14 @@ Route::get('signout', [AuthController::class, 'signout'])->name('signout');
 
 Route::group(['middleware' => ['auth']], function () {
     Route::get('/dashboard', [DashboardController::class, 'index']);
+    Route::get('/finance', [FinanceController::class, 'index'])->name('finance.index');
+    Route::resource('academic-sessions', AcademicSessionController::class);
+    Route::post('academic-sessions/{id}/switch', [AcademicSessionController::class, 'switchSession'])->name('academic-sessions.switch');
+    Route::resource('nsb-receipts', NsbReceiptController::class);
+    Route::resource('special-grants', SpecialGrantController::class);
+    // Nested installment CRUD: /special-grants/{specialGrant}/installments/...
+    Route::resource('special-grants.installments', SpecialGrantInstallmentController::class)
+        ->only(['create', 'store', 'edit', 'update', 'destroy']);
     Route::view('config', 'config')->name('config');
 
     // users
@@ -154,7 +167,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('bulk-invoices/print/checked', [BulkInvoiceController::class, 'print'])->name('bulk-invoices.print');
 
     // Fee
-    Route::resource('fee-vouchers', FeeVoucherController::class);
+    Route::resource('ftf-vouchers', FtfVoucherController::class);
     Route::resource('lecture-timings', LectureTimingController::class);
     // salaries
     Route::resource('salaries', SalaryController::class);
@@ -162,10 +175,10 @@ Route::group(['middleware' => ['auth']], function () {
     // Expenses
     Route::resource('expenses', ExpenseController::class);
 
-    Route::resource('voucher.section.payments', VoucherPaymentController::class);
-    Route::get('voucher/{voucher}/section/{section}/missing/import', [VoucherPaymentController::class, 'import'])->name('voucher.section.payments.import');
-    Route::post('voucher/{voucher}/section/{section}/missing/import', [VoucherPaymentController::class, 'postImport'])->name('voucher.section.payments.import.post');
-    Route::delete('voucher/{voucher}/section/{section}/clean', [VoucherPaymentController::class, 'postClean'])->name('voucher.section.payments.clean');
+    Route::resource('ftf-voucher.section.payments', FtfPaymentController::class);
+    Route::get('ftf-voucher/{voucher}/section/{section}/missing/import', [FtfPaymentController::class, 'import'])->name('ftf-voucher.section.payments.import');
+    Route::post('ftf-voucher/{voucher}/section/{section}/missing/import', [FtfPaymentController::class, 'postImport'])->name('ftf-voucher.section.payments.import.post');
+    Route::delete('ftf-voucher/{voucher}/section/{section}/clean', [FtfPaymentController::class, 'postClean'])->name('ftf-voucher.section.payments.clean');
 
     // assessment
     Route::resource('tests', TestController::class);

@@ -7,7 +7,7 @@
                 <div class="flex items-center gap-2 text-slate-400 text-xs uppercase tracking-widest font-bold mb-2">
                     <a href="/" class="hover:text-teal-600">Home</a>
                     <i class="bi-chevron-right text-[10px]"></i>
-                    <a href="{{ route('fee-vouchers.index') }}" class="hover:text-teal-600">Vouchers</a>
+                    <a href="{{ route('ftf-vouchers.index') }}" class="hover:text-teal-600">Vouchers</a>
                     <i class="bi-chevron-right text-[10px]"></i>
                     <span class="text-teal-600">Voucher Details</span>
                 </div>
@@ -33,11 +33,11 @@
                     </span>
                 @endif
 
-                <a href="{{ route('fee-vouchers.edit', $feeVoucher) }}" class="flex items-center gap-2 bg-white border border-gray-200 px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-50 transition-all shadow-sm">
+                <a href="{{ route('ftf-vouchers.edit', $feeVoucher) }}" class="flex items-center gap-2 bg-white border border-gray-200 px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-50 transition-all shadow-sm">
                     <i class="bx bx-pencil text-teal-600"></i> Edit
                 </a>
                 
-                <form action="{{ route('fee-vouchers.destroy', $feeVoucher) }}" method="post" onsubmit="return confirmDel(event)" class="inline">
+                <form action="{{ route('ftf-vouchers.destroy', $feeVoucher) }}" method="post" onsubmit="return confirmDel(event)" class="inline">
                     @csrf
                     @method('DELETE')
                     <button class="flex items-center gap-2 bg-white border border-red-100 px-4 py-2 rounded-xl text-xs font-bold text-red-600 hover:bg-red-50 transition-all shadow-sm">
@@ -164,7 +164,7 @@
                                     </div>
                                 </td>
                                 <td class="px-8 py-2 text-right">
-                                    <a href="{{ route('voucher.section.payments.index', [$feeVoucher, $section]) }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-800 text-white text-[10px] font-bold uppercase tracking-widest hover:bg-teal-600 hover:shadow-lg hover:shadow-teal-100 transition-all">
+                                    <a href="{{ route('ftf-voucher.section.payments.index', [$feeVoucher, $section]) }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-800 text-white text-[10px] font-bold uppercase tracking-widest hover:bg-teal-600 hover:shadow-lg hover:shadow-teal-100 transition-all">
                                         Manage <i class="bi-arrow-right"></i>
                                     </a>
                                 </td>

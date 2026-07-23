@@ -7,7 +7,7 @@
                 <div class="flex items-center gap-2 text-slate-400 text-xs uppercase tracking-widest font-bold mb-2">
                     <a href="/" class="hover:text-teal-600">Home</a>
                     <i class="bi-chevron-right text-[10px]"></i>
-                    <a href="{{ route('fee-vouchers.index') }}" class="hover:text-teal-600">Vouchers</a>
+                    <a href="{{ route('ftf-vouchers.index') }}" class="hover:text-teal-600">Vouchers</a>
                     <i class="bi-chevron-right text-[10px]"></i>
                     <span class="text-teal-600">Edit Voucher</span>
                 </div>
@@ -23,7 +23,7 @@
             </div>
 
             <div class="flex items-center gap-2">
-                <a href="{{ route('fee-vouchers.show', $feeVoucher) }}" class="flex items-center gap-2 bg-white border border-gray-200 px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-50 transition-all shadow-sm">
+                <a href="{{ route('ftf-vouchers.show', $feeVoucher) }}" class="flex items-center gap-2 bg-white border border-gray-200 px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-50 transition-all shadow-sm">
                     <i class="bx bx-arrow-back text-teal-600"></i> Back to Details
                 </a>
             </div>
@@ -39,7 +39,7 @@
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <!-- Left Column: Form Details -->
             <div class="lg:col-span-2">
-                <form action="{{ route('fee-vouchers.update', $feeVoucher) }}" method="post" class="space-y-6">
+                <form action="{{ route('ftf-vouchers.update', $feeVoucher) }}" method="post" class="space-y-6">
                     @csrf
                     @method('PUT')
                     
@@ -118,7 +118,7 @@
                     </div>
 
                     <div class="flex items-center justify-end gap-3 pt-4">
-                        <a href="{{ route('fee-vouchers.show', $feeVoucher) }}" class="px-6 py-3 rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-100 transition-all uppercase tracking-widest">Cancel</a>
+                        <a href="{{ route('ftf-vouchers.show', $feeVoucher) }}" class="px-6 py-3 rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-100 transition-all uppercase tracking-widest">Cancel</a>
                         <button type="submit" class="px-8 py-3 rounded-xl bg-teal-600 text-white text-[9px] font-bold uppercase tracking-widest hover:bg-teal-700 hover:shadow-xl hover:shadow-teal-100 transition-all">
                             Save Changes <i class="bi-check2-all ml-2"></i>
                         </button>

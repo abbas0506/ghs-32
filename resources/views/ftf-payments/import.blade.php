@@ -7,11 +7,11 @@
     <div class="bread-crumb">
         <a href="/">Home</a>
         <div>/</div>
-        <a href="{{ route('fee-vouchers.index') }}">Vouchers</a>
+        <a href="{{ route('ftf-vouchers.index') }}">Vouchers</a>
         <div>/</div>
-        <a href="{{ route('fee-vouchers.show', $voucher) }}">Details</a>
+        <a href="{{ route('ftf-vouchers.show', $voucher) }}">Details</a>
         <div>/</div>
-        <a href="{{ route('voucher.section.payments.index', [$voucher, $section]) }}">Payments</a>
+        <a href="{{ route('ftf-voucher.section.payments.index', [$voucher, $section]) }}">Payments</a>
         <div>/</div>
         <div>Import</div>
     </div>
@@ -24,7 +24,7 @@
     <div class="bg-white p-4 md:p-8 rounded-2xl border border-gray-100 shadow-sm mt-4">
         <p class="text-xs text-slate-400 mb-6 uppercase tracking-widest font-bold">Select students to add to this voucher</p>
 
-        <form action="{{ route('voucher.section.payments.import.post', [$voucher, $section]) }}" method="post">
+        <form action="{{ route('ftf-voucher.section.payments.import.post', [$voucher, $section]) }}" method="post">
             @csrf
             <div class="mb-4 flex items-center space-x-2">
                 <input type="checkbox" id="check_all" class="rounded border-gray-300 text-teal-600 focus:ring-teal-500">

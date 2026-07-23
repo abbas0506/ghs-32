@@ -7,17 +7,17 @@
     <div class="bread-crumb">
         <a href="/">Home</a>
         <div>/</div>
-        <a href="{{ route('fee-vouchers.index') }}">Vouchers</a>
+        <a href="{{ route('ftf-vouchers.index') }}">Vouchers</a>
         <div>/</div>
-        <a href="{{ route('fee-vouchers.show', $voucher) }}">Details</a>
+        <a href="{{ route('ftf-vouchers.show', $voucher) }}">Details</a>
         <div>/</div>
-        <a href="{{ route('voucher.section.payments.index', [$voucher, $section]) }}">Payments</a>
+        <a href="{{ route('ftf-voucher.section.payments.index', [$voucher, $section]) }}">Payments</a>
         <div>/</div>
         <div>Edit</div>
     </div>
 
     <div class="md:w-1/2 mx-auto bg-white p-6 md:p-10 rounded-2xl border border-gray-100 shadow-sm mt-8">
-        <form action="{{ route('voucher.section.payments.update', [$voucher, $section, $fee]) }}" method="post">
+        <form action="{{ route('ftf-voucher.section.payments.update', [$voucher, $section, $fee]) }}" method="post">
             @csrf
             @method('PATCH')
             
@@ -29,7 +29,7 @@
             </div>
 
             <div class="mt-8 flex justify-end space-x-2">
-                <a href="{{ route('voucher.section.payments.index', [$voucher, $section]) }}" class="px-6 py-2 text-slate-400 text-[9px] font-bold uppercase">Cancel</a>
+                <a href="{{ route('ftf-voucher.section.payments.index', [$voucher, $section]) }}" class="px-6 py-2 text-slate-400 text-[9px] font-bold uppercase">Cancel</a>
                 <button type="submit" class="bg-teal-600 text-white px-8 py-2 rounded-xl font-bold uppercase text-xs hover:bg-teal-700 transition-all">
                     Update Payment
                 </button>

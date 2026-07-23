@@ -21,7 +21,7 @@
             </div>
 
             @role('head')
-                <a href="{{ route('fee-vouchers.create') }}" 
+                <a href="{{ route('ftf-vouchers.create') }}" 
                    class="flex items-center gap-2 px-6 py-3 bg-teal-600 text-white rounded-xl text-[9px] font-bold uppercase tracking-widest hover:bg-teal-700 hover:shadow-lg hover:shadow-teal-100 transition-all">
                    <i class="bi-plus-lg"></i> Create Voucher
                 </a>
@@ -110,7 +110,7 @@
                                 </td>
                                 <td class="py-2">
                                     <div class="flex flex-col">
-                                        <a href="{{ route('fee-vouchers.show', $feeVoucher) }}" class="text-sm text-left font-bold text-slate-800 hover:text-teal-600 transition-colors leading-tight">
+                                        <a href="{{ route('ftf-vouchers.show', $feeVoucher) }}" class="text-sm text-left font-bold text-slate-800 hover:text-teal-600 transition-colors leading-tight">
                                             {{ $feeVoucher->description }}
                                         </a>
                                         <div class="flex items-center gap-3 mt-1.5">
@@ -132,7 +132,7 @@
                                     </div>
                                 </td>
                                 <td class="py-2 text-enter">
-                                    <a href="{{ route('fee-vouchers.show', $feeVoucher) }}" 
+                                    <a href="{{ route('ftf-vouchers.show', $feeVoucher) }}" 
                                        class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-white border border-slate-200 text-slate-400 hover:text-teal-600 hover:border-teal-200 transition-all">
                                         <i class="bi-chevron-right text-xs"></i>
                                     </a>

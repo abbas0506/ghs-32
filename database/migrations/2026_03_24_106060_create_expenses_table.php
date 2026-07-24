@@ -34,9 +34,12 @@ return new class extends Migration
             $table->unsignedInteger('net_amount');
             $table->boolean('status')->default(false);
             $table->foreignId('transaction_id')->constrained()->cascadeOnDelete();
-            $table->string('fund_type', 15)->default('nsb'); // 'ftf', 'nsb', or 'special_grant'
-            $table->foreignId('special_grant_id')->nullable()->constrained('special_grants')->nullOnDelete();
+            $table->string('fund_type', 15)->default('nsb'); // 'ftf', 'nsb', or 'grant'
+            $table->foreignId('grant_id')->nullable()->constrained('grants')->nullOnDelete();
             $table->string('receipt_no', 50);
+            $table->string('cheque_no', 50)->nullable();
+            $table->string('expense_type', 20)->default('purchase'); // 'purchase', 'service', 'utility', 'other'
+            $table->string('description', 255)->nullable();
 
             $table->timestamps();
         });

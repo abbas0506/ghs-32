@@ -16,8 +16,9 @@ class Expense extends Model
         'status',
         'transaction_id',
         'fund_type',
-        'special_grant_id',
+        'grant_id',
         'receipt_no',
+        'cheque_no',
         'tax_type',
         'gst_rate',
         'pst_rate',
@@ -26,6 +27,8 @@ class Expense extends Model
         'pst_amount',
         'it_amount',
         'net_amount',
+        'expense_type',
+        'description',
     ];
 
     protected $casts = [
@@ -38,7 +41,7 @@ class Expense extends Model
         'it_amount' => 'integer',
         'net_amount' => 'integer',
         'status' => 'boolean',
-        'special_grant_id' => 'integer',
+        'grant_id' => 'integer',
     ];
 
     public function transaction()
@@ -56,8 +59,8 @@ class Expense extends Model
         return $this->belongsTo(Account::class, 'payment_account_id');
     }
 
-    public function specialGrant()
+    public function grant()
     {
-        return $this->belongsTo(SpecialGrant::class, 'special_grant_id');
+        return $this->belongsTo(Grant::class, 'grant_id');
     }
 }

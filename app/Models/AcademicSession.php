@@ -125,7 +125,9 @@ class AcademicSession extends Model
      */
     public function getNsbCollectionAttribute(): int
     {
-        return (int) NsbReceipt::whereBetween('received_date', [
+        $nsbGrant = \App\Models\Grant::where('title', 'like', '%NSB%')->orWhere('title', 'like', '%Non-Salary%')->first();
+        if (!$nsbGrant) return 0;
+        return (int) $nsbGrant->installments()->whereBetween('received_date', [
             $this->start_date->toDateString(),
             $this->end_date->toDateString(),
         ])->sum('amount');
@@ -136,7 +138,9 @@ class AcademicSession extends Model
      */
     public function getSpecialGrantsCollectionAttribute(): int
     {
-        return (int) SpecialGrantInstallment::whereBetween('received_date', [
+        $nsbGrant = \App\Models\Grant::where('title', 'like', '%NSB%')->orWhere('title', 'like', '%Non-Salary%')->first();
+        $nsbId = $nsbGrant ? $nsbGrant->id : 0;
+        return (int) \App\Models\GrantInstallment::where('grant_id', '!=', $nsbId)->whereBetween('received_date', [
             $this->start_date->toDateString(),
             $this->end_date->toDateString(),
         ])->sum('amount');
@@ -158,10 +162,12 @@ class AcademicSession extends Model
      */
     public function getNsbExpensesAttribute(): int
     {
+        $nsbGrant = \App\Models\Grant::where('title', 'like', '%NSB%')->orWhere('title', 'like', '%Non-Salary%')->first();
+        if (!$nsbGrant) return 0;
         return (int) Expense::whereBetween('created_at', [
             $this->start_date->startOfDay()->toDateTimeString(),
             $this->end_date->endOfDay()->toDateTimeString(),
-        ])->where('fund_type', 'nsb')->sum('amount');
+        ])->where('grant_id', $nsbGrant->id)->sum('amount');
     }
 
     /**
@@ -169,10 +175,12 @@ class AcademicSession extends Model
      */
     public function getSpecialGrantsExpensesAttribute(): int
     {
+        $nsbGrant = \App\Models\Grant::where('title', 'like', '%NSB%')->orWhere('title', 'like', '%Non-Salary%')->first();
+        $nsbId = $nsbGrant ? $nsbGrant->id : 0;
         return (int) Expense::whereBetween('created_at', [
             $this->start_date->startOfDay()->toDateTimeString(),
             $this->end_date->endOfDay()->toDateTimeString(),
-        ])->where('fund_type', 'special_grant')->sum('amount');
+        ])->where('grant_id', '!=', $nsbId)->whereNotNull('grant_id')->sum('amount');
     }
 
     /**
@@ -188,7 +196,11 @@ class AcademicSession extends Model
      */
     public function getNsbBalanceAttribute(): int
     {
-        return $this->nsb_start + $this->nsb_collection - $this->nsb_expenses;
+        $nsbGrant = \App\Models\Grant::where('title', 'like', '%NSB%')->orWhere('title', 'like', '%Non-Salary%')->first();
+        if (!$nsbGrant) return 0;
+        $received = $nsbGrant->installments()->sum('amount');
+        $spent = $nsbGrant->expenses()->sum('amount');
+        return $received - $spent;
     }
 
     /**
@@ -196,6 +208,10 @@ class AcademicSession extends Model
      */
     public function getSpecialGrantsBalanceAttribute(): int
     {
-        return $this->special_grants_start + $this->special_grants_collection - $this->special_grants_expenses;
+        $nsbGrant = \App\Models\Grant::where('title', 'like', '%NSB%')->orWhere('title', 'like', '%Non-Salary%')->first();
+        $nsbId = $nsbGrant ? $nsbGrant->id : 0;
+        $received = \App\Models\GrantInstallment::where('grant_id', '!=', $nsbId)->sum('amount');
+        $spent = Expense::where('grant_id', '!=', $nsbId)->whereNotNull('grant_id')->sum('amount');
+        return $received - $spent;
     }
 }

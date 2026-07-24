@@ -8,11 +8,11 @@
                 <a href="{{ route('finance.index') }}" class="text-slate-400 hover:text-teal-600 text-xs transition-colors" title="Back to Finance">
                     <i class="bi bi-arrow-left text-sm font-bold"></i>
                 </a>
-                <span class="text-xs font-extrabold text-slate-800 tracking-tight uppercase">Special Grants</span>
+                <span class="text-xs font-extrabold text-slate-800 tracking-tight uppercase">Grants Admin</span>
             </div>
-            <a href="{{ route('special-grants.create') }}"
+            <a href="{{ route('grants.create') }}"
                 class="px-2.5 py-1 text-[10px] bg-teal-50 hover:bg-teal-100 text-teal-700 rounded-lg font-bold transition-all shadow-sm">
-                + Add Grant
+                + New Grant Type
             </a>
         </div>
 
@@ -26,17 +26,10 @@
         <div class="relative overflow-hidden bg-gradient-to-br from-teal-500 to-emerald-600 text-white p-4 rounded-xl border border-teal-400/20 shadow-sm flex flex-col gap-2">
             <div class="absolute -right-10 -bottom-10 w-24 h-24 bg-white/10 rounded-full blur-xl pointer-events-none"></div>
             <div class="space-y-0.5 relative z-10">
-                <p class="text-[8px] font-black uppercase tracking-wider text-teal-100/80">Active Session · Special Grants</p>
+                <p class="text-[8px] font-black uppercase tracking-wider text-teal-100/80">Active Session · Grants Admin</p>
                 <h2 class="text-sm font-extrabold tracking-tight">
                     Session: {{ $session ? $session->name : 'No Active Session' }}
                 </h2>
-                @if ($session)
-                    <p class="text-[9px] text-teal-100/90">
-                        Opening Balance: <span class="font-bold text-white">{{ number_format($session->special_grants_start) }} PKR</span>
-                        &nbsp;|&nbsp;
-                        Balance: <span class="font-bold text-emerald-100">{{ number_format($session->special_grants_balance) }} PKR</span>
-                    </p>
-                @endif
             </div>
         </div>
 
@@ -86,18 +79,18 @@
                                     </td>
                                     <td class="py-2.5 px-3 text-right">
                                         <div class="flex items-center justify-end gap-2.5">
-                                            <a href="{{ route('special-grants.show', $grant->id) }}"
-                                                class="text-slate-400 hover:text-teal-650 transition-colors"
-                                                title="View Installments">
+                                            <a href="{{ route('grants.show', $grant->id) }}"
+                                                class="text-slate-400 hover:text-teal-655 transition-colors"
+                                                title="View Ledger">
                                                 <i class="bi bi-eye text-sm"></i>
                                             </a>
-                                            <a href="{{ route('special-grants.edit', $grant->id) }}"
-                                                class="text-slate-400 hover:text-teal-650 transition-colors"
+                                            <a href="{{ route('grants.edit', $grant->id) }}"
+                                                class="text-slate-400 hover:text-teal-655 transition-colors"
                                                 title="Edit">
                                                 <i class="bi bi-pencil-square text-sm"></i>
                                             </a>
                                             <form id="delete-form-{{ $grant->id }}"
-                                                action="{{ route('special-grants.destroy', $grant->id) }}"
+                                                action="{{ route('grants.destroy', $grant->id) }}"
                                                 method="POST"
                                                 class="inline">
                                                 @csrf

@@ -140,18 +140,11 @@
                     <span>FTF Vouchers</span>
                 </a>
 
-                <!-- NSB Receipts -->
-                <a href="{{ route('nsb-receipts.index') }}"
-                    class="group flex items-center px-4 py-2 rounded-xl font-semibold text-sm transition-all duration-200 relative {{ request()->routeIs('nsb-receipts.*') ? 'bg-indigo-50 text-indigo-700' : 'text-slate-600 hover:bg-slate-50' }}">
+                <!-- Grants & Funding -->
+                <a href="{{ route('grants.index') }}"
+                    class="group flex items-center px-4 py-2 rounded-xl font-semibold text-sm transition-all duration-200 relative {{ request()->routeIs('grants.*') || request()->routeIs('grant-installments.*') ? 'bg-indigo-50 text-indigo-700' : 'text-slate-600 hover:bg-slate-50' }}">
                     <i class="bi-wallet2 text-lg mr-3"></i>
-                    <span>NSB Receipts</span>
-                </a>
-
-                <!-- Special Grants -->
-                <a href="{{ route('special-grants.index') }}"
-                    class="group flex items-center px-4 py-2 rounded-xl font-semibold text-sm transition-all duration-200 relative {{ request()->routeIs('special-grants.*') ? 'bg-indigo-50 text-indigo-700' : 'text-slate-600 hover:bg-slate-50' }}">
-                    <i class="bi-gift text-lg mr-3"></i>
-                    <span>Special Grants</span>
+                    <span>Grants & Funding</span>
                 </a>
 
                 @role('head')

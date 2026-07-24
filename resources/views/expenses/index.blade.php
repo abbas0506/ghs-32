@@ -84,14 +84,24 @@
                                     data-fund-type="{{ $expense->fund_type }}"
                                     data-grant-id="{{ $expense->special_grant_id ?? '' }}">
                                     <td class="py-2.5 px-3">
-                                        <div class="font-bold text-slate-800 text-xs">{{ $expense->expenseAccount->name }}</div>
-                                        <div class="text-[9px] text-slate-400 font-semibold mt-0.5">
-                                            Paid via {{ $expense->paymentAccount->name }}
-                                            @if ($expense->fund_type === 'special_grant' && $expense->specialGrant)
-                                                &middot; <span class="text-indigo-600">{{ $expense->specialGrant->title }}</span>
-                                            @endif
-                                        </div>
-                                    </td>
+                                         <div class="font-bold text-slate-800 text-xs flex items-center gap-1.5">
+                                             {{ $expense->expenseAccount->name }}
+                                             @if($expense->expense_type)
+                                                 <span class="inline-flex items-center px-1.5 py-0.2 rounded text-[8px] font-bold uppercase bg-slate-100 text-slate-600">
+                                                     {{ $expense->expense_type }}
+                                                 </span>
+                                             @endif
+                                         </div>
+                                         @if($expense->description)
+                                             <div class="text-[11px] text-slate-600 font-medium mt-0.5">{{ $expense->description }}</div>
+                                         @endif
+                                         <div class="text-[9px] text-slate-400 font-semibold mt-0.5">
+                                             Paid via {{ $expense->paymentAccount->name }}
+                                             @if ($expense->fund_type === 'special_grant' && $expense->specialGrant)
+                                                 &middot; <span class="text-indigo-600">{{ $expense->specialGrant->title }}</span>
+                                             @endif
+                                         </div>
+                                     </td>
                                     <td class="py-2.5 px-3">
                                         <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[8px] font-bold uppercase {{ $expense->fund_type == 'ftf' ? 'bg-emerald-50 text-emerald-700' : ($expense->fund_type == 'nsb' ? 'bg-amber-50 text-amber-700' : 'bg-teal-50 text-teal-700') }}">
                                             {{ $expense->fund_type }}

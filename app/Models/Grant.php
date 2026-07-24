@@ -5,11 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class SpecialGrant extends Model
+class Grant extends Model
 {
     use HasFactory;
 
-    protected $table = 'special_grants';
+    protected $table = 'grants';
 
     protected $fillable = [
         'title',
@@ -22,7 +22,15 @@ class SpecialGrant extends Model
      */
     public function installments()
     {
-        return $this->hasMany(SpecialGrantInstallment::class);
+        return $this->hasMany(GrantInstallment::class, 'grant_id');
+    }
+
+    /**
+     * All expenses charged against this grant.
+     */
+    public function expenses()
+    {
+        return $this->hasMany(Expense::class, 'grant_id');
     }
 
     /**

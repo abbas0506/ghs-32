@@ -8,16 +8,16 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
-     * A special grant is a top-level record (e.g. "Govt Computer Lab Grant").
-     * Actual money received is tracked in special_grant_installments.
+     * A grant is a top-level funding record (e.g. "Non-Salary Budget", "Computer Lab Grant").
+     * Actual money received is tracked in grant_installments.
      */
     public function up(): void
     {
-        Schema::create('special_grants', function (Blueprint $table) {
+        Schema::create('grants', function (Blueprint $table) {
             $table->id();
-            $table->string('title');                      // Grant name / title
-            $table->string('issued_by')->nullable();      // Issuing authority / department
-            $table->string('description')->nullable();    // Notes
+            $table->string('title');                    // Grant name / title
+            $table->string('issued_by')->nullable();   // Issuing authority / department
+            $table->string('description')->nullable(); // Notes
             $table->timestamps();
         });
     }
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('special_grants');
+        Schema::dropIfExists('grants');
     }
 };

@@ -5,10 +5,10 @@
         {{-- Header --}}
         <div class="flex items-center justify-between py-1.5 border-b border-slate-100 pb-2">
             <div class="flex items-center gap-2">
-                <a href="{{ route('special-grants.index') }}" class="text-slate-400 hover:text-teal-600 text-xs transition-colors" title="Back to Grants">
+                <a href="{{ route('grants.index') }}" class="text-slate-400 hover:text-teal-600 text-xs transition-colors" title="Back to Grants">
                     <i class="bi bi-arrow-left text-sm font-bold"></i>
                 </a>
-                <span class="text-xs font-extrabold text-slate-800 tracking-tight uppercase">New Special Grant</span>
+                <span class="text-xs font-extrabold text-slate-800 tracking-tight uppercase">New Grant Type</span>
             </div>
         </div>
 
@@ -16,7 +16,7 @@
             <x-message :errors='$errors'></x-message>
         @endif
 
-        <form action="{{ route('special-grants.store') }}" method="POST" class="space-y-4">
+        <form action="{{ route('grants.store') }}" method="POST" class="space-y-4">
             @csrf
 
             <div class="bg-white rounded-xl border border-slate-100 shadow-sm p-4 space-y-3">

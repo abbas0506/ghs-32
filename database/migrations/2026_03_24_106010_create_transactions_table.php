@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
             $table->date('date');
+            $table->string('cheque_no', 50)->nullable();
             $table->text('description')->nullable();
             $table->timestamps();
         });

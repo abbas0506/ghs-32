@@ -5,17 +5,19 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class SpecialGrantInstallment extends Model
+class GrantInstallment extends Model
 {
     use HasFactory;
 
-    protected $table = 'special_grant_installments';
+    protected $table = 'grant_installments';
 
     protected $fillable = [
-        'special_grant_id',
+        'grant_id',
         'amount',
         'received_date',
         'description',
+        'cheque_no',
+        'transaction_id',
     ];
 
     protected $casts = [
@@ -25,6 +27,11 @@ class SpecialGrantInstallment extends Model
 
     public function grant()
     {
-        return $this->belongsTo(SpecialGrant::class, 'special_grant_id');
+        return $this->belongsTo(Grant::class, 'grant_id');
+    }
+
+    public function transaction()
+    {
+        return $this->belongsTo(Transaction::class, 'transaction_id');
     }
 }

@@ -25,28 +25,10 @@
                     <h3 class="text-xs font-black text-slate-700 uppercase tracking-wider border-b border-slate-50 pb-2">Expense Details</h3>
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {{-- Fund Source --}}
-                        <div>
-                            <label for="fund_type" class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Fund Source <span class="text-red-500">*</span></label>
-                            <select name="fund_type" id="fund_type" class="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-400 focus:border-transparent outline-none transition" required>
-                                <option value="nsb" selected>Non-Salary Budget (NSB)</option>
-                                <option value="ftf">Farogh-e-Taleem Fund (FTF)</option>
-                                <option value="special_grant">Special Grant</option>
-                            </select>
-                        </div>
+                        {{-- Fund Source (Hidden & Defaulted to NSB) --}}
+                        <input type="hidden" name="fund_type" id="fund_type" value="nsb">
 
-                        {{-- Special Grant Option --}}
-                        <div id="special_grant_wrapper" class="hidden">
-                            <label for="special_grant_id" class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Select Special Grant <span class="text-red-500">*</span></label>
-                            <select name="special_grant_id" id="special_grant_id" class="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-400 focus:border-transparent outline-none transition">
-                                <option value="">-- Select Grant --</option>
-                                @foreach ($specialGrants as $grant)
-                                    <option value="{{ $grant->id }}">{{ $grant->title }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        {{-- Expense Account --}}
+                        {{-- Expense Category --}}
                         <div>
                             <label for="expense_account_id" class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Expense Category <span class="text-red-500">*</span></label>
                             <select name="expense_account_id" id="expense_account_id" class="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-400 focus:border-transparent outline-none transition" required>
@@ -72,12 +54,31 @@
                             </select>
                         </div>
 
-                        {{-- Gross Amount --}}
+                        {{-- Expense Type --}}
                         <div>
-                            <label for="amount" class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Bill / Gross Amount (PKR) <span class="text-red-500">*</span></label>
+                            <label for="expense_type" class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Expense Type <span class="text-red-500">*</span></label>
+                            <select name="expense_type" id="expense_type" class="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-400 focus:border-transparent outline-none transition" required>
+                                <option value="purchase" {{ old('expense_type') == 'purchase' ? 'selected' : '' }}>Purchase</option>
+                                <option value="service" {{ old('expense_type') == 'service' ? 'selected' : '' }}>Service</option>
+                                <option value="utility" {{ old('expense_type') == 'utility' ? 'selected' : '' }}>Utility</option>
+                                <option value="other" {{ old('expense_type', 'other') == 'other' ? 'selected' : '' }}>Other</option>
+                            </select>
+                        </div>
+
+                        {{-- Description --}}
+                        <div>
+                            <label for="description" class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Description / Detail</label>
+                            <input type="text" id="description" name="description" value="{{ old('description', '') }}"
+                                class="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-400 focus:border-transparent outline-none transition"
+                                placeholder="e.g. Purchased lab stationery">
+                        </div>
+
+                        {{-- Net Amount --}}
+                        <div>
+                            <label for="amount" class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Net Amount Paid (PKR) <span class="text-red-500">*</span></label>
                             <input type="number" id="amount" name="amount" value="{{ old('amount', '') }}" min="1"
                                 class="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-400 focus:border-transparent outline-none transition"
-                                placeholder="e.g. 10000" required>
+                                placeholder="e.g. 7650" required>
                         </div>
 
                         {{-- Receipt Number --}}
@@ -158,37 +159,37 @@
                         
                         <div class="space-y-2 text-xs">
                             <div class="flex items-center justify-between text-slate-300">
-                                <span>Gross Amount:</span>
-                                <span class="font-bold text-white"><span id="preview_gross">0</span> PKR</span>
+                                <span>Net Paid Amount:</span>
+                                <span class="font-bold text-white"><span id="preview_net">0</span> PKR</span>
                             </div>
                             
                             {{-- Taxes List --}}
                             <div class="space-y-1.5 pl-2 border-l border-white/10 my-2" id="taxes_list_preview">
                                 <div class="flex items-center justify-between text-[11px] text-slate-400" id="preview_gst_row">
                                     <span>GST Withheld (<span id="preview_gst_pct">18</span>%):</span>
-                                    <span>- <span id="preview_gst_val">0</span> PKR</span>
+                                    <span>+ <span id="preview_gst_val">0</span> PKR</span>
                                 </div>
                                 <div class="flex items-center justify-between text-[11px] text-slate-400" id="preview_pst_row">
                                     <span>PST Withheld (<span id="preview_pst_pct">20</span>%):</span>
-                                    <span>- <span id="preview_pst_val">0</span> PKR</span>
+                                    <span>+ <span id="preview_pst_val">0</span> PKR</span>
                                 </div>
                                 <div class="flex items-center justify-between text-[11px] text-slate-400" id="preview_it_row">
                                     <span>Income Tax (<span id="preview_it_pct">5.5</span>%):</span>
-                                    <span>- <span id="preview_it_val">0</span> PKR</span>
+                                    <span>+ <span id="preview_it_val">0</span> PKR</span>
                                 </div>
                             </div>
 
-                            <div class="flex items-center justify-between text-[11px] text-rose-300" id="preview_total_tax_row">
-                                <span>Total Deductions:</span>
-                                <span class="font-bold">- <span id="preview_total_tax">0</span> PKR</span>
+                            <div class="flex items-center justify-between text-[11px] text-emerald-300" id="preview_total_tax_row">
+                                <span>Total Taxes Added:</span>
+                                <span class="font-bold">+ <span id="preview_total_tax">0</span> PKR</span>
                             </div>
                         </div>
                     </div>
 
                     <div class="border-t border-white/10 pt-4 mt-6">
                         <div class="flex items-baseline justify-between mb-4">
-                            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Net Payment:</span>
-                            <span class="text-base font-black text-emerald-400"><span id="preview_net">0</span> <span class="text-[9px] text-emerald-500 font-bold">PKR</span></span>
+                            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Gross Bill Amount:</span>
+                            <span class="text-base font-black text-amber-400"><span id="preview_gross">0</span> <span class="text-[9px] text-amber-500 font-bold">PKR</span></span>
                         </div>
                         
                         <button type="submit" class="w-full py-2 bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold rounded-lg transition shadow-md flex items-center justify-center gap-1.5">
@@ -326,13 +327,19 @@
                     }
                 });
 
-                const gstVal = Math.round((amount * gstRate) / 100);
-                const pstVal = Math.round((amount * pstRate) / 100);
-                const itVal = Math.round((amount * itRate) / 100);
-                const totalTax = gstVal + pstVal + itVal;
-                const netVal = amount - totalTax;
+                const rateSum = gstRate + pstRate + itRate;
+                let estimatedGross = amount;
+                if (rateSum < 100) {
+                    estimatedGross = Math.round(amount / (1 - rateSum / 100));
+                }
 
-                previewGross.textContent = amount.toLocaleString();
+                const gstVal = Math.round((estimatedGross * gstRate) / 100);
+                const pstVal = Math.round((estimatedGross * pstRate) / 100);
+                const itVal = Math.round((estimatedGross * itRate) / 100);
+                const totalTax = gstVal + pstVal + itVal;
+                const calculatedGross = amount + totalTax;
+
+                previewGross.textContent = calculatedGross.toLocaleString();
                 
                 previewGstPct.textContent = gstRate;
                 previewGstVal.textContent = gstVal.toLocaleString();
@@ -344,7 +351,7 @@
                 previewItVal.textContent = itVal.toLocaleString();
 
                 previewTotalTax.textContent = totalTax.toLocaleString();
-                previewNet.textContent = netVal.toLocaleString();
+                previewNet.textContent = amount.toLocaleString();
             }
 
             taxTypeInputs.forEach(input => {

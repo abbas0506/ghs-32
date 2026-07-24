@@ -8,9 +8,8 @@ use App\Http\Controllers\TestController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FinanceController;
 use App\Http\Controllers\AcademicSessionController;
-use App\Http\Controllers\NsbReceiptController;
-use App\Http\Controllers\SpecialGrantController;
-use App\Http\Controllers\SpecialGrantInstallmentController;
+use App\Http\Controllers\GrantController;
+use App\Http\Controllers\GrantInstallmentController;
 use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\FacultyController;
 use App\Http\Controllers\FeeController;
@@ -98,11 +97,12 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/finance', [FinanceController::class, 'index'])->name('finance.index');
     Route::resource('academic-sessions', AcademicSessionController::class);
     Route::post('academic-sessions/{id}/switch', [AcademicSessionController::class, 'switchSession'])->name('academic-sessions.switch');
-    Route::resource('nsb-receipts', NsbReceiptController::class);
-    Route::resource('special-grants', SpecialGrantController::class);
-    // Nested installment CRUD: /special-grants/{specialGrant}/installments/...
-    Route::resource('special-grants.installments', SpecialGrantInstallmentController::class)
+    Route::resource('grants', GrantController::class);
+    Route::resource('grants.installments', GrantInstallmentController::class)
         ->only(['create', 'store', 'edit', 'update', 'destroy']);
+    Route::resource('accounts', \App\Http\Controllers\AccountController::class);
+    Route::post('accounts/{account}/transaction', [\App\Http\Controllers\AccountController::class, 'storeTransaction'])->name('accounts.transaction.store');
+    Route::delete('accounts/transactions/{transaction}', [\App\Http\Controllers\AccountController::class, 'destroyTransaction'])->name('accounts.transaction.destroy');
     Route::view('config', 'config')->name('config');
 
     // users

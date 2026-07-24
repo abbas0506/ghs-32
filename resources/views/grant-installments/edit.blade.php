@@ -5,7 +5,7 @@
         {{-- Header --}}
         <div class="flex items-center justify-between py-1.5 border-b border-slate-100 pb-2">
             <div class="flex items-center gap-2">
-                <a href="{{ route('special-grants.show', $specialGrant->id) }}" class="text-slate-400 hover:text-teal-600 text-xs transition-colors" title="Back to Grant">
+                <a href="{{ route('grants.show', $grant->id) }}" class="text-slate-400 hover:text-teal-600 text-xs transition-colors" title="Back to Grant">
                     <i class="bi bi-arrow-left text-sm font-bold"></i>
                 </a>
                 <span class="text-xs font-extrabold text-slate-800 tracking-tight uppercase">Edit Installment</span>
@@ -15,14 +15,14 @@
         {{-- Grant Context (Teal Theme) --}}
         <div class="bg-teal-50 border border-teal-100 rounded-lg px-3 py-2">
             <p class="text-[8px] font-bold uppercase text-teal-400 tracking-wider">Grant</p>
-            <p class="text-[11px] font-bold text-teal-800">{{ $specialGrant->title }}</p>
+            <p class="text-[11px] font-bold text-teal-800">{{ $grant->title }}</p>
         </div>
 
         @if ($errors->any())
             <x-message :errors='$errors'></x-message>
         @endif
 
-        <form action="{{ route('special-grants.installments.update', [$specialGrant->id, $installment->id]) }}" method="POST" class="space-y-4">
+        <form action="{{ route('grants.installments.update', [$grant->id, $installment->id]) }}" method="POST" class="space-y-4">
             @csrf
             @method('PUT')
 

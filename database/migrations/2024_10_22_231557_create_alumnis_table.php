@@ -21,6 +21,7 @@ return new class extends Migration
             $table->text('introduction')->nullable();
             $table->string('photo')->nullable();
             $table->unsignedInteger('display_order')->default(1000);
+            $table->boolean('is_approved')->default(false); // merged from add_is_approved_to_alumnis
             $table->timestamps();
         });
     }

@@ -49,6 +49,18 @@ class FinanceController extends Controller
             $specialGrantsChange = 0;
         }
 
+        // Fetch FTF Bank Account and SMC Bank Account
+        $ftfAccount = \App\Models\Account::where('code', '1002')->orWhere('name', 'like', '%FTF%')->first();
+        $smcAccount = \App\Models\Account::where('code', '1007')->orWhere('name', 'like', '%SMC%')->first();
+
+        // Fetch each grant and compute balance
+        $specialGrants = \App\Models\Grant::with(['installments', 'expenses'])->get();
+        foreach ($specialGrants as $grant) {
+            $received = $grant->installments->sum('amount');
+            $spent = $grant->expenses->sum('amount');
+            $grant->balance = $received - $spent;
+        }
+
         return view('finance', compact(
             'ftfBalance', 
             'nsbBalance', 
@@ -56,7 +68,10 @@ class FinanceController extends Controller
             'ftfChange', 
             'nsbChange', 
             'specialGrantsChange', 
-            'currentSession'
+            'currentSession',
+            'specialGrants',
+            'ftfAccount',
+            'smcAccount'
         ));
     }
 }

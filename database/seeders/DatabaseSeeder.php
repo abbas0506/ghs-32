@@ -35,8 +35,8 @@ class DatabaseSeeder extends Seeder
             BookReturnPolicySeeder::class,
             AcademicSessionSeeder::class,
             StudentFeeSeeder::class,
-            NsbReceiptSeeder::class,
-            SpecialGrantSeeder::class,
+            GrantSeeder::class,
+            GrantInstallmentSeeder::class,
             ExpenseSeeder::class,
         ]);
     }

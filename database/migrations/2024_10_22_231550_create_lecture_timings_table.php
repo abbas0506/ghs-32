@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->tinyInteger('lecture_no');
             $table->time('starts_at');
+            $table->integer('duration')->nullable()->default(30); // duration in minutes
             $table->timestamps();
         });
     }

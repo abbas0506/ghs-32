@@ -27,7 +27,14 @@ class AccountSeeder extends Seeder
             ],
             [
                 'code' => '1002',
-                'name' => 'Bank',
+                'name' => 'FTF Bank Account',
+                'type' => 'asset',
+                'is_payment_method' => 1,
+                'parent_id' => $asset->id,
+            ],
+            [
+                'code' => '1007',
+                'name' => 'SMC Bank Account',
                 'type' => 'asset',
                 'is_payment_method' => 1,
                 'parent_id' => $asset->id,
@@ -135,7 +142,12 @@ class AccountSeeder extends Seeder
                 'type' => 'income',
                 'parent_id' => $income->id,
             ],
-
+            [
+                'code' => '4002',
+                'name' => 'Grant Receipts Income',
+                'type' => 'income',
+                'parent_id' => $income->id,
+            ],
         ]);
 
         // ===== EXPENSES =====

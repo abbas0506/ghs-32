@@ -20,8 +20,8 @@
                             <tr>
                                 <th class="px-4 py-2 text-left font-medium text-gray-700">Date</th>
                                 <th class="px-4 py-2 text-left font-medium text-gray-700">Txn #</th>
-                                <th class="px-4 py-2 text-right font-medium text-gray-700">Debit</th>
-                                <th class="px-4 py-2 text-right font-medium text-gray-700">Credit</th>
+                                <th class="px-4 py-2 text-right font-medium text-gray-700">Credit (Outflow)</th>
+                                <th class="px-4 py-2 text-right font-medium text-gray-700">Debit (Inflow)</th>
                                 <th class="px-4 py-2 text-right font-medium text-gray-700">Balance</th>
                             </tr>
                         </thead>
@@ -41,11 +41,11 @@
                                     <td class="px-4 py-2">
                                         {{ $line->transaction_id }}
                                     </td>
-                                    <td class="px-4 py-2 text-right text-green-600">
-                                        {{ $line->debit ? number_format($line->debit, 2) : '—' }}
-                                    </td>
                                     <td class="px-4 py-2 text-right text-red-600">
                                         {{ $line->credit ? number_format($line->credit, 2) : '—' }}
+                                    </td>
+                                    <td class="px-4 py-2 text-right text-green-600">
+                                        {{ $line->debit ? number_format($line->debit, 2) : '—' }}
                                     </td>
                                     <td class="px-4 py-2 text-right font-medium">
                                         {{ number_format($balance, 2) }}
@@ -64,11 +64,11 @@
                         <tfoot class="bg-gray-100 font-semibold">
                             <tr>
                                 <td colspan="2" class="px-4 py-2 text-right">Total</td>
-                                <td class="px-4 py-2 text-right text-green-700">
-                                    {{ number_format($account->lines->sum('debit'), 2) }}
-                                </td>
                                 <td class="px-4 py-2 text-right text-red-700">
                                     {{ number_format($account->lines->sum('credit'), 2) }}
+                                </td>
+                                <td class="px-4 py-2 text-right text-green-700">
+                                    {{ number_format($account->lines->sum('debit'), 2) }}
                                 </td>
                                 <td class="px-4 py-2 text-right">
                                     {{ number_format($account->lines->sum('debit') - $account->lines->sum('credit'), 2) }}

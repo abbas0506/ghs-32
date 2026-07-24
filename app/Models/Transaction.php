@@ -10,6 +10,7 @@ class Transaction extends Model
     use HasFactory;
     protected $fillable = [
         'date',
+        'cheque_no',
         'description',
     ];
 

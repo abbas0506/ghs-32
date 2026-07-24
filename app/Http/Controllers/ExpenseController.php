@@ -47,18 +47,33 @@ class ExpenseController extends Controller
             'amount' => 'required|numeric|min:1',
             'expense_account_id' => 'required|exists:accounts,id',
             'payment_account_id' => 'nullable|exists:accounts,id',
-            'fund_type' => 'nullable|string|in:ftf,nsb,special_grant',
-            'special_grant_id' => 'nullable|exists:special_grants,id',
+            'fund_type' => 'nullable|string|in:ftf,nsb,special_grant,grant',
+            'grant_id' => 'nullable|exists:grants,id',
+            'special_grant_id' => 'nullable|exists:grants,id',
             'receipt_no' => 'required|string|max:50',
+            'cheque_no' => 'nullable|string|max:50',
             'tax_type' => 'required|string|in:none,purchase,service',
             'gst_rate' => 'nullable|numeric|min:0|max:100',
             'pst_rate' => 'nullable|numeric|min:0|max:100',
             'it_rate' => 'nullable|numeric|min:0|max:100',
+            'expense_type' => 'required|string|in:purchase,service,utility,other',
+            'description' => 'nullable|string|max:255',
         ]);
 
-        $fundType = $request->fund_type ?? 'nsb';
+        $fundType = $request->fund_type ?? 'grant';
+        if ($fundType === 'nsb' || $fundType === 'special_grant') {
+            $fundType = 'grant';
+        }
+
+        $grantId = $request->grant_id ?? $request->special_grant_id;
+
+        if ($fundType === 'grant' && !$grantId) {
+            $nsbGrant = \App\Models\Grant::where('title', 'like', '%NSB%')->orWhere('title', 'like', '%Non-Salary%')->first();
+            $grantId = $nsbGrant ? $nsbGrant->id : null;
+        }
+
         $taxType = $request->tax_type;
-        $grossAmount = $request->amount;
+        $netAmount = $request->amount; // Taken as net amount paid
 
         $gstRate = 0.00;
         $pstRate = 0.00;
@@ -74,12 +89,19 @@ class ExpenseController extends Controller
             }
         }
 
+        $rateSum = $gstRate + $pstRate + $itRate;
+        if ($rateSum >= 100) {
+            return redirect()->back()->withErrors('Tax rate sum cannot be 100% or more.')->withInput();
+        }
+
+        $grossAmount = round($netAmount / (1 - $rateSum / 100));
+
         $gstAmount = round(($grossAmount * $gstRate) / 100);
         $pstAmount = round(($grossAmount * $pstRate) / 100);
         $itAmount = round(($grossAmount * $itRate) / 100);
 
         $totalTax = $gstAmount + $pstAmount + $itAmount;
-        $netAmount = $grossAmount - $totalTax;
+        $grossAmount = $netAmount + $totalTax;
 
         $paymentAccountId = $request->payment_account_id;
         if (!$paymentAccountId) {
@@ -90,6 +112,7 @@ class ExpenseController extends Controller
         try {
             $transaction = Transaction::create([
                 'date' => now(),
+                'cheque_no' => $request->cheque_no ?? null,
                 'description' => Account::find($request->expense_account_id)->name . ' expense (' . strtoupper($fundType) . ')',
             ]);
 
@@ -126,8 +149,9 @@ class ExpenseController extends Controller
                 'status' => 1,
                 'transaction_id' => $transaction->id,
                 'fund_type' => $fundType,
-                'special_grant_id' => $fundType === 'special_grant' ? $request->special_grant_id : null,
+                'grant_id' => $fundType === 'grant' ? $grantId : null,
                 'receipt_no' => $request->receipt_no,
+                'cheque_no' => $request->cheque_no ?? null,
                 'tax_type' => $taxType,
                 'gst_rate' => $gstRate,
                 'pst_rate' => $pstRate,
@@ -136,9 +160,15 @@ class ExpenseController extends Controller
                 'pst_amount' => $pstAmount,
                 'it_amount' => $itAmount,
                 'net_amount' => $netAmount,
+                'expense_type' => $request->expense_type,
+                'description' => $request->description,
             ]);
 
             DB::commit();
+
+            if ($request->has('redirect_to')) {
+                return redirect($request->redirect_to)->with('success', 'Successfully created');
+            }
             return redirect()->route('expenses.index')->with('success', 'Successfully created');
         } catch (Exception $e) {
             DB::rollBack();

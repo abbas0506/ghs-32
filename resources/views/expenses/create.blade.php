@@ -127,7 +127,7 @@
                         {{-- GST Rate --}}
                         <div id="gst_rate_container">
                             <label for="gst_rate" class="block text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-1">GST Rate (%)</label>
-                            <input type="number" step="0.01" id="gst_rate" name="gst_rate" value="18.00" min="0" max="100"
+                            <input type="number" step="0.01" id="gst_rate" name="gst_rate" value="19.00" min="0" max="100"
                                 class="w-full px-3 py-1.5 text-xs border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-400 focus:border-transparent outline-none transition">
                         </div>
 
@@ -141,7 +141,7 @@
                         {{-- IT Rate --}}
                         <div id="it_rate_container">
                             <label for="it_rate" class="block text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-1">Income Tax (%)</label>
-                            <input type="number" step="0.01" id="it_rate" name="it_rate" value="5.50" min="0" max="100"
+                            <input type="number" step="0.01" id="it_rate" name="it_rate" value="11.00" min="0" max="100"
                                 class="w-full px-3 py-1.5 text-xs border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-400 focus:border-transparent outline-none transition">
                         </div>
                     </div>
@@ -358,11 +358,11 @@
                 input.addEventListener('change', function() {
                     if (this.checked) {
                         if (this.value === 'purchase') {
-                            gstRateInput.value = '18.00';
-                            itRateInput.value = '5.50';
+                            gstRateInput.value = '19.00';
+                            itRateInput.value = '11.00';
                         } else if (this.value === 'service') {
                             pstRateInput.value = '20.00';
-                            itRateInput.value = '5.50';
+                            itRateInput.value = '11.00';
                         }
                         recalculate();
                     }

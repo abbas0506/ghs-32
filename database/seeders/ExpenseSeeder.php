@@ -22,11 +22,12 @@ class ExpenseSeeder extends Seeder
         $taxWithheldAcc = Account::where('code', '2003')->first();
 
         // Expense Accounts
-        $salaryAcc = Account::where('code', '5001')->first();
-        $examAcc = Account::where('code', '5002')->first();
-        $rentAcc = Account::where('code', '5003')->first();
-        $elecAcc = Account::where('code', '5004')->first();
-        $netAcc = Account::where('code', '5005')->first();
+        $elecAcc  = Account::where('name', 'Electricity')->first();
+        $netAcc   = Account::where('name', 'Internet')->first();
+        $examAcc  = Account::where('name', 'Exams')->first();
+        $labAcc   = Account::where('name', 'Computer Lab')->first();
+        $maintAcc = Account::where('name', 'Maintenance')->first();
+        $wagesAcc = Account::where('name', 'Wages')->first();
 
         // Grants
         $nsbGrant = Grant::where('title', 'like', '%NSB%')->orWhere('title', 'like', '%Non-Salary%')->first();
@@ -39,11 +40,12 @@ class ExpenseSeeder extends Seeder
         // Categories configuration: 5 expenses for each: FTF, NSB, Special Grant
         $config = [
             // FTF Category - Paid via Cash or FTF Bank Account
+            // FTF Category - Paid via Cash or FTF Bank Account
             [
                 'fund_type' => 'ftf',
                 'items' => [
-                    ['account' => $salaryAcc, 'amount' => 12000, 'date' => $baseDate->copy()->addDays(5), 'description' => 'Security Guard Salary (FTF)', 'description_detail' => 'Security Guard Salary for active month', 'expense_type' => 'service', 'payment' => $cashAcc, 'chq' => null],
-                    ['account' => $rentAcc, 'amount' => 8000, 'date' => $baseDate->copy()->addDays(15), 'description' => 'Office Rent portion (FTF)', 'description_detail' => 'Office Rent portion for current academic session', 'expense_type' => 'other', 'payment' => $ftfBankAcc, 'chq' => 'CHQ-FTF-001'],
+                    ['account' => $wagesAcc, 'amount' => 12000, 'date' => $baseDate->copy()->addDays(5), 'description' => 'Security Guard Salary (FTF)', 'description_detail' => 'Security Guard Salary for active month', 'expense_type' => 'service', 'payment' => $cashAcc, 'chq' => null],
+                    ['account' => $maintAcc, 'amount' => 8000, 'date' => $baseDate->copy()->addDays(15), 'description' => 'Office Maintenance (FTF)', 'description_detail' => 'Office Maintenance for current academic session', 'expense_type' => 'other', 'payment' => $ftfBankAcc, 'chq' => 'CHQ-FTF-001'],
                     ['account' => $examAcc, 'amount' => 5000, 'date' => $baseDate->copy()->addDays(25), 'description' => 'Printing of Exam Sheets (FTF)', 'description_detail' => 'Printing of midterm Exam Answer Sheets', 'expense_type' => 'purchase', 'payment' => $cashAcc, 'chq' => null],
                     ['account' => $elecAcc, 'amount' => 6000, 'date' => $baseDate->copy()->addDays(35), 'description' => 'Generator fuel (FTF)', 'description_detail' => 'Generator fuel purchase for backing power', 'expense_type' => 'purchase', 'payment' => $cashAcc, 'chq' => null],
                     ['account' => $netAcc, 'amount' => 3000, 'date' => $baseDate->copy()->addDays(45), 'description' => 'Broadband Internet fee (FTF)', 'description_detail' => 'Broadband Internet fee for fiber connection', 'expense_type' => 'utility', 'payment' => $ftfBankAcc, 'chq' => 'CHQ-FTF-002'],
@@ -53,26 +55,26 @@ class ExpenseSeeder extends Seeder
             [
                 'fund_type' => 'grant',
                 'items' => [
-                    // Purchases: GST 18%, IT 5.5%
-                    ['account' => $examAcc, 'amount' => 25000, 'date' => $baseDate->copy()->addDays(10), 'description' => 'Purchase of Answer Sheets (NSB)', 'description_detail' => 'Purchase of Answer Sheets for final term exams', 'expense_type' => 'purchase', 'payment' => $smcBankAcc, 'chq' => 'CHQ-SMC-101', 'tax_type' => 'purchase', 'gst' => 18.00, 'pst' => 0.00, 'it' => 5.50, 'grant' => $nsbGrant],
-                    ['account' => $elecAcc, 'amount' => 15000, 'date' => $baseDate->copy()->addDays(20), 'description' => 'Purchase of Electrical Wiring (NSB)', 'description_detail' => 'Purchase of Electrical Wiring for computer lab repair', 'expense_type' => 'purchase', 'payment' => $cashAcc, 'chq' => null, 'tax_type' => 'purchase', 'gst' => 18.00, 'pst' => 0.00, 'it' => 5.50, 'grant' => $nsbGrant],
-                    ['account' => $netAcc, 'amount' => 8000, 'date' => $baseDate->copy()->addDays(30), 'description' => 'Purchase of Router Hardware (NSB)', 'description_detail' => 'Purchase of Router Hardware for secondary building network extension', 'expense_type' => 'purchase', 'payment' => $smcBankAcc, 'chq' => 'CHQ-SMC-102', 'tax_type' => 'purchase', 'gst' => 18.00, 'pst' => 0.00, 'it' => 5.50, 'grant' => $nsbGrant],
-                    // Services: PST 20%, IT 5.5%
-                    ['account' => $salaryAcc, 'amount' => 10000, 'date' => $baseDate->copy()->addDays(40), 'description' => 'Generator Repair Services (NSB)', 'description_detail' => 'Generator Repair Services and tuning', 'expense_type' => 'service', 'payment' => $cashAcc, 'chq' => null, 'tax_type' => 'service', 'gst' => 0.00, 'pst' => 20.00, 'it' => 5.50, 'grant' => $nsbGrant],
-                    ['account' => $rentAcc, 'amount' => 18000, 'date' => $baseDate->copy()->addDays(50), 'description' => 'Building Painting Labor (NSB)', 'description_detail' => 'Building Painting Labor for main building', 'expense_type' => 'service', 'payment' => $smcBankAcc, 'chq' => 'CHQ-SMC-103', 'tax_type' => 'service', 'gst' => 0.00, 'pst' => 20.00, 'it' => 5.50, 'grant' => $nsbGrant],
+                    // Purchases: GST 19%, IT 11%
+                    ['account' => $examAcc, 'amount' => 25000, 'date' => $baseDate->copy()->addDays(10), 'description' => 'Purchase of Answer Sheets (NSB)', 'description_detail' => 'Purchase of Answer Sheets for final term exams', 'expense_type' => 'purchase', 'payment' => $smcBankAcc, 'chq' => 'CHQ-SMC-101', 'tax_type' => 'purchase', 'gst' => 19.00, 'pst' => 0.00, 'it' => 11.00, 'grant' => $nsbGrant],
+                    ['account' => $elecAcc, 'amount' => 15000, 'date' => $baseDate->copy()->addDays(20), 'description' => 'Purchase of Electrical Wiring (NSB)', 'description_detail' => 'Purchase of Electrical Wiring for computer lab repair', 'expense_type' => 'purchase', 'payment' => $cashAcc, 'chq' => null, 'tax_type' => 'purchase', 'gst' => 19.00, 'pst' => 0.00, 'it' => 11.00, 'grant' => $nsbGrant],
+                    ['account' => $netAcc, 'amount' => 8000, 'date' => $baseDate->copy()->addDays(30), 'description' => 'Purchase of Router Hardware (NSB)', 'description_detail' => 'Purchase of Router Hardware for secondary building network extension', 'expense_type' => 'purchase', 'payment' => $smcBankAcc, 'chq' => 'CHQ-SMC-102', 'tax_type' => 'purchase', 'gst' => 19.00, 'pst' => 0.00, 'it' => 11.00, 'grant' => $nsbGrant],
+                    // Services: PST 20%, IT 11%
+                    ['account' => $wagesAcc, 'amount' => 10000, 'date' => $baseDate->copy()->addDays(40), 'description' => 'Generator Repair Services (NSB)', 'description_detail' => 'Generator Repair Services and tuning', 'expense_type' => 'service', 'payment' => $cashAcc, 'chq' => null, 'tax_type' => 'service', 'gst' => 0.00, 'pst' => 20.00, 'it' => 11.00, 'grant' => $nsbGrant],
+                    ['account' => $maintAcc, 'amount' => 18000, 'date' => $baseDate->copy()->addDays(50), 'description' => 'Building Painting Labor (NSB)', 'description_detail' => 'Building Painting Labor for main building', 'expense_type' => 'service', 'payment' => $smcBankAcc, 'chq' => 'CHQ-SMC-103', 'tax_type' => 'service', 'gst' => 0.00, 'pst' => 20.00, 'it' => 11.00, 'grant' => $nsbGrant],
                 ]
             ],
             // Special Grant Category - Paid via Cash or SMC Bank Account (Taxable)
             [
                 'fund_type' => 'grant',
                 'items' => [
-                    // Purchases: GST 18%, IT 5.5% - Linked to Lab Grant
-                    ['account' => $elecAcc, 'amount' => 30000, 'date' => $baseDate->copy()->addDays(12), 'description' => 'Purchase of LED lights (Special Grant)', 'description_detail' => 'Purchase of LED lights for classes', 'expense_type' => 'purchase', 'payment' => $smcBankAcc, 'chq' => 'CHQ-SMC-201', 'tax_type' => 'purchase', 'gst' => 18.00, 'pst' => 0.00, 'it' => 5.50, 'grant' => $labGrant],
-                    ['account' => $examAcc, 'amount' => 12000, 'date' => $baseDate->copy()->addDays(22), 'description' => 'Purchase of Science kits (Special Grant)', 'description_detail' => 'Purchase of Science kits for lab', 'expense_type' => 'purchase', 'payment' => $cashAcc, 'chq' => null, 'tax_type' => 'purchase', 'gst' => 18.00, 'pst' => 0.00, 'it' => 5.50, 'grant' => $labGrant],
-                    ['account' => $netAcc, 'amount' => 20000, 'date' => $baseDate->copy()->addDays(32), 'description' => 'Purchase of Networking cables (Special Grant)', 'description_detail' => 'Purchase of Networking cables', 'expense_type' => 'purchase', 'payment' => $smcBankAcc, 'chq' => 'CHQ-SMC-202', 'tax_type' => 'purchase', 'gst' => 18.00, 'pst' => 0.00, 'it' => 5.50, 'grant' => $labGrant],
-                    // Services: PST 20%, IT 5.5% - Linked to Sports Grant
-                    ['account' => $salaryAcc, 'amount' => 15000, 'date' => $baseDate->copy()->addDays(42), 'description' => 'Lab Installation labor (Special Grant)', 'description_detail' => 'Lab Installation labor', 'expense_type' => 'service', 'payment' => $cashAcc, 'chq' => null, 'tax_type' => 'service', 'gst' => 0.00, 'pst' => 20.00, 'it' => 5.50, 'grant' => $sportsGrant],
-                    ['account' => $rentAcc, 'amount' => 22000, 'date' => $baseDate->copy()->addDays(52), 'description' => 'Air conditioner maintenance (Special Grant)', 'description_detail' => 'Air conditioner maintenance and cleaning', 'expense_type' => 'service', 'payment' => $smcBankAcc, 'chq' => 'CHQ-SMC-203', 'tax_type' => 'service', 'gst' => 0.00, 'pst' => 20.00, 'it' => 5.50, 'grant' => $sportsGrant],
+                    // Purchases: GST 19%, IT 11% - Linked to Lab Grant
+                    ['account' => $elecAcc, 'amount' => 30000, 'date' => $baseDate->copy()->addDays(12), 'description' => 'Purchase of LED lights (Special Grant)', 'description_detail' => 'Purchase of LED lights for classes', 'expense_type' => 'purchase', 'payment' => $smcBankAcc, 'chq' => 'CHQ-SMC-201', 'tax_type' => 'purchase', 'gst' => 19.00, 'pst' => 0.00, 'it' => 11.00, 'grant' => $labGrant],
+                    ['account' => $examAcc, 'amount' => 12000, 'date' => $baseDate->copy()->addDays(22), 'description' => 'Purchase of Science kits (Special Grant)', 'description_detail' => 'Purchase of Science kits for lab', 'expense_type' => 'purchase', 'payment' => $cashAcc, 'chq' => null, 'tax_type' => 'purchase', 'gst' => 19.00, 'pst' => 0.00, 'it' => 11.00, 'grant' => $labGrant],
+                    ['account' => $netAcc, 'amount' => 20000, 'date' => $baseDate->copy()->addDays(32), 'description' => 'Purchase of Networking cables (Special Grant)', 'description_detail' => 'Purchase of Networking cables', 'expense_type' => 'purchase', 'payment' => $smcBankAcc, 'chq' => 'CHQ-SMC-202', 'tax_type' => 'purchase', 'gst' => 19.00, 'pst' => 0.00, 'it' => 11.00, 'grant' => $labGrant],
+                    // Services: PST 20%, IT 11% - Linked to Sports Grant
+                    ['account' => $wagesAcc, 'amount' => 15000, 'date' => $baseDate->copy()->addDays(42), 'description' => 'Lab Installation labor (Special Grant)', 'description_detail' => 'Lab Installation labor', 'expense_type' => 'service', 'payment' => $cashAcc, 'chq' => null, 'tax_type' => 'service', 'gst' => 0.00, 'pst' => 20.00, 'it' => 11.00, 'grant' => $sportsGrant],
+                    ['account' => $maintAcc, 'amount' => 22000, 'date' => $baseDate->copy()->addDays(52), 'description' => 'Air conditioner maintenance (Special Grant)', 'description_detail' => 'Air conditioner maintenance and cleaning', 'expense_type' => 'service', 'payment' => $smcBankAcc, 'chq' => 'CHQ-SMC-203', 'tax_type' => 'service', 'gst' => 0.00, 'pst' => 20.00, 'it' => 11.00, 'grant' => $sportsGrant],
                 ]
             ]
         ];

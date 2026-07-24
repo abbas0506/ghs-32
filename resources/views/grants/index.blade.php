@@ -79,6 +79,11 @@
                                     </td>
                                     <td class="py-2.5 px-3 text-right">
                                         <div class="flex items-center justify-end gap-2.5">
+                                            <a href="{{ route('grants.pdf', $grant->id) }}" target="_blank"
+                                                class="text-red-500 hover:text-red-700 transition-colors p-0.5"
+                                                title="Download PDF Financial Report">
+                                                <i class="bi bi-file-earmark-pdf-fill text-sm"></i>
+                                            </a>
                                             <a href="{{ route('grants.show', $grant->id) }}"
                                                 class="text-slate-400 hover:text-teal-655 transition-colors"
                                                 title="View Ledger">

@@ -23,6 +23,7 @@
                                 <th class="px-4 py-2 text-right font-medium text-gray-700">Credit (Outflow)</th>
                                 <th class="px-4 py-2 text-right font-medium text-gray-700">Debit (Inflow)</th>
                                 <th class="px-4 py-2 text-right font-medium text-gray-700">Balance</th>
+                                <th class="px-4 py-2 text-center font-medium text-gray-700">Actions</th>
                             </tr>
                         </thead>
 
@@ -32,6 +33,7 @@
                             @forelse ($account->lines as $line)
                                 @php
                                     $balance += $line->debit - $line->credit;
+                                    $txn = $line->transaction;
                                 @endphp
 
                                 <tr class="hover:bg-gray-50">
@@ -49,6 +51,16 @@
                                     </td>
                                     <td class="px-4 py-2 text-right font-medium">
                                         {{ number_format($balance, 2) }}
+                                    </td>
+                                    <td class="px-4 py-2 text-center">
+                                        @if ($txn)
+                                            <form action="{{ route('accounts.transaction.destroy', $txn->id) }}" method="POST" class="inline" onsubmit="return confirm('Delete this transaction?')">
+                                                @csrf @method('DELETE')
+                                                <button type="submit" class="text-gray-400 hover:text-red-600 transition-colors" title="Delete">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </form>
+                                        @endif
                                     </td>
                                 </tr>
                             @empty
@@ -73,6 +85,7 @@
                                 <td class="px-4 py-2 text-right">
                                     {{ number_format($account->lines->sum('debit') - $account->lines->sum('credit'), 2) }}
                                 </td>
+                                <td></td>
                             </tr>
                         </tfoot>
                     </table>

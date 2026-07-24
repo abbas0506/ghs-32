@@ -222,6 +222,77 @@ class AccountController extends Controller
     }
 
     /**
+     * Update a manual transaction.
+     */
+    public function updateTransaction(Request $request, Transaction $transaction)
+    {
+        $request->validate([
+            'date'              => 'required|date',
+            'amount'            => 'required|numeric|min:1',
+            'description'       => 'nullable|string|max:255',
+            'cheque_no'         => 'nullable|string|max:50',
+            'account_id'        => 'required|exists:accounts,id',
+            'contra_account_id' => 'required|exists:accounts,id',
+            'txn_type'          => 'required|in:debit,credit',
+        ]);
+
+        $account = Account::findOrFail($request->account_id);
+
+        if ($request->txn_type === 'credit' && in_array($account->code, ['1002', '1007'])) {
+            $request->validate([
+                'cheque_no' => 'required|string|max:50',
+            ], [
+                'cheque_no.required' => 'Cheque number is required for bank cheque withdrawals.',
+            ]);
+        }
+
+        DB::beginTransaction();
+        try {
+            $transaction->update([
+                'date'        => $request->date,
+                'cheque_no'   => $request->cheque_no ?? null,
+                'description' => $request->description ?? 'Manual Transaction (' . ucfirst($request->txn_type) . ')',
+            ]);
+
+            $contraAcc = Account::findOrFail($request->contra_account_id);
+
+            // Replace transaction lines
+            $transaction->lines()->delete();
+
+            if ($request->txn_type === 'debit') {
+                $transaction->lines()->create([
+                    'account_id' => $account->id,
+                    'debit'      => $request->amount,
+                    'credit'     => 0,
+                ]);
+                $transaction->lines()->create([
+                    'account_id' => $contraAcc->id,
+                    'debit'      => 0,
+                    'credit'     => $request->amount,
+                ]);
+            } else {
+                $transaction->lines()->create([
+                    'account_id' => $account->id,
+                    'debit'      => 0,
+                    'credit'     => $request->amount,
+                ]);
+                $transaction->lines()->create([
+                    'account_id' => $contraAcc->id,
+                    'debit'      => $request->amount,
+                    'credit'     => 0,
+                ]);
+            }
+
+            DB::commit();
+
+            return redirect()->route('accounts.show', $account->id)->with('success', 'Transaction updated successfully.');
+        } catch (Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->withErrors($e->getMessage())->withInput();
+        }
+    }
+
+    /**
      * Delete a manual transaction.
      */
     public function destroyTransaction(Transaction $transaction)

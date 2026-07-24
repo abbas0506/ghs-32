@@ -98,10 +98,12 @@ Route::group(['middleware' => ['auth']], function () {
     Route::resource('academic-sessions', AcademicSessionController::class);
     Route::post('academic-sessions/{id}/switch', [AcademicSessionController::class, 'switchSession'])->name('academic-sessions.switch');
     Route::resource('grants', GrantController::class);
+    Route::get('grants/{grant}/pdf', [GrantController::class, 'exportPdf'])->name('grants.pdf');
     Route::resource('grants.installments', GrantInstallmentController::class)
         ->only(['create', 'store', 'edit', 'update', 'destroy']);
     Route::resource('accounts', \App\Http\Controllers\AccountController::class);
     Route::post('accounts/{account}/transaction', [\App\Http\Controllers\AccountController::class, 'storeTransaction'])->name('accounts.transaction.store');
+    Route::put('accounts/transactions/{transaction}', [\App\Http\Controllers\AccountController::class, 'updateTransaction'])->name('accounts.transaction.update');
     Route::delete('accounts/transactions/{transaction}', [\App\Http\Controllers\AccountController::class, 'destroyTransaction'])->name('accounts.transaction.destroy');
     Route::view('config', 'config')->name('config');
 

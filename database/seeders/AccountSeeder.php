@@ -2,17 +2,20 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\Account;
+use Illuminate\Database\Seeder;
 
 class AccountSeeder extends Seeder
 {
+    /**
+     * Run the database seeds.
+     */
     public function run(): void
     {
-        // Assets
+        // ===== ASSETS =====
         $asset = Account::create([
             'code' => '1000',
-            'name' => 'Asset',
+            'name' => 'Assets',
             'type' => 'asset',
             'parent_id' => null,
         ]);
@@ -20,7 +23,7 @@ class AccountSeeder extends Seeder
         Account::insert([
             [
                 'code' => '1001',
-                'name' => 'Cash',
+                'name' => 'Cash Account',
                 'type' => 'asset',
                 'is_payment_method' => 1,
                 'parent_id' => $asset->id,
@@ -48,21 +51,21 @@ class AccountSeeder extends Seeder
             ],
             [
                 'code' => '1004',
-                'name' => 'Easypaisa',
+                'name' => 'Easy Paisa',
                 'type' => 'asset',
                 'is_payment_method' => 1,
                 'parent_id' => $asset->id,
             ],
             [
                 'code' => '1005',
-                'name' => 'Fee Receivable',
+                'name' => 'Accounts Receivable',
                 'type' => 'asset',
                 'is_payment_method' => 0,
                 'parent_id' => $asset->id,
             ],
             [
                 'code' => '1006',
-                'name' => 'Furniture',
+                'name' => 'Inventory',
                 'type' => 'asset',
                 'is_payment_method' => 0,
                 'parent_id' => $asset->id,
@@ -161,31 +164,67 @@ class AccountSeeder extends Seeder
         Account::insert([
             [
                 'code' => '5001',
-                'name' => 'Salary Enxpenses',
-                'type' => 'expense',
-                'parent_id' => $expenses->id,
-            ],
-            [
-                'code' => '5002',
-                'name' => 'Exam Expenses',
-                'type' => 'expense',
-                'parent_id' => $expenses->id,
-            ],
-            [
-                'code' => '5003',
-                'name' => 'Office Rent',
-                'type' => 'expense',
-                'parent_id' => $expenses->id,
-            ],
-            [
-                'code' => '5004',
                 'name' => 'Electricity',
                 'type' => 'expense',
                 'parent_id' => $expenses->id,
             ],
             [
-                'code' => '5005',
+                'code' => '5002',
                 'name' => 'Internet',
+                'type' => 'expense',
+                'parent_id' => $expenses->id,
+            ],
+            [
+                'code' => '5003',
+                'name' => 'Exams',
+                'type' => 'expense',
+                'parent_id' => $expenses->id,
+            ],
+            [
+                'code' => '5004',
+                'name' => 'Computer Lab',
+                'type' => 'expense',
+                'parent_id' => $expenses->id,
+            ],
+            [
+                'code' => '5005',
+                'name' => 'Science Lab',
+                'type' => 'expense',
+                'parent_id' => $expenses->id,
+            ],
+            [
+                'code' => '5006',
+                'name' => 'Furniture',
+                'type' => 'expense',
+                'parent_id' => $expenses->id,
+            ],
+            [
+                'code' => '5007',
+                'name' => 'Sports',
+                'type' => 'expense',
+                'parent_id' => $expenses->id,
+            ],
+            [
+                'code' => '5008',
+                'name' => 'Maintenance',
+                'type' => 'expense',
+                'parent_id' => $expenses->id,
+            ],
+            [
+                'code' => '5009',
+                'name' => 'Wages',
+                'type' => 'expense',
+                'parent_id' => $expenses->id,
+            ],
+            [
+                'code' => '5010',
+                'name' => 'Renovation',
+                'type' => 'expense',
+                'parent_id' => $expenses->id,
+            ],
+            [
+                'code' => '5011',
+                'name' => 'Others',
                 'type' => 'expense',
                 'parent_id' => $expenses->id,
             ],

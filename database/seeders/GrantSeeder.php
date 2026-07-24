@@ -22,22 +22,5 @@ class GrantSeeder extends Seeder
             ]
         );
 
-        // 2. Computer Lab Upgrades Grant
-        Grant::firstOrCreate(
-            ['title' => 'Computer Lab Upgrades Grant'],
-            [
-                'issued_by'   => 'Punjab Education Foundation',
-                'description' => 'Grant for computer lab hardware and software upgrades',
-            ]
-        );
-
-        // 3. Sports Gala Equipment Grant
-        Grant::firstOrCreate(
-            ['title' => 'Sports Gala Equipment Grant'],
-            [
-                'issued_by'   => 'District Education Office',
-                'description' => 'Grant for annual sports gala equipment and prizes',
-            ]
-        );
     }
 }

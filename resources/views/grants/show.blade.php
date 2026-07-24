@@ -27,6 +27,12 @@
                 </div>
             </div>
             <div class="flex items-center gap-1.5 shrink-0">
+                <a href="{{ route('grants.pdf', $grant->id) }}" target="_blank"
+                    class="flex items-center gap-1 px-2 py-1.5 sm:px-3 text-[10px] font-bold bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-lg shadow-sm transition-all"
+                    title="Export PDF Statement">
+                    <i class="bi bi-file-earmark-pdf-fill text-[12px]"></i>
+                    <span class="hidden sm:inline">Export PDF</span>
+                </a>
                 {{-- Icon-only on mobile, icon+text on sm+ --}}
                 <button type="button" onclick="openModal('addInstallmentModal')"
                     class="flex items-center gap-1 px-2 py-1.5 sm:px-3 text-[10px] font-bold bg-white hover:bg-teal-50 text-teal-700 border border-teal-200 rounded-lg shadow-sm transition-all"
@@ -409,25 +415,29 @@
                         Expense Type <span class="text-red-500">*</span>
                     </label>
                     <div class="grid grid-cols-4 gap-2">
-                        <label class="flex flex-col items-center gap-1 p-2 border-2 border-slate-200 rounded-xl cursor-pointer hover:border-teal-400 hover:bg-teal-50 transition text-center expense-type-label" data-value="purchase">
-                            <input type="radio" name="expense_type" value="purchase" class="sr-only" {{ old('expense_type', 'purchase') == 'purchase' ? 'checked' : '' }}>
-                            <i class="bi bi-bag text-sm text-blue-500"></i>
-                            <span class="text-[8px] font-bold text-slate-600">Purchase</span>
+                        <label id="card_expense_type_purchase" class="relative flex flex-col items-center gap-1 p-2.5 border-2 rounded-xl cursor-pointer transition-all duration-200 text-center expense-type-card border-slate-200 bg-white text-slate-500 hover:border-teal-300">
+                            <input type="radio" name="expense_type" value="purchase" class="sr-only" {{ old('expense_type', 'purchase') == 'purchase' ? 'checked' : '' }} onchange="updateExpenseTypeSelection()">
+                            <i class="bi bi-bag text-base text-blue-500"></i>
+                            <span class="text-[9px] font-black text-slate-700">Purchase</span>
+                            <span class="check-badge hidden absolute top-1 right-1 text-teal-600 text-[10px]"><i class="bi bi-check-circle-fill"></i></span>
                         </label>
-                        <label class="flex flex-col items-center gap-1 p-2 border-2 border-slate-200 rounded-xl cursor-pointer hover:border-teal-400 hover:bg-teal-50 transition text-center expense-type-label" data-value="service">
-                            <input type="radio" name="expense_type" value="service" class="sr-only" {{ old('expense_type') == 'service' ? 'checked' : '' }}>
-                            <i class="bi bi-tools text-sm text-violet-500"></i>
-                            <span class="text-[8px] font-bold text-slate-600">Service</span>
+                        <label id="card_expense_type_service" class="relative flex flex-col items-center gap-1 p-2.5 border-2 rounded-xl cursor-pointer transition-all duration-200 text-center expense-type-card border-slate-200 bg-white text-slate-500 hover:border-teal-300">
+                            <input type="radio" name="expense_type" value="service" class="sr-only" {{ old('expense_type') == 'service' ? 'checked' : '' }} onchange="updateExpenseTypeSelection()">
+                            <i class="bi bi-tools text-base text-violet-500"></i>
+                            <span class="text-[9px] font-black text-slate-700">Service</span>
+                            <span class="check-badge hidden absolute top-1 right-1 text-teal-600 text-[10px]"><i class="bi bi-check-circle-fill"></i></span>
                         </label>
-                        <label class="flex flex-col items-center gap-1 p-2 border-2 border-slate-200 rounded-xl cursor-pointer hover:border-teal-400 hover:bg-teal-50 transition text-center expense-type-label" data-value="utility">
-                            <input type="radio" name="expense_type" value="utility" class="sr-only" {{ old('expense_type') == 'utility' ? 'checked' : '' }}>
-                            <i class="bi bi-lightning text-sm text-orange-500"></i>
-                            <span class="text-[8px] font-bold text-slate-600">Utility</span>
+                        <label id="card_expense_type_utility" class="relative flex flex-col items-center gap-1 p-2.5 border-2 rounded-xl cursor-pointer transition-all duration-200 text-center expense-type-card border-slate-200 bg-white text-slate-500 hover:border-teal-300">
+                            <input type="radio" name="expense_type" value="utility" class="sr-only" {{ old('expense_type') == 'utility' ? 'checked' : '' }} onchange="updateExpenseTypeSelection()">
+                            <i class="bi bi-lightning text-base text-orange-500"></i>
+                            <span class="text-[9px] font-black text-slate-700">Utility</span>
+                            <span class="check-badge hidden absolute top-1 right-1 text-teal-600 text-[10px]"><i class="bi bi-check-circle-fill"></i></span>
                         </label>
-                        <label class="flex flex-col items-center gap-1 p-2 border-2 border-slate-200 rounded-xl cursor-pointer hover:border-teal-400 hover:bg-teal-50 transition text-center expense-type-label" data-value="other">
-                            <input type="radio" name="expense_type" value="other" class="sr-only" {{ old('expense_type') == 'other' ? 'checked' : '' }}>
-                            <i class="bi bi-three-dots text-sm text-slate-400"></i>
-                            <span class="text-[8px] font-bold text-slate-600">Other</span>
+                        <label id="card_expense_type_other" class="relative flex flex-col items-center gap-1 p-2.5 border-2 rounded-xl cursor-pointer transition-all duration-200 text-center expense-type-card border-slate-200 bg-white text-slate-500 hover:border-teal-300">
+                            <input type="radio" name="expense_type" value="other" class="sr-only" {{ old('expense_type') == 'other' ? 'checked' : '' }} onchange="updateExpenseTypeSelection()">
+                            <i class="bi bi-three-dots text-base text-slate-400"></i>
+                            <span class="text-[9px] font-black text-slate-700">Other</span>
+                            <span class="check-badge hidden absolute top-1 right-1 text-teal-600 text-[10px]"><i class="bi bi-check-circle-fill"></i></span>
                         </label>
                     </div>
                 </div>
@@ -545,7 +555,7 @@
                             <div class="grid grid-cols-2 gap-2.5">
                                 <div id="modal_gst_rate_container">
                                     <label class="block text-[8px] font-bold text-slate-400 uppercase mb-1">GST Rate (%)</label>
-                                    <input type="number" step="0.01" id="modal_gst_rate" name="gst_rate" value="18.00" min="0" max="100"
+                                    <input type="number" step="0.01" id="modal_gst_rate" name="gst_rate" value="19.00" min="0" max="100"
                                         class="w-full px-2 py-1.5 text-xs border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-400 outline-none bg-white">
                                 </div>
                                 <div id="modal_pst_rate_container">
@@ -555,7 +565,7 @@
                                 </div>
                                 <div id="modal_it_rate_container">
                                     <label class="block text-[8px] font-bold text-slate-400 uppercase mb-1">Income Tax (%)</label>
-                                    <input type="number" step="0.01" id="modal_it_rate" name="it_rate" value="5.50" min="0" max="100"
+                                    <input type="number" step="0.01" id="modal_it_rate" name="it_rate" value="11.00" min="0" max="100"
                                         class="w-full px-2 py-1.5 text-xs border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-400 outline-none bg-white">
                                 </div>
                             </div>
@@ -757,8 +767,8 @@
 
         taxTypeInputs.forEach(i => {
             i.addEventListener('change', function () {
-                if (this.value === 'purchase') { gstRateInput.value = '18.00'; itRateInput.value = '5.50'; }
-                if (this.value === 'service')  { pstRateInput.value = '20.00'; itRateInput.value = '5.50'; }
+                if (this.value === 'purchase') { gstRateInput.value = '19.00'; itRateInput.value = '11.00'; }
+                if (this.value === 'service')  { pstRateInput.value = '20.00'; itRateInput.value = '11.00'; }
                 recalculate();
             });
         });
@@ -769,6 +779,25 @@
 
         window.modalRecalculate = recalculate;
         recalculate();
+        updateExpenseTypeSelection();
     });
+
+    function updateExpenseTypeSelection() {
+        const radios = document.querySelectorAll('input[name="expense_type"]');
+        radios.forEach(radio => {
+            const card = document.getElementById('card_expense_type_' + radio.value);
+            if (!card) return;
+            const badge = card.querySelector('.check-badge');
+            if (radio.checked) {
+                card.classList.remove('border-slate-200', 'bg-white', 'opacity-70');
+                card.classList.add('border-teal-500', 'bg-teal-50/80', 'ring-2', 'ring-teal-400/40', 'shadow-sm', 'opacity-100');
+                if (badge) badge.classList.remove('hidden');
+            } else {
+                card.classList.remove('border-teal-500', 'bg-teal-50/80', 'ring-2', 'ring-teal-400/40', 'shadow-sm');
+                card.classList.add('border-slate-200', 'bg-white', 'opacity-70');
+                if (badge) badge.classList.add('hidden');
+            }
+        });
+    }
 </script>
 @endsection

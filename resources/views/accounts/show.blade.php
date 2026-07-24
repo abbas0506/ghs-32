@@ -116,13 +116,34 @@
                                     </td>
                                     <td class="py-2 px-2.5 text-center whitespace-nowrap">
                                         @if ($txn)
-                                            <form id="del-txn-{{ $txn->id }}" action="{{ route('accounts.transaction.destroy', $txn->id) }}" method="POST" class="inline">
-                                                @csrf @method('DELETE')
-                                                <button type="button" onclick="confirmDel(event, 'del-txn-{{ $txn->id }}')"
-                                                    class="text-slate-300 hover:text-red-500 transition-colors" title="Delete Transaction">
-                                                    <i class="bi bi-trash text-[11px]"></i>
+                                            @php
+                                                $contraLine = $txn->lines->firstWhere('account_id', '!=', $account->id);
+                                                $contraId   = $contraLine ? $contraLine->account_id : '';
+                                                $txnType    = $line->debit > 0 ? 'debit' : 'credit';
+                                                $amount     = $line->debit > 0 ? $line->debit : $line->credit;
+                                            @endphp
+                                            <div class="flex items-center justify-center gap-1.5">
+                                                <button type="button"
+                                                    onclick="openEditTxnModal({{ json_encode([
+                                                        'id' => $txn->id,
+                                                        'date' => $txn->date ? \Carbon\Carbon::parse($txn->date)->format('Y-m-d') : $line->created_at->format('Y-m-d'),
+                                                        'txn_type' => $txnType,
+                                                        'amount' => $amount,
+                                                        'contra_account_id' => $contraId,
+                                                        'cheque_no' => $txn->cheque_no,
+                                                        'description' => $txn->description
+                                                    ]) }})"
+                                                    class="text-slate-300 hover:text-teal-600 transition-colors" title="Edit Transaction">
+                                                    <i class="bi bi-pencil-square text-[11px]"></i>
                                                 </button>
-                                            </form>
+                                                <form id="del-txn-{{ $txn->id }}" action="{{ route('accounts.transaction.destroy', $txn->id) }}" method="POST" class="inline">
+                                                    @csrf @method('DELETE')
+                                                    <button type="button" onclick="confirmDel(event, 'del-txn-{{ $txn->id }}')"
+                                                        class="text-slate-300 hover:text-red-500 transition-colors" title="Delete Transaction">
+                                                        <i class="bi bi-trash text-[11px]"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
                                         @endif
                                     </td>
                                 </tr>
@@ -225,13 +246,95 @@
             </form>
         </div>
     </div>
+
+    {{-- EDIT TRANSACTION MODAL --}}
+    <div id="editTxnModal" class="fixed inset-0 z-[9999] hidden bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
+        <div id="editTxnCard" class="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden border border-slate-100 transform transition-all duration-200 scale-95 opacity-0">
+            <div class="flex items-center justify-between px-5 py-3.5 bg-slate-800 text-white">
+                <div class="flex items-center gap-2">
+                    <i class="bi bi-pencil-square text-teal-400"></i>
+                    <h3 class="text-xs font-extrabold uppercase tracking-wider">Edit Transaction</h3>
+                </div>
+                <button type="button" onclick="closeModal('editTxnModal', 'editTxnCard')" class="text-slate-400 hover:text-white transition">
+                    <i class="bi bi-x-lg text-xs"></i>
+                </button>
+            </div>
+
+            <form id="editTxnForm" action="" method="POST" class="p-5 space-y-4">
+                @csrf @method('PUT')
+                <input type="hidden" name="account_id" value="{{ $account->id }}">
+
+                {{-- Date --}}
+                <div>
+                    <label class="block text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-1">Date</label>
+                    <input type="date" name="date" id="edit_date" required
+                           class="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-teal-400">
+                </div>
+
+                {{-- Transaction Type --}}
+                <div>
+                    <label class="block text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-1">Transaction Type</label>
+                    <select name="txn_type" id="edit_txn_type" required
+                            class="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-teal-400">
+                        <option value="debit">Deposit / Inflow (Debit)</option>
+                        <option value="credit">Withdrawal / Outflow (Credit)</option>
+                    </select>
+                </div>
+
+                {{-- Amount & Contra Account --}}
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-1">Amount (PKR)</label>
+                        <input type="number" name="amount" id="edit_amount" min="1" step="any" required
+                               class="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-teal-400">
+                    </div>
+                    <div>
+                        <label class="block text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-1">Contra Account</label>
+                        <select name="contra_account_id" id="edit_contra_account_id" required
+                                class="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-teal-400">
+                            @foreach ($otherAccounts as $acc)
+                                <option value="{{ $acc->id }}">{{ $acc->name }} ({{ $acc->code }})</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+
+                {{-- Cheque Number --}}
+                <div id="edit_cheque_container">
+                    <label class="block text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-1">
+                        Cheque Number
+                    </label>
+                    <input type="text" name="cheque_no" id="edit_cheque_no" placeholder="e.g. CHQ-8849102"
+                           class="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-teal-400">
+                </div>
+
+                {{-- Description --}}
+                <div>
+                    <label class="block text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-1">Description / Notes</label>
+                    <input type="text" name="description" id="edit_description" placeholder="e.g. Cheque withdrawal"
+                           class="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-teal-400">
+                </div>
+
+                <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
+                    <button type="button" onclick="closeModal('editTxnModal', 'editTxnCard')"
+                        class="px-4 py-2 border border-slate-200 hover:bg-slate-50 text-slate-500 text-[10px] font-bold rounded-lg transition">
+                        Cancel
+                    </button>
+                    <button type="submit"
+                        class="px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white text-[10px] font-bold rounded-lg shadow transition">
+                        Update Transaction
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 @endsection
 
 @section('script')
 <script>
-    function openModal(id) {
-        const modal = document.getElementById(id);
-        const card  = document.getElementById('addTxnCard');
+    function openModal(modalId = 'addTxnModal', cardId = 'addTxnCard') {
+        const modal = document.getElementById(modalId);
+        const card  = document.getElementById(cardId);
         modal.classList.remove('hidden');
         requestAnimationFrame(() => {
             card.classList.remove('scale-95', 'opacity-0');
@@ -239,12 +342,26 @@
         });
     }
 
-    function closeModal(id) {
-        const modal = document.getElementById(id);
-        const card  = document.getElementById('addTxnCard');
+    function closeModal(modalId = 'addTxnModal', cardId = 'addTxnCard') {
+        const modal = document.getElementById(modalId);
+        const card  = document.getElementById(cardId);
         card.classList.remove('scale-100', 'opacity-100');
         card.classList.add('scale-95', 'opacity-0');
         setTimeout(() => modal.classList.add('hidden'), 200);
+    }
+
+    function openEditTxnModal(txn) {
+        const form = document.getElementById('editTxnForm');
+        form.action = `/accounts/transactions/${txn.id}`;
+        
+        document.getElementById('edit_date').value = txn.date;
+        document.getElementById('edit_txn_type').value = txn.txn_type;
+        document.getElementById('edit_amount').value = txn.amount;
+        document.getElementById('edit_contra_account_id').value = txn.contra_account_id;
+        document.getElementById('edit_cheque_no').value = txn.cheque_no || '';
+        document.getElementById('edit_description').value = txn.description || '';
+
+        openModal('editTxnModal', 'editTxnCard');
     }
 
     function confirmDel(event, formId) {

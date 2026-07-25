@@ -47,5 +47,12 @@ class UserSeeder extends Seeder
             'email' => 'admin@gmail.com',
             'password' => Hash::make('password'),
         ]);
+        $user->assignRole(['admin']);
+        Profile::create([
+            'user_id' => $user->id,
+            'name' => 'System Admin',
+            'short_name' => 'Admin',
+            'bps' => 18,
+        ]);
     }
 }

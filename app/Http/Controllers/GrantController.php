@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\AcademicSession;
 use App\Models\Grant;
 use App\Models\Account;
+use App\Models\SchoolResolution;
 use Illuminate\Http\Request;
 use Mpdf\Mpdf;
 use Illuminate\Support\Str;
@@ -34,7 +35,7 @@ class GrantController extends Controller
     public function exportPdf(Grant $grant)
     {
         $session = AcademicSession::current();
-        $isNsb = (str_contains(strtolower($grant->title), 'nsb') || str_contains(strtolower($grant->title), 'non-salary'));
+        $isNsb = (str_contains(strtolower($grant->title), 'nsb') || str_contains(strtolower($grant->title), 'smc') || str_contains(strtolower($grant->title), 'non-salary'));
         $openingBalance = ($isNsb && $session) ? (int) $session->nsb_start : 0;
 
         $installments = $grant->installments()->orderBy('received_date', 'asc')->get();
@@ -95,8 +96,52 @@ class GrantController extends Controller
                 'gst_amount'   => $expense->gst_amount,
                 'pst_amount'   => $expense->pst_amount,
                 'it_amount'    => $expense->it_amount,
+                'gst_rate'     => $expense->gst_rate,
+                'pst_rate'     => $expense->pst_rate,
+                'it_rate'      => $expense->it_rate,
+                'resolution_no'   => $expense->schoolResolution ? $expense->schoolResolution->number : null,
+                'resolution_date' => $expense->schoolResolution ? $expense->schoolResolution->date : null,
                 'receipt_no'   => $expense->receipt_no,
             ]);
+        }
+
+        $manualTransactions = \App\Models\Transaction::where('grant_id', $grant->id)
+            ->whereNotExists(function ($query) {
+                $query->select(\DB::raw(1))
+                    ->from('expenses')
+                    ->whereColumn('expenses.transaction_id', 'transactions.id');
+            })
+            ->get();
+
+        foreach ($manualTransactions as $mtxn) {
+            $smcLine = $mtxn->lines()->whereHas('account', function($q) {
+                $q->where('code', '1007'); // SMC Bank Account
+            })->first();
+            $line = $smcLine ?? $mtxn->lines()->first();
+            
+            if ($line) {
+                $isDebit = $line->debit > 0;
+                $ledger->push((object)[
+                    'type'         => 'manual_transaction',
+                    'id'           => $mtxn->id,
+                    'date'         => $mtxn->date,
+                    'description'  => $mtxn->description . ' (SMC Bank Transaction)',
+                    'expense_type' => 'transfer',
+                    'amount'       => $isDebit ? $line->debit : $line->credit, // gross
+                    'net_amount'   => $isDebit ? $line->debit : $line->credit,
+                    'gst_amount'   => 0,
+                    'pst_amount'   => 0,
+                    'it_amount'    => 0,
+                    'gst_rate'     => 0,
+                    'pst_rate'     => 0,
+                    'it_rate'      => 0,
+                    'receipt_no'   => $mtxn->cheque_no ?? 'TRANSFER',
+                    'resolution_no'   => null,
+                    'resolution_date' => null,
+                    'raw_model'    => $mtxn,
+                    'txn_direction'=> $isDebit ? 'debit' : 'credit'
+                ]);
+            }
         }
 
         $ledger = $ledger->sortBy('date');
@@ -105,8 +150,14 @@ class GrantController extends Controller
         foreach ($ledger as $item) {
             if ($item->type === 'receipt') {
                 $runningBalance += $item->amount;
-            } else {
+            } elseif ($item->type === 'expense') {
                 $runningBalance -= $item->amount;
+            } elseif ($item->type === 'manual_transaction') {
+                if ($item->txn_direction === 'credit') {
+                    $runningBalance -= $item->amount;
+                } else {
+                    $runningBalance += $item->amount;
+                }
             }
             $item->running_balance = $runningBalance;
         }
@@ -196,7 +247,7 @@ class GrantController extends Controller
         $expenses = $grant->expenses()->orderBy('created_at', 'desc')->get();
 
         $session = AcademicSession::current();
-        $isNsb = (str_contains(strtolower($grant->title), 'nsb') || str_contains(strtolower($grant->title), 'non-salary'));
+        $isNsb = (str_contains(strtolower($grant->title), 'nsb') || str_contains(strtolower($grant->title), 'smc') || str_contains(strtolower($grant->title), 'non-salary'));
         $openingBalance = ($isNsb && $session) ? (int) $session->nsb_start : 0;
 
         $ledger = collect();
@@ -224,9 +275,53 @@ class GrantController extends Controller
                 'gst_amount'   => $expense->gst_amount,
                 'pst_amount'   => $expense->pst_amount,
                 'it_amount'    => $expense->it_amount,
+                'gst_rate'     => $expense->gst_rate,
+                'pst_rate'     => $expense->pst_rate,
+                'it_rate'      => $expense->it_rate,
                 'receipt_no'   => $expense->receipt_no,
+                'resolution_no'   => $expense->schoolResolution ? $expense->schoolResolution->number : null,
+                'resolution_date' => $expense->schoolResolution ? $expense->schoolResolution->date : null,
                 'raw_model'    => $expense
             ]);
+        }
+
+        $manualTransactions = \App\Models\Transaction::where('grant_id', $grant->id)
+            ->whereNotExists(function ($query) {
+                $query->select(\DB::raw(1))
+                    ->from('expenses')
+                    ->whereColumn('expenses.transaction_id', 'transactions.id');
+            })
+            ->get();
+
+        foreach ($manualTransactions as $mtxn) {
+            $smcLine = $mtxn->lines()->whereHas('account', function($q) {
+                $q->where('code', '1007'); // SMC Bank Account
+            })->first();
+            $line = $smcLine ?? $mtxn->lines()->first();
+            
+            if ($line) {
+                $isDebit = $line->debit > 0;
+                $ledger->push((object)[
+                    'type'         => 'manual_transaction',
+                    'id'           => $mtxn->id,
+                    'date'         => $mtxn->date,
+                    'description'  => $mtxn->description . ' (SMC Bank Transaction)',
+                    'expense_type' => 'transfer',
+                    'amount'       => $isDebit ? $line->debit : $line->credit, // gross
+                    'net_amount'   => $isDebit ? $line->debit : $line->credit,
+                    'gst_amount'   => 0,
+                    'pst_amount'   => 0,
+                    'it_amount'    => 0,
+                    'gst_rate'     => 0,
+                    'pst_rate'     => 0,
+                    'it_rate'      => 0,
+                    'receipt_no'   => $mtxn->cheque_no ?? 'TRANSFER',
+                    'resolution_no'   => null,
+                    'resolution_date' => null,
+                    'raw_model'    => $mtxn,
+                    'txn_direction'=> $isDebit ? 'debit' : 'credit'
+                ]);
+            }
         }
 
         // Sort by date ascending to calculate running balance starting from opening balance
@@ -236,8 +331,14 @@ class GrantController extends Controller
         foreach ($ledger as $item) {
             if ($item->type === 'receipt') {
                 $runningBalance += $item->amount;
-            } else {
+            } elseif ($item->type === 'expense') {
                 $runningBalance -= $item->amount;
+            } elseif ($item->type === 'manual_transaction') {
+                if ($item->txn_direction === 'credit') {
+                    $runningBalance -= $item->amount;
+                } else {
+                    $runningBalance += $item->amount;
+                }
             }
             $item->running_balance = $runningBalance;
         }
@@ -247,8 +348,18 @@ class GrantController extends Controller
         // Sort by date descending for display
         $ledger = $ledger->sortByDesc('date');
 
-        $expenseAccounts = Account::where('type', 'expense')->orderBy('name')->get();
+        $totalReceived = $installments->sum('amount');
+        $totalGross    = $expenses->sum('amount');
+        $totalNetPaid  = $expenses->sum('net_amount');
+        $totalGst      = $expenses->sum('gst_amount');
+        $totalPst      = $expenses->sum('pst_amount');
+        $totalIt       = $expenses->sum('it_amount');
+
+        $expenseAccounts = Account::where('type', 'expense')->whereNotNull('parent_id')->orderBy('name')->get();
         $paymentMethods = Account::where('is_payment_method', true)->orderBy('name')->get();
+        $resolutions = SchoolResolution::orderBy('number')->get();
+        $smcAccount = Account::where('code', '1007')->first();
+        $cashAccount = Account::where('code', '1001')->first();
 
         return view('grants.show', compact(
             'grant', 
@@ -258,7 +369,16 @@ class GrantController extends Controller
             'openingBalance',
             'expenseAccounts', 
             'paymentMethods', 
-            'session'
+            'session',
+            'resolutions',
+            'totalReceived',
+            'totalGross',
+            'totalNetPaid',
+            'totalGst',
+            'totalPst',
+            'totalIt',
+            'smcAccount',
+            'cashAccount'
         ));
     }
 

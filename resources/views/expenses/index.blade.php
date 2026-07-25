@@ -82,7 +82,7 @@
                             @foreach ($expenses as $expense)
                                 <tr class="tr hover:bg-slate-50/60 transition-colors duration-150 text-xs text-slate-655"
                                     data-fund-type="{{ $expense->fund_type }}"
-                                    data-grant-id="{{ $expense->special_grant_id ?? '' }}">
+                                    data-grant-id="{{ $expense->grant_id ?? '' }}">
                                     <td class="py-2.5 px-3">
                                          <div class="font-bold text-slate-800 text-xs flex items-center gap-1.5">
                                              {{ $expense->expenseAccount->name }}
@@ -97,8 +97,8 @@
                                          @endif
                                          <div class="text-[9px] text-slate-400 font-semibold mt-0.5">
                                              Paid via {{ $expense->paymentAccount->name }}
-                                             @if ($expense->fund_type === 'special_grant' && $expense->specialGrant)
-                                                 &middot; <span class="text-indigo-600">{{ $expense->specialGrant->title }}</span>
+                                             @if ($expense->fund_type === 'grant' && $expense->grant)
+                                                 &middot; <span class="text-indigo-600">{{ $expense->grant->title }}</span>
                                              @endif
                                          </div>
                                      </td>

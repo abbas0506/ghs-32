@@ -13,14 +13,31 @@ class GrantSeeder extends Seeder
      */
     public function run(): void
     {
-        // 1. Non-Salary Budget (NSB) Grant
+        // 1. School Management Committee (SMC) Grant
         Grant::firstOrCreate(
-            ['title' => 'Non-Salary Budget (NSB)'],
+            ['title' => 'SMC'],
             [
                 'issued_by'   => 'Government of Punjab',
-                'description' => 'Annual non-salary budget for school operations',
+                'description' => 'School Management Committee Grant for operations and management',
             ]
         );
 
+        // 2. Annual Development Program (ADP) Grant
+        Grant::firstOrCreate(
+            ['title' => 'ADP'],
+            [
+                'issued_by'   => 'Planning & Development Board',
+                'description' => 'Annual Development Program Grant for infrastructure extension',
+            ]
+        );
+
+        // 3. Early Childhood Care and Education (ECCE) Grant
+        Grant::firstOrCreate(
+            ['title' => 'ECCE'],
+            [
+                'issued_by'   => 'School Education Department',
+                'description' => 'Early Childhood Care and Education Classrooms Grant',
+            ]
+        );
     }
 }

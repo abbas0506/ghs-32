@@ -28,17 +28,14 @@ return new class extends Migration
             $table->decimal('gst_rate', 5, 2)->default(0.00);
             $table->decimal('pst_rate', 5, 2)->default(0.00);
             $table->decimal('it_rate', 5, 2)->default(0.00);
-            $table->unsignedInteger('gst_amount')->default(0);
-            $table->unsignedInteger('pst_amount')->default(0);
-            $table->unsignedInteger('it_amount')->default(0);
             $table->unsignedInteger('net_amount');
             $table->boolean('status')->default(false);
             $table->foreignId('transaction_id')->constrained()->cascadeOnDelete();
             $table->string('fund_type', 15)->default('nsb'); // 'ftf', 'nsb', or 'grant'
             $table->foreignId('grant_id')->nullable()->constrained('grants')->nullOnDelete();
             $table->string('receipt_no', 50);
-            $table->string('cheque_no', 50)->nullable();
             $table->string('expense_type', 20)->default('purchase'); // 'purchase', 'service', 'utility', 'other'
+            $table->foreignId('school_resolution_id')->nullable()->constrained('school_resolutions')->nullOnDelete();
             $table->string('description', 255)->nullable();
 
             $table->timestamps();

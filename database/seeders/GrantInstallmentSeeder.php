@@ -18,62 +18,70 @@ class GrantInstallmentSeeder extends Seeder
      */
     public function run(): void
     {
-        $smcBankAcc = Account::where('code', '1007')->orWhere('name', 'like', '%SMC%')->first();
+        $smcBankAcc = Account::where('code', '1007')->first();
         $grantIncomeAcc = Account::where('code', '4002')->orWhere('name', 'like', '%Grant%')->first();
 
-        $nsbGrant = Grant::where('title', 'like', '%NSB%')->orWhere('title', 'like', '%Non-Salary%')->first();
-        $labGrant = Grant::where('title', 'like', '%Computer%')->first();
-        $sportsGrant = Grant::where('title', 'like', '%Sports%')->first();
+        $smcGrant = Grant::where('title', 'SMC')->first();
+        $adpGrant = Grant::where('title', 'ADP')->first();
+        $ecceGrant = Grant::where('title', 'ECCE')->first();
 
         $installmentsData = [];
 
-        if ($nsbGrant) {
+        if ($smcGrant) {
             $installmentsData[] = [
-                'grant' => $nsbGrant,
-                'amount' => 45000,
-                'date' => Carbon::parse('2026-04-15'),
-                'desc' => 'First Quarter NSB Fund Receipt',
-                'chq' => 'CHQ-NSB-001'
+                'grant' => $smcGrant,
+                'amount' => 150000,
+                'date' => Carbon::parse('2026-04-10'),
+                'desc' => 'First Quarter SMC Fund Receipt',
+                'chq' => 'CHQ-SMC-RCV01'
             ];
             $installmentsData[] = [
-                'grant' => $nsbGrant,
-                'amount' => 38000,
-                'date' => Carbon::parse('2026-07-10'),
-                'desc' => 'Second Quarter NSB Fund Receipt',
-                'chq' => 'CHQ-NSB-002'
+                'grant' => $smcGrant,
+                'amount' => 120000,
+                'date' => Carbon::parse('2026-07-15'),
+                'desc' => 'Second Quarter SMC Fund Receipt',
+                'chq' => 'CHQ-SMC-RCV02'
             ];
         }
 
-        if ($labGrant) {
+        if ($adpGrant) {
             $installmentsData[] = [
-                'grant' => $labGrant,
-                'amount' => 80000,
-                'date' => Carbon::parse('2026-05-20'),
-                'desc' => 'First installment — hardware purchase',
-                'chq' => 'CHQ-LAB-001'
+                'grant' => $adpGrant,
+                'amount' => 300000,
+                'date' => Carbon::parse('2026-05-05'),
+                'desc' => 'First installment — building extension',
+                'chq' => 'CHQ-ADP-RCV01'
             ];
             $installmentsData[] = [
-                'grant' => $labGrant,
-                'amount' => 40000,
+                'grant' => $adpGrant,
+                'amount' => 250000,
                 'date' => Carbon::parse('2026-08-10'),
-                'desc' => 'Second installment — software licenses',
-                'chq' => 'CHQ-LAB-002'
+                'desc' => 'Second installment — building extension',
+                'chq' => 'CHQ-ADP-RCV02'
             ];
         }
 
-        if ($sportsGrant) {
+        if ($ecceGrant) {
             $installmentsData[] = [
-                'grant' => $sportsGrant,
-                'amount' => 35000,
-                'date' => Carbon::parse('2026-08-15'),
-                'desc' => 'Full grant received in one installment',
-                'chq' => 'CHQ-SPT-001'
+                'grant' => $ecceGrant,
+                'amount' => 100000,
+                'date' => Carbon::parse('2026-06-01'),
+                'desc' => 'ECCE classroom setup grant',
+                'chq' => 'CHQ-ECE-RCV01'
             ];
         }
 
         foreach ($installmentsData as $inst) {
             DB::transaction(function () use ($inst, $smcBankAcc, $grantIncomeAcc) {
-                $txn = null;
+                // 1. Create the Grant Installment record
+                $installment = GrantInstallment::create([
+                    'grant_id'      => $inst['grant']->id,
+                    'amount'        => $inst['amount'],
+                    'received_date' => $inst['date'],
+                    'description'   => $inst['desc'],
+                ]);
+
+                // 2. Post double entry transaction
                 if ($smcBankAcc && $grantIncomeAcc) {
                     $txn = Transaction::create([
                         'date'        => $inst['date'],
@@ -101,19 +109,6 @@ class GrantInstallmentSeeder extends Seeder
                         'updated_at' => $inst['date'],
                     ]);
                 }
-
-                GrantInstallment::firstOrCreate(
-                    [
-                        'grant_id'      => $inst['grant']->id,
-                        'received_date' => $inst['date'],
-                    ],
-                    [
-                        'amount'         => $inst['amount'],
-                        'description'    => $inst['desc'],
-                        'cheque_no'      => $inst['chq'],
-                        'transaction_id' => $txn ? $txn->id : null,
-                    ]
-                );
             });
         }
     }

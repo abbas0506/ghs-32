@@ -5,10 +5,10 @@
         {{-- Minimal Header Section --}}
         <div class="flex items-center justify-between py-1.5 border-b border-slate-100 pb-2">
             <div class="flex items-center gap-2">
-                <a href="{{ route('expenses.index') }}" class="text-slate-400 hover:text-teal-600 text-xs transition-colors" title="Back to Expenses">
+                <a href="{{ request('redirect_to', route('expenses.index')) }}" class="text-slate-400 hover:text-teal-600 text-xs transition-colors" title="Back">
                     <i class="bi bi-arrow-left text-sm font-bold"></i>
                 </a>
-                <span class="text-xs font-extrabold text-slate-800 tracking-tight uppercase">New School Expense</span>
+                <span class="text-xs font-extrabold text-slate-800 tracking-tight uppercase">Edit School Expense</span>
             </div>
         </div>
 
@@ -16,8 +16,13 @@
             <x-message :errors='$errors'></x-message>
         @endif
 
-        <form action="{{ route('expenses.store') }}" method="POST" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <form action="{{ route('expenses.update', $expense->id) }}" method="POST" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             @csrf
+            @method('PUT')
+
+            @if(request()->has('redirect_to'))
+                <input type="hidden" name="redirect_to" value="{{ request('redirect_to') }}">
+            @endif
 
             {{-- Main Form Fields --}}
             <div class="lg:col-span-2 space-y-4">
@@ -25,8 +30,9 @@
                     <h3 class="text-xs font-black text-slate-700 uppercase tracking-wider border-b border-slate-50 pb-2">Expense Details</h3>
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {{-- Fund Source (Hidden & Defaulted to NSB) --}}
-                        <input type="hidden" name="fund_type" id="fund_type" value="nsb">
+                        {{-- Fund Source & Grants --}}
+                        <input type="hidden" name="fund_type" id="fund_type" value="{{ $expense->fund_type }}">
+                        <input type="hidden" name="grant_id" value="{{ $expense->grant_id }}">
 
                         {{-- Expense Category --}}
                         <div>
@@ -34,37 +40,35 @@
                             <select name="expense_account_id" id="expense_account_id" class="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-400 focus:border-transparent outline-none transition" required>
                                 <option value="">-- Select Expense Type --</option>
                                 @foreach ($expenseAccounts as $expenseAccount)
-                                    <option value="{{ $expenseAccount->id }}" {{ old('expense_account_id') == $expenseAccount->id ? 'selected' : '' }}>
+                                    <option value="{{ $expenseAccount->id }}" {{ old('expense_account_id', $expense->expense_account_id) == $expenseAccount->id ? 'selected' : '' }}>
                                         {{ $expenseAccount->name }}
                                     </option>
                                 @endforeach
                             </select>
                         </div>
 
-
-
                         {{-- Expense Type --}}
                         <div>
                             <label for="expense_type" class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Expense Type <span class="text-red-500">*</span></label>
                             <select name="expense_type" id="expense_type" class="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-400 focus:border-transparent outline-none transition" required>
-                                <option value="purchase" {{ old('expense_type') == 'purchase' ? 'selected' : '' }}>Purchase</option>
-                                <option value="service" {{ old('expense_type') == 'service' ? 'selected' : '' }}>Service</option>
-                                <option value="utility" {{ old('expense_type') == 'utility' ? 'selected' : '' }}>Utility</option>
-                                <option value="other" {{ old('expense_type', 'other') == 'other' ? 'selected' : '' }}>Other</option>
+                                <option value="purchase" {{ old('expense_type', $expense->expense_type) == 'purchase' ? 'selected' : '' }}>Purchase</option>
+                                <option value="service" {{ old('expense_type', $expense->expense_type) == 'service' ? 'selected' : '' }}>Service</option>
+                                <option value="utility" {{ old('expense_type', $expense->expense_type) == 'utility' ? 'selected' : '' }}>Utility</option>
+                                <option value="other" {{ old('expense_type', $expense->expense_type) == 'other' ? 'selected' : '' }}>Other</option>
                             </select>
                         </div>
 
                         {{-- Expense Date --}}
                         <div>
                             <label for="expense_date" class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Expense Date <span class="text-red-500">*</span></label>
-                            <input type="date" id="expense_date" name="expense_date" value="{{ old('expense_date', date('Y-m-d')) }}"
+                            <input type="date" id="expense_date" name="expense_date" value="{{ old('expense_date', $expense->created_at ? $expense->created_at->format('Y-m-d') : date('Y-m-d')) }}"
                                 class="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-400 focus:border-transparent outline-none transition" required>
                         </div>
 
                         {{-- Description --}}
                         <div>
                             <label for="description" class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Description / Detail</label>
-                            <input type="text" id="description" name="description" value="{{ old('description', '') }}"
+                            <input type="text" id="description" name="description" value="{{ old('description', $expense->description) }}"
                                 class="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-400 focus:border-transparent outline-none transition"
                                 placeholder="e.g. Purchased lab stationery">
                         </div>
@@ -72,7 +76,7 @@
                         {{-- Net Amount --}}
                         <div>
                             <label for="amount" class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Net Amount Paid (PKR) <span class="text-red-500">*</span></label>
-                            <input type="number" id="amount" name="amount" value="{{ old('amount', '') }}" min="1"
+                            <input type="number" id="amount" name="amount" value="{{ old('amount', $expense->net_amount) }}" min="1"
                                 class="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-400 focus:border-transparent outline-none transition"
                                 placeholder="e.g. 7650" required>
                         </div>
@@ -80,7 +84,7 @@
                         {{-- Receipt Number --}}
                         <div>
                             <label for="receipt_no" class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Receipt Number <span class="text-red-500">*</span></label>
-                            <input type="text" id="receipt_no" name="receipt_no" value="{{ old('receipt_no', '') }}"
+                            <input type="text" id="receipt_no" name="receipt_no" value="{{ old('receipt_no', $expense->receipt_no) }}"
                                 class="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-400 focus:border-transparent outline-none transition"
                                 placeholder="e.g. REC-5912" required>
                         </div>
@@ -93,7 +97,7 @@
                                     class="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-400 focus:border-transparent outline-none transition bg-white">
                                     <option value="" data-date="">Select Resolution</option>
                                     @foreach ($resolutions as $res)
-                                        <option value="{{ $res->id }}" data-date="{{ $res->date->format('Y-m-d') }}" {{ old('school_resolution_id') == $res->id ? 'selected' : '' }}>
+                                        <option value="{{ $res->id }}" data-date="{{ $res->date->format('Y-m-d') }}" {{ old('school_resolution_id', $expense->school_resolution_id) == $res->id ? 'selected' : '' }}>
                                             {{ $res->number }}
                                         </option>
                                     @endforeach
@@ -103,6 +107,13 @@
                                     <i class="bi bi-plus-lg font-bold"></i>
                                 </button>
                             </div>
+                        </div>
+
+                        {{-- Resolution Date --}}
+                        <div>
+                            <label for="resolution_date" class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Resolution Date</label>
+                            <input type="date" id="resolution_date" value="{{ $expense->schoolResolution ? $expense->schoolResolution->date->format('Y-m-d') : '' }}"
+                                class="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg bg-slate-50 text-slate-500 outline-none transition" readonly disabled>
                         </div>
                     </div>
                 </div>
@@ -124,17 +135,17 @@
                         <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Transaction Tax Category</label>
                         <div class="grid grid-cols-3 gap-2">
                             <label class="relative flex flex-col items-center justify-center p-3 border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50 transition" id="label_tax_none">
-                                <input type="radio" name="tax_type" value="none" class="sr-only" checked>
+                                <input type="radio" name="tax_type" value="none" class="sr-only" {{ old('tax_type', $expense->tax_type) == 'none' ? 'checked' : '' }}>
                                 <span class="text-xs font-bold text-slate-700">No Tax</span>
                                 <span class="text-[8px] text-slate-400 mt-0.5">0% Deduction</span>
                             </label>
                             <label class="relative flex flex-col items-center justify-center p-3 border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50 transition" id="label_tax_purchase">
-                                <input type="radio" name="tax_type" value="purchase" class="sr-only">
+                                <input type="radio" name="tax_type" value="purchase" class="sr-only" {{ old('tax_type', $expense->tax_type) == 'purchase' ? 'checked' : '' }}>
                                 <span class="text-xs font-bold text-slate-700">Purchase</span>
                                 <span class="text-[8px] text-slate-400 mt-0.5">GST + IT</span>
                             </label>
                             <label class="relative flex flex-col items-center justify-center p-3 border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50 transition" id="label_tax_service">
-                                <input type="radio" name="tax_type" value="service" class="sr-only">
+                                <input type="radio" name="tax_type" value="service" class="sr-only" {{ old('tax_type', $expense->tax_type) == 'service' ? 'checked' : '' }}>
                                 <span class="text-xs font-bold text-slate-700">Labour / Service</span>
                                 <span class="text-[8px] text-slate-400 mt-0.5">PST + IT</span>
                             </label>
@@ -146,21 +157,21 @@
                         {{-- GST Rate --}}
                         <div id="gst_rate_container">
                             <label for="gst_rate" class="block text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-1">GST Rate (%)</label>
-                            <input type="number" step="0.01" id="gst_rate" name="gst_rate" value="19.00" min="0" max="100"
+                            <input type="number" step="0.01" id="gst_rate" name="gst_rate" value="{{ old('gst_rate', $expense->gst_rate ?? '19.00') }}" min="0" max="100"
                                 class="w-full px-3 py-1.5 text-xs border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-400 focus:border-transparent outline-none transition">
                         </div>
 
                         {{-- PST Rate --}}
                         <div id="pst_rate_container">
                             <label for="pst_rate" class="block text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-1">PST Rate (%)</label>
-                            <input type="number" step="0.01" id="pst_rate" name="pst_rate" value="20.00" min="0" max="100"
+                            <input type="number" step="0.01" id="pst_rate" name="pst_rate" value="{{ old('pst_rate', $expense->pst_rate ?? '20.00') }}" min="0" max="100"
                                 class="w-full px-3 py-1.5 text-xs border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-400 focus:border-transparent outline-none transition">
                         </div>
 
                         {{-- IT Rate --}}
                         <div id="it_rate_container">
                             <label for="it_rate" class="block text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-1">Income Tax (%)</label>
-                            <input type="number" step="0.01" id="it_rate" name="it_rate" value="11.00" min="0" max="100"
+                            <input type="number" step="0.01" id="it_rate" name="it_rate" value="{{ old('it_rate', $expense->it_rate ?? '11.00') }}" min="0" max="100"
                                 class="w-full px-3 py-1.5 text-xs border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-400 focus:border-transparent outline-none transition">
                         </div>
                     </div>
@@ -170,7 +181,7 @@
                     <div>
                         <div class="flex items-center justify-between border-b border-white/10 pb-2.5 mb-3">
                             <span class="text-[9px] font-black uppercase tracking-widest text-slate-400">Cashbook Preview</span>
-                            <span id="fund_badge" class="px-2 py-0.5 bg-amber-500 text-white rounded text-[8px] font-bold uppercase tracking-wider">NSB</span>
+                            <span id="fund_badge" class="px-2 py-0.5 bg-amber-500 text-white rounded text-[8px] font-bold uppercase tracking-wider">{{ strtoupper($expense->fund_type ?? 'NSB') }}</span>
                         </div>
                         
                         <div class="space-y-2 text-xs">
@@ -210,7 +221,7 @@
                         
                         <button type="submit" class="w-full py-2 bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold rounded-lg transition shadow-md flex items-center justify-center gap-1.5">
                             <i class="bi bi-file-earmark-check-fill text-sm"></i>
-                            Save to Cashbook
+                            Update Cashbook
                         </button>
                     </div>
                 </div>
@@ -268,17 +279,6 @@
                 });
 
                 fundBadge.textContent = fundType.toUpperCase();
-
-                const sgWrapper = document.getElementById('special_grant_wrapper');
-                const sgInput = document.getElementById('special_grant_id');
-                if (fundType === 'special_grant') {
-                    sgWrapper.classList.remove('hidden');
-                    sgInput.setAttribute('required', 'required');
-                } else {
-                    sgWrapper.classList.add('hidden');
-                    sgInput.removeAttribute('required');
-                    sgInput.value = '';
-                }
 
                 if (fundType === 'ftf') {
                     const noneInput = document.querySelector('input[name="tax_type"][value="none"]');
@@ -367,11 +367,11 @@
                 input.addEventListener('change', function() {
                     if (this.checked) {
                         if (this.value === 'purchase') {
-                            gstRateInput.value = '19.00';
-                            itRateInput.value = '11.00';
+                            gstRateInput.value = '18.00';
+                            itRateInput.value = '5.50';
                         } else if (this.value === 'service') {
                             pstRateInput.value = '20.00';
-                            itRateInput.value = '11.00';
+                            itRateInput.value = '5.50';
                         }
                         recalculate();
                     }
@@ -476,6 +476,14 @@
             }
 
             const resolutionDropdown = document.getElementById('school_resolution_id');
+            if (resolutionDropdown) {
+                resolutionDropdown.addEventListener('change', function() {
+                    const selectedOpt = this.options[this.selectedIndex];
+                    const dateVal = selectedOpt ? (selectedOpt.getAttribute('data-date') || '') : '';
+                    const dateInput = document.getElementById('resolution_date');
+                    if (dateInput) dateInput.value = dateVal;
+                });
+            }
 
             // Form Ajax submit
             const addResolutionForm = document.getElementById('addResolutionForm');
@@ -529,6 +537,9 @@
                                 option.selected = true;
                                 resolutionDropdown.appendChild(option);
                             }
+                            
+                            const dateInputVal = document.getElementById('resolution_date');
+                            if (dateInputVal) dateInputVal.value = optDate;
                             
                             numberInput.value = '';
                             closeModal('addResolutionModal');

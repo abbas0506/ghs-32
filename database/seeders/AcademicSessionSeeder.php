@@ -18,9 +18,9 @@ class AcademicSessionSeeder extends Seeder
             [
                 'start_date' => Carbon::parse('2024-04-01'),
                 'end_date' => Carbon::parse('2025-03-31'),
-                'ftf_start' => 25000,
-                'nsb_start' => 100000,
-                'special_grants_start' => 15000,
+                'ftf_start' => 0,
+                'nsb_start' => 0,
+                'special_grants_start' => 0,
                 'is_current' => false,
             ]
         );
@@ -30,9 +30,9 @@ class AcademicSessionSeeder extends Seeder
             [
                 'start_date' => Carbon::parse('2025-04-01'),
                 'end_date' => Carbon::parse('2026-03-31'),
-                'ftf_start' => 35000,
-                'nsb_start' => 120000,
-                'special_grants_start' => 20000,
+                'ftf_start' => 0,
+                'nsb_start' => 0,
+                'special_grants_start' => 0,
                 'is_current' => false,
             ]
         );
@@ -43,9 +43,9 @@ class AcademicSessionSeeder extends Seeder
             [
                 'start_date' => Carbon::parse('2026-04-01'),
                 'end_date' => Carbon::parse('2027-03-31'),
-                'ftf_start' => 15000,
-                'nsb_start' => 142000,
-                'special_grants_start' => 50000,
+                'ftf_start' => 0,
+                'nsb_start' => 0,
+                'special_grants_start' => 0,
                 'is_current' => true,
             ]
         );

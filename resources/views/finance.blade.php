@@ -36,7 +36,7 @@
             @php
                 $ftfBankBal = $ftfAccount ? $ftfAccount->balance() : $ftfBalance;
             @endphp
-            <a href="{{ $ftfAccount ? route('accounts.show', $ftfAccount->id) : route('accounts.index') }}" 
+            <a href="{{ route('finance.ftf.ledger') }}" 
                class="relative overflow-hidden bg-gradient-to-r from-emerald-50/40 via-white to-white p-3 rounded-xl border border-slate-100 shadow-sm hover:border-emerald-250 hover:-translate-y-0.5 transition-all duration-300 group flex items-center justify-between cursor-pointer">
                 <div class="flex items-center gap-3 relative z-10">
                     <div class="w-9 h-9 bg-gradient-to-br from-emerald-500 to-emerald-600 text-white rounded-lg flex items-center justify-center text-sm shadow-sm group-hover:scale-105 transition-transform duration-300">
@@ -52,30 +52,6 @@
                     </div>
                 </div>
                 <div class="text-slate-300 group-hover:text-emerald-600 transition-colors duration-200 relative z-10 pr-1">
-                    <i class="bi bi-chevron-right text-xs"></i>
-                </div>
-            </a>
-
-            {{-- SMC Bank Account Card --}}
-            @php
-                $smcBankBal = $smcAccount ? $smcAccount->balance() : 0;
-            @endphp
-            <a href="{{ $smcAccount ? route('accounts.show', $smcAccount->id) : route('accounts.index') }}" 
-               class="relative overflow-hidden bg-gradient-to-r from-blue-50/40 via-white to-white p-3 rounded-xl border border-slate-100 shadow-sm hover:border-blue-250 hover:-translate-y-0.5 transition-all duration-300 group flex items-center justify-between cursor-pointer">
-                <div class="flex items-center gap-3 relative z-10">
-                    <div class="w-9 h-9 bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-lg flex items-center justify-center text-sm shadow-sm group-hover:scale-105 transition-transform duration-300">
-                        <i class="bi bi-building"></i>
-                    </div>
-                    <div>
-                        <h3 class="text-slate-400 text-[8px] font-extrabold uppercase tracking-wider mb-0.5">
-                            SMC Bank Account
-                        </h3>
-                        <div class="flex items-baseline gap-1">
-                            <p class="text-sm font-black text-slate-800 leading-none tracking-tight">{{ number_format($smcBankBal) }} <span class="text-[8px] font-bold text-slate-400">PKR</span></p>
-                        </div>
-                    </div>
-                </div>
-                <div class="text-slate-300 group-hover:text-blue-600 transition-colors duration-200 relative z-10 pr-1">
                     <i class="bi bi-chevron-right text-xs"></i>
                 </div>
             </a>

@@ -18,16 +18,13 @@ class Expense extends Model
         'fund_type',
         'grant_id',
         'receipt_no',
-        'cheque_no',
         'tax_type',
         'gst_rate',
         'pst_rate',
         'it_rate',
-        'gst_amount',
-        'pst_amount',
-        'it_amount',
         'net_amount',
         'expense_type',
+        'school_resolution_id',
         'description',
     ];
 
@@ -36,13 +33,26 @@ class Expense extends Model
         'gst_rate' => 'float',
         'pst_rate' => 'float',
         'it_rate' => 'float',
-        'gst_amount' => 'integer',
-        'pst_amount' => 'integer',
-        'it_amount' => 'integer',
         'net_amount' => 'integer',
         'status' => 'boolean',
         'grant_id' => 'integer',
+        'school_resolution_id' => 'integer',
     ];
+
+    public function getGstAmountAttribute()
+    {
+        return (int) round(($this->net_amount * $this->gst_rate) / 100);
+    }
+
+    public function getPstAmountAttribute()
+    {
+        return (int) round(($this->net_amount * $this->pst_rate) / 100);
+    }
+
+    public function getItAmountAttribute()
+    {
+        return (int) round(($this->net_amount * $this->it_rate) / 100);
+    }
 
     public function transaction()
     {
@@ -62,5 +72,10 @@ class Expense extends Model
     public function grant()
     {
         return $this->belongsTo(Grant::class, 'grant_id');
+    }
+
+    public function schoolResolution()
+    {
+        return $this->belongsTo(SchoolResolution::class, 'school_resolution_id');
     }
 }

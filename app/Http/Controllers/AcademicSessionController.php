@@ -34,8 +34,9 @@ class AcademicSessionController extends Controller
             'name' => 'required|string|max:50|unique:academic_sessions,name',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after:start_date',
-            'ftf_start' => 'required|integer|min:0',
-            'nsb_start' => 'required|integer|min:0',
+            'ftf_start' => 'nullable|integer|min:0',
+            'nsb_start' => 'nullable|integer|min:0',
+            'special_grants_start' => 'nullable|integer|min:0',
             'is_current' => 'nullable|boolean',
         ]);
 
@@ -44,8 +45,9 @@ class AcademicSessionController extends Controller
                 'name' => $request->name,
                 'start_date' => $request->start_date,
                 'end_date' => $request->end_date,
-                'ftf_start' => $request->ftf_start,
-                'nsb_start' => $request->nsb_start,
+                'ftf_start' => $request->input('ftf_start', 0) ?? 0,
+                'nsb_start' => $request->input('nsb_start', 0) ?? 0,
+                'special_grants_start' => $request->input('special_grants_start', 0) ?? 0,
                 'is_current' => $request->has('is_current') ? (bool) $request->is_current : false,
             ]);
 
@@ -89,8 +91,9 @@ class AcademicSessionController extends Controller
             'name' => 'required|string|max:50|unique:academic_sessions,name,' . $session->id,
             'start_date' => 'required|date',
             'end_date' => 'required|date|after:start_date',
-            'ftf_start' => 'required|integer|min:0',
-            'nsb_start' => 'required|integer|min:0',
+            'ftf_start' => 'nullable|integer|min:0',
+            'nsb_start' => 'nullable|integer|min:0',
+            'special_grants_start' => 'nullable|integer|min:0',
             'is_current' => 'nullable|boolean',
         ]);
 
@@ -99,8 +102,9 @@ class AcademicSessionController extends Controller
                 'name' => $request->name,
                 'start_date' => $request->start_date,
                 'end_date' => $request->end_date,
-                'ftf_start' => $request->ftf_start,
-                'nsb_start' => $request->nsb_start,
+                'ftf_start' => $request->input('ftf_start', $session->ftf_start ?? 0) ?? 0,
+                'nsb_start' => $request->input('nsb_start', $session->nsb_start ?? 0) ?? 0,
+                'special_grants_start' => $request->input('special_grants_start', $session->special_grants_start ?? 0) ?? 0,
                 'is_current' => $request->has('is_current') ? (bool) $request->is_current : false,
             ]);
 

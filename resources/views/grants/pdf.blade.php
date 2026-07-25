@@ -297,9 +297,9 @@
     <table class="data-table">
         <thead>
             <tr>
-                <th style="width: 8%;">Date</th>
-                <th style="width: 9%;">Receipt #</th>
-                <th style="width: 25%;">Particulars / Description</th>
+                <th style="width: 17%;">Receipt</th>
+                <th style="width: 20%;">Particulars / Description</th>
+                <th style="width: 10%;">Resolution</th>
                 <th class="text-right" style="width: 9%;">Net Paid</th>
                 <th class="text-right" style="width: 8%;">GST</th>
                 <th class="text-right" style="width: 8%;">PST</th>
@@ -312,9 +312,7 @@
         <tbody>
             {{-- Opening Balance Row --}}
             <tr style="background-color: #f0fdf4; font-weight: bold;">
-                <td>—</td>
-                <td><span style="color:#059669; font-weight:bold;">INIT</span></td>
-                <td>Opening Balance Forward (Session {{ $session ? $session->name : '' }})</td>
+                <td colspan="3">Opening Balance Forward (Session {{ $session ? $session->name : '' }})</td>
                 <td class="text-right">—</td>
                 <td class="text-right">—</td>
                 <td class="text-right">—</td>
@@ -328,13 +326,15 @@
             @foreach ($ledger as $item)
                 @php $rowIndex++; @endphp
                 <tr class="{{ $rowIndex % 2 === 0 ? 'even-row' : '' }}">
-                    <td>{{ $item->date ? \Carbon\Carbon::parse($item->date)->format('d M Y') : '—' }}</td>
                     <td>
                         @if ($item->type === 'receipt')
-                            <span style="color:#059669; font-weight:bold;">RCPT</span>
+                            <div style="color:#059669; font-weight:bold; font-size:8pt;">RCPT</div>
+                        @elseif ($item->type === 'manual_transaction')
+                            <div style="color:#1d4ed8; font-weight:bold; font-size:8pt;">TXN</div>
                         @else
-                            {{ $item->receipt_no ?? '—' }}
+                            <div style="font-weight:bold; color:#475569; font-size:8pt;">#{{ $item->receipt_no ?? '—' }}</div>
                         @endif
+                        <div style="font-size:7.5pt; color:#64748b; margin-top:2px;">{{ $item->date ? \Carbon\Carbon::parse($item->date)->format('d M Y') : '—' }}</div>
                     </td>
                     <td>
                         @php
@@ -357,23 +357,54 @@
                             </div>
                         @endif
                     </td>
+                    <td>
+                        @if ($item->type === 'expense' && !empty($item->resolution_no))
+                            <div style="font-weight:bold; color:#334155;">#{{ $item->resolution_no }}</div>
+                            @if (!empty($item->resolution_date))
+                                <div style="font-size:7pt; color:#64748b; margin-top:2px;">{{ \Carbon\Carbon::parse($item->resolution_date)->format('d M Y') }}</div>
+                            @endif
+                        @else
+                            —
+                        @endif
+                    </td>
                     <td class="text-right">
                         {{ $item->type === 'expense' ? number_format($item->net_amount) : '—' }}
                     </td>
                     <td class="text-right">
-                        {{ ($item->type === 'expense' && $item->gst_amount > 0) ? number_format($item->gst_amount) : '—' }}
+                        @if ($item->type === 'expense' && $item->gst_amount > 0)
+                            <div>{{ number_format($item->gst_amount) }}</div>
+                            @if (($item->gst_rate ?? 0) > 0)
+                                <div style="font-size:6.5pt; color:#0f766e;">@ {{ (float) $item->gst_rate }}%</div>
+                            @endif
+                        @else
+                            —
+                        @endif
                     </td>
                     <td class="text-right">
-                        {{ ($item->type === 'expense' && $item->pst_amount > 0) ? number_format($item->pst_amount) : '—' }}
+                        @if ($item->type === 'expense' && $item->pst_amount > 0)
+                            <div>{{ number_format($item->pst_amount) }}</div>
+                            @if (($item->pst_rate ?? 0) > 0)
+                                <div style="font-size:6.5pt; color:#0f766e;">@ {{ (float) $item->pst_rate }}%</div>
+                            @endif
+                        @else
+                            —
+                        @endif
                     </td>
                     <td class="text-right">
-                        {{ ($item->type === 'expense' && $item->it_amount > 0) ? number_format($item->it_amount) : '—' }}
+                        @if ($item->type === 'expense' && $item->it_amount > 0)
+                            <div>{{ number_format($item->it_amount) }}</div>
+                            @if (($item->it_rate ?? 0) > 0)
+                                <div style="font-size:6.5pt; color:#0f766e;">@ {{ (float) $item->it_rate }}%</div>
+                            @endif
+                        @else
+                            —
+                        @endif
                     </td>
                     <td class="text-right" style="color:#e11d48; font-weight:bold;">
-                        {{ $item->type === 'expense' ? number_format($item->amount) : '—' }}
+                        {{ ($item->type === 'expense' || ($item->type === 'manual_transaction' && $item->txn_direction === 'credit')) ? number_format($item->amount) : '—' }}
                     </td>
                     <td class="text-right" style="color:#059669; font-weight:bold;">
-                        {{ $item->type === 'receipt' ? number_format($item->amount) : '—' }}
+                        {{ ($item->type === 'receipt' || ($item->type === 'manual_transaction' && $item->txn_direction === 'debit')) ? number_format($item->amount) : '—' }}
                     </td>
                     <td class="text-right" style="font-weight:bold; color:#0f172a;">
                         {{ number_format($item->running_balance) }}

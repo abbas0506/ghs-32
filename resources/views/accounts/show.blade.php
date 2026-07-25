@@ -16,11 +16,7 @@
                     <h1 class="text-sm font-extrabold text-slate-800 leading-tight">{{ $account->name }}</h1>
                 </div>
             </div>
-            <button type="button" onclick="openModal('addTxnModal')"
-                class="flex items-center gap-1 px-3 py-1.5 text-[10px] font-bold bg-teal-600 hover:bg-teal-700 text-white rounded-lg shadow-sm transition-all">
-                <i class="bi bi-plus-lg"></i>
-                + Post Manual Transaction
-            </button>
+
         </div>
 
         @if ($errors->any())
@@ -97,6 +93,11 @@
                                         <p class="text-[10px] font-semibold text-slate-800 truncate" title="{{ $txn ? $txn->description : 'Entry' }}">
                                             {{ $txn ? $txn->description : 'Entry' }}
                                         </p>
+                                        @if ($txn && $txn->grant)
+                                            <span class="inline-block px-1.5 py-0.5 mt-0.5 bg-teal-50 text-teal-700 border border-teal-100 rounded text-[8px] font-bold">
+                                                Grant: {{ $txn->grant->title }}
+                                            </span>
+                                        @endif
                                     </td>
                                     <td class="py-2 px-2.5 text-[9px] whitespace-nowrap">
                                         @if ($cheque)
@@ -131,7 +132,8 @@
                                                         'amount' => $amount,
                                                         'contra_account_id' => $contraId,
                                                         'cheque_no' => $txn->cheque_no,
-                                                        'description' => $txn->description
+                                                        'description' => $txn->description,
+                                                        'grant_id' => $txn->grant_id
                                                     ]) }})"
                                                     class="text-slate-300 hover:text-teal-600 transition-colors" title="Edit Transaction">
                                                     <i class="bi bi-pencil-square text-[11px]"></i>
@@ -164,88 +166,7 @@
         </div>
     </div>
 
-    {{-- ══════════════════════════════════════════════════════
-         MODAL: POST MANUAL TRANSACTION
-    ══════════════════════════════════════════════════════ --}}
-    <div id="addTxnModal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-        <div id="addTxnCard"
-            class="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden border border-slate-100 transform transition-all duration-200 scale-95 opacity-0">
 
-            <div class="flex items-center justify-between px-5 py-3.5 bg-teal-50 border-b border-teal-100">
-                <div>
-                    <h3 class="text-xs font-black text-teal-800 uppercase tracking-wider">Post Manual Transaction</h3>
-                    <p class="text-[9px] text-teal-500 mt-0.5">Post Debit/Credit entry for <span class="font-bold">{{ $account->name }}</span></p>
-                </div>
-                <button type="button" onclick="closeModal('addTxnModal')"
-                    class="w-6 h-6 flex items-center justify-center rounded-full hover:bg-teal-100 text-teal-400 hover:text-teal-700 transition">
-                    <i class="bi bi-x-lg text-xs"></i>
-                </button>
-            </div>
-
-            <form action="{{ route('accounts.transaction.store', $account->id) }}" method="POST" class="p-5 space-y-4">
-                @csrf
-
-                {{-- Date & Type --}}
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-1">Transaction Date <span class="text-red-500">*</span></label>
-                        <input type="date" name="date" value="{{ date('Y-m-d') }}" class="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-teal-400" required>
-                    </div>
-                    <div>
-                        <label class="block text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-1">Transaction Type <span class="text-red-500">*</span></label>
-                        <select name="txn_type" id="modal_txn_type" class="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-teal-400 bg-white" required>
-                            <option value="debit">Debit (Deposit / Inflow)</option>
-                            <option value="credit">Credit (Withdrawal / Outflow)</option>
-                        </select>
-                    </div>
-                </div>
-
-                {{-- Amount & Contra Account --}}
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-1">Amount (PKR) <span class="text-red-500">*</span></label>
-                        <input type="number" name="amount" min="1" placeholder="e.g. 25000" class="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-teal-400" required>
-                    </div>
-                    <div>
-                        <label class="block text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-1">Counterpart Account <span class="text-red-500">*</span></label>
-                        <select name="contra_account_id" class="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-teal-400 bg-white" required>
-                            <option value="">— Select Account —</option>
-                            @foreach ($otherAccounts as $oAcc)
-                                <option value="{{ $oAcc->id }}">{{ $oAcc->name }} ({{ $oAcc->code }})</option>
-                            @endforeach
-                        </select>
-                    </div>
-                </div>
-
-                {{-- Cheque Number (Required for Bank Credit/Withdrawals) --}}
-                <div id="modal_cheque_container">
-                    <label class="block text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-1">
-                        Cheque Number <span id="modal_cheque_req" class="text-red-500">*</span>
-                    </label>
-                    <input type="text" name="cheque_no" id="modal_cheque_no" placeholder="e.g. CHQ-8849102"
-                           class="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-teal-400">
-                </div>
-
-                {{-- Description --}}
-                <div>
-                    <label class="block text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-1">Description / Notes</label>
-                    <input type="text" name="description" placeholder="e.g. Cheque withdrawal for office supplies"
-                           class="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-teal-400">
-                </div>
-
-                <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
-                    <button type="button" onclick="closeModal('addTxnModal')"
-                        class="px-4 py-2 border border-slate-200 hover:bg-slate-50 text-slate-500 text-[10px] font-bold rounded-lg transition">
-                        Cancel
-                    </button>
-                    <button type="submit"
-                        class="px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white text-[10px] font-bold rounded-lg shadow transition">
-                        Post Transaction
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
 
     {{-- EDIT TRANSACTION MODAL --}}
     <div id="editTxnModal" class="fixed inset-0 z-[9999] hidden bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
@@ -282,13 +203,13 @@
                 </div>
 
                 {{-- Amount & Contra Account --}}
-                <div class="grid grid-cols-2 gap-3">
+                <div class="grid grid-cols-2 gap-3" id="edit_amount_contra_row">
                     <div>
                         <label class="block text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-1">Amount (PKR)</label>
                         <input type="number" name="amount" id="edit_amount" min="1" step="any" required
                                class="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-teal-400">
                     </div>
-                    <div>
+                    <div id="edit_contra_container">
                         <label class="block text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-1">Contra Account</label>
                         <select name="contra_account_id" id="edit_contra_account_id" required
                                 class="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-teal-400">
@@ -308,12 +229,32 @@
                            class="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-teal-400">
                 </div>
 
-                {{-- Description --}}
-                <div>
-                    <label class="block text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-1">Description / Notes</label>
-                    <input type="text" name="description" id="edit_description" placeholder="e.g. Cheque withdrawal"
-                           class="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-teal-400">
-                </div>
+                @if ($account->code === '1007')
+                    {{-- Description & Grant --}}
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-1">Description / Notes</label>
+                            <input type="text" name="description" id="edit_description" placeholder="e.g. Cheque withdrawal"
+                                   class="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-teal-400">
+                        </div>
+                        <div>
+                            <label class="block text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-1">Associate with Grant <span class="text-red-500">*</span></label>
+                            <select name="grant_id" id="edit_grant_id" class="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-teal-400 bg-white" required>
+                                <option value="">— Select Grant —</option>
+                                @foreach ($grants as $gr)
+                                    <option value="{{ $gr->id }}">{{ $gr->title }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                @else
+                    {{-- Standalone Description --}}
+                    <div>
+                        <label class="block text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-1">Description / Notes</label>
+                        <input type="text" name="description" id="edit_description" placeholder="e.g. Cheque withdrawal"
+                               class="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-teal-400">
+                    </div>
+                @endif
 
                 <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
                     <button type="button" onclick="closeModal('editTxnModal', 'editTxnCard')"
@@ -332,6 +273,45 @@
 
 @section('script')
 <script>
+    function updateContraVisibility(typeSelectId, contraContainerId, amountContraRowId, contraInputId) {
+        const typeSelect = document.getElementById(typeSelectId);
+        const contraContainer = document.getElementById(contraContainerId);
+        const amountContraRow = document.getElementById(amountContraRowId);
+        const contraInput = document.getElementById(contraInputId);
+        
+        const isBank = {{ in_array($account->code, ['1002', '1007']) ? 'true' : 'false' }};
+        
+        if (isBank && typeSelect.value === 'credit') {
+            contraContainer.style.display = 'none';
+            contraInput.removeAttribute('required');
+            amountContraRow.classList.remove('grid-cols-2');
+            amountContraRow.classList.add('grid-cols-1');
+        } else {
+            contraContainer.style.display = 'block';
+            contraInput.setAttribute('required', 'required');
+            amountContraRow.classList.remove('grid-cols-1');
+            amountContraRow.classList.add('grid-cols-2');
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const addTypeSelect = document.getElementById('modal_txn_type');
+        if (addTypeSelect) {
+            addTypeSelect.addEventListener('change', function() {
+                updateContraVisibility('modal_txn_type', 'add_contra_container', 'add_amount_contra_row', 'modal_contra_account_id');
+            });
+            // Init
+            updateContraVisibility('modal_txn_type', 'add_contra_container', 'add_amount_contra_row', 'modal_contra_account_id');
+        }
+
+        const editTypeSelect = document.getElementById('edit_txn_type');
+        if (editTypeSelect) {
+            editTypeSelect.addEventListener('change', function() {
+                updateContraVisibility('edit_txn_type', 'edit_contra_container', 'edit_amount_contra_row', 'edit_contra_account_id');
+            });
+        }
+    });
+
     function openModal(modalId = 'addTxnModal', cardId = 'addTxnCard') {
         const modal = document.getElementById(modalId);
         const card  = document.getElementById(cardId);
@@ -340,6 +320,9 @@
             card.classList.remove('scale-95', 'opacity-0');
             card.classList.add('scale-100', 'opacity-100');
         });
+        if (modalId === 'addTxnModal') {
+            updateContraVisibility('modal_txn_type', 'add_contra_container', 'add_amount_contra_row', 'modal_contra_account_id');
+        }
     }
 
     function closeModal(modalId = 'addTxnModal', cardId = 'addTxnCard') {
@@ -357,9 +340,15 @@
         document.getElementById('edit_date').value = txn.date;
         document.getElementById('edit_txn_type').value = txn.txn_type;
         document.getElementById('edit_amount').value = txn.amount;
-        document.getElementById('edit_contra_account_id').value = txn.contra_account_id;
+        document.getElementById('edit_contra_account_id').value = txn.contra_account_id || '';
         document.getElementById('edit_cheque_no').value = txn.cheque_no || '';
         document.getElementById('edit_description').value = txn.description || '';
+        const editGrantIdEl = document.getElementById('edit_grant_id');
+        if (editGrantIdEl) {
+            editGrantIdEl.value = txn.grant_id || '';
+        }
+
+        updateContraVisibility('edit_txn_type', 'edit_contra_container', 'edit_amount_contra_row', 'edit_contra_account_id');
 
         openModal('editTxnModal', 'editTxnCard');
     }

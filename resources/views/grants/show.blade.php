@@ -3,15 +3,7 @@
 @section('page-content')
     <div class="space-y-4 pb-16 md:pb-6">
 
-        {{-- Compute totals --}}
-        @php
-            $totalReceived = $installments->sum('amount');
-            $totalGross    = $grant->expenses()->sum('amount');
-            $totalNetPaid  = $grant->expenses()->sum('net_amount');
-            $totalGst      = $grant->expenses()->sum('gst_amount');
-            $totalPst      = $grant->expenses()->sum('pst_amount');
-            $totalIt       = $grant->expenses()->sum('it_amount');
-        @endphp
+
 
         {{-- Page Header --}}
         <div class="flex items-center justify-between border-b border-slate-100 pb-2.5 gap-2">
@@ -39,6 +31,12 @@
                     title="Add Receipt">
                     <i class="bi bi-arrow-down-circle text-[12px]"></i>
                     <span class="hidden sm:inline">Add Receipt</span>
+                </button>
+                <button type="button" onclick="openModal('addWithdrawalModal')"
+                    class="flex items-center gap-1 px-2 py-1.5 sm:px-3 text-[10px] font-bold bg-white hover:bg-blue-50 text-blue-700 border border-blue-200 rounded-lg shadow-sm transition-all"
+                    title="Cheque Withdrawal">
+                    <i class="bi bi-arrow-up-circle text-[12px]"></i>
+                    <span class="hidden sm:inline">Cheque Withdrawal</span>
                 </button>
                 <button type="button" onclick="openModal('addExpenseModal')"
                     class="flex items-center gap-1 px-2 py-1.5 sm:px-3 text-[10px] font-bold bg-teal-600 hover:bg-teal-700 text-white rounded-lg shadow-sm transition-all"
@@ -116,9 +114,9 @@
                     <table class="w-full text-left border-collapse">
                         <thead>
                             <tr class="bg-slate-50 border-b border-slate-200">
-                                <th class="py-2 px-2.5 text-[8px] font-extrabold uppercase tracking-wider text-slate-400 whitespace-nowrap">Date</th>
-                                <th class="py-2 px-2.5 text-[8px] font-extrabold uppercase tracking-wider text-slate-400 whitespace-nowrap">Receipt #</th>
+                                <th class="py-2 px-2.5 text-[8px] font-extrabold uppercase tracking-wider text-slate-400 whitespace-nowrap">Receipt</th>
                                 <th class="py-2 px-2.5 text-[8px] font-extrabold uppercase tracking-wider text-slate-400">Particulars</th>
+                                <th class="py-2 px-2.5 text-[8px] font-extrabold uppercase tracking-wider text-slate-400 whitespace-nowrap">Resolution</th>
                                 <th class="py-2 px-2.5 text-[8px] font-extrabold uppercase tracking-wider text-slate-400 text-right whitespace-nowrap">Net Paid</th>
                                 <th class="py-2 px-2.5 text-[8px] font-extrabold uppercase tracking-wider text-slate-400 text-right whitespace-nowrap">GST</th>
                                 <th class="py-2 px-2.5 text-[8px] font-extrabold uppercase tracking-wider text-slate-400 text-right whitespace-nowrap">PST</th>
@@ -153,18 +151,15 @@
                             @foreach ($ledger->sortBy('date') as $item)
                                 <tr class="hover:bg-slate-50/60 transition-colors duration-100">
 
-                                    {{-- Date --}}
-                                    <td class="py-2 px-2.5 text-[9px] text-slate-500 font-medium whitespace-nowrap">
-                                        {{ $item->date->format('d M Y') }}
-                                    </td>
-
-                                    {{-- Receipt # --}}
                                     <td class="py-2 px-2.5 whitespace-nowrap">
                                         @if ($item->type === 'receipt')
-                                            <span class="px-1.5 py-0.5 bg-emerald-100 text-emerald-700 rounded text-[8px] font-bold">RCPT</span>
+                                            <span class="px-1.5 py-0.5 bg-emerald-100 text-emerald-700 rounded text-[8px] font-bold inline-block">RCPT</span>
+                                        @elseif ($item->type === 'manual_transaction')
+                                            <span class="px-1.5 py-0.5 bg-blue-100 text-blue-700 rounded text-[8px] font-bold inline-block">TXN</span>
                                         @else
-                                            <span class="text-[9px] font-semibold text-slate-600 uppercase">{{ $item->receipt_no ?? '—' }}</span>
+                                            <span class="text-[9px] font-semibold text-slate-700 uppercase">#{{ $item->receipt_no ?? '—' }}</span>
                                         @endif
+                                        <div class="text-[8px] text-slate-400 mt-0.5">{{ \Carbon\Carbon::parse($item->date)->format('d M Y') }}</div>
                                     </td>
 
                                     {{-- Particulars --}}
@@ -184,6 +179,18 @@
                                         @endif
                                     </td>
 
+                                    {{-- Resolution --}}
+                                    <td class="py-2 px-2.5 text-[9px] text-slate-600 whitespace-nowrap">
+                                        @if ($item->type === 'expense' && !empty($item->raw_model->resolution_no))
+                                            <span class="font-semibold text-slate-700">#{{ $item->raw_model->resolution_no }}</span>
+                                            @if (!empty($item->raw_model->resolution_date))
+                                                <span class="text-slate-400 block text-[8px] mt-0.5">{{ \Carbon\Carbon::parse($item->raw_model->resolution_date)->format('d M Y') }}</span>
+                                            @endif
+                                        @else
+                                            —
+                                        @endif
+                                    </td>
+
                                     {{-- Net Paid --}}
                                     <td class="py-2 px-2.5 text-right text-[9px] font-semibold whitespace-nowrap
                                         {{ $item->type === 'expense' ? 'text-slate-600' : 'text-slate-300' }}">
@@ -192,32 +199,53 @@
 
                                     {{-- GST --}}
                                     <td class="py-2 px-2.5 text-right text-[9px] whitespace-nowrap
-                                        {{ ($item->type === 'expense' && $item->gst_amount > 0) ? 'text-slate-500' : 'text-slate-200' }}">
-                                        {{ ($item->type === 'expense' && $item->gst_amount > 0) ? number_format($item->gst_amount) : '—' }}
+                                        {{ ($item->type === 'expense' && $item->gst_amount > 0) ? 'text-slate-700 font-semibold' : 'text-slate-200' }}">
+                                        @if ($item->type === 'expense' && $item->gst_amount > 0)
+                                            <div>{{ number_format($item->gst_amount) }}</div>
+                                            @if (($item->gst_rate ?? 0) > 0)
+                                                <div class="text-[7.5px] font-medium text-teal-600">@ {{ (float) $item->gst_rate }}%</div>
+                                            @endif
+                                        @else
+                                            —
+                                        @endif
                                     </td>
 
                                     {{-- PST --}}
                                     <td class="py-2 px-2.5 text-right text-[9px] whitespace-nowrap
-                                        {{ ($item->type === 'expense' && $item->pst_amount > 0) ? 'text-slate-500' : 'text-slate-200' }}">
-                                        {{ ($item->type === 'expense' && $item->pst_amount > 0) ? number_format($item->pst_amount) : '—' }}
+                                        {{ ($item->type === 'expense' && $item->pst_amount > 0) ? 'text-slate-700 font-semibold' : 'text-slate-200' }}">
+                                        @if ($item->type === 'expense' && $item->pst_amount > 0)
+                                            <div>{{ number_format($item->pst_amount) }}</div>
+                                            @if (($item->pst_rate ?? 0) > 0)
+                                                <div class="text-[7.5px] font-medium text-teal-600">@ {{ (float) $item->pst_rate }}%</div>
+                                            @endif
+                                        @else
+                                            —
+                                        @endif
                                     </td>
 
                                     {{-- IT --}}
                                     <td class="py-2 px-2.5 text-right text-[9px] whitespace-nowrap
-                                        {{ ($item->type === 'expense' && $item->it_amount > 0) ? 'text-slate-500' : 'text-slate-200' }}">
-                                        {{ ($item->type === 'expense' && $item->it_amount > 0) ? number_format($item->it_amount) : '—' }}
+                                        {{ ($item->type === 'expense' && $item->it_amount > 0) ? 'text-slate-700 font-semibold' : 'text-slate-200' }}">
+                                        @if ($item->type === 'expense' && $item->it_amount > 0)
+                                            <div>{{ number_format($item->it_amount) }}</div>
+                                            @if (($item->it_rate ?? 0) > 0)
+                                                <div class="text-[7.5px] font-medium text-teal-600">@ {{ (float) $item->it_rate }}%</div>
+                                            @endif
+                                        @else
+                                            —
+                                        @endif
                                     </td>
 
                                     {{-- Outflow (Gross) --}}
                                     <td class="py-2 px-2.5 text-right text-[9px] font-extrabold whitespace-nowrap
-                                        {{ $item->type === 'expense' ? 'text-rose-600' : 'text-slate-200' }}">
-                                        {{ $item->type === 'expense' ? number_format($item->amount) : '—' }}
+                                        {{ ($item->type === 'expense' || ($item->type === 'manual_transaction' && $item->txn_direction === 'credit')) ? 'text-rose-600' : 'text-slate-200' }}">
+                                        {{ ($item->type === 'expense' || ($item->type === 'manual_transaction' && $item->txn_direction === 'credit')) ? number_format($item->amount) : '—' }}
                                     </td>
 
                                     {{-- Inflow --}}
                                     <td class="py-2 px-2.5 text-right text-[9px] font-extrabold whitespace-nowrap
-                                        {{ $item->type === 'receipt' ? 'text-emerald-600' : 'text-slate-200' }}">
-                                        {{ $item->type === 'receipt' ? number_format($item->amount) : '—' }}
+                                        {{ ($item->type === 'receipt' || ($item->type === 'manual_transaction' && $item->txn_direction === 'debit')) ? 'text-emerald-600' : 'text-slate-200' }}">
+                                        {{ ($item->type === 'receipt' || ($item->type === 'manual_transaction' && $item->txn_direction === 'debit')) ? number_format($item->amount) : '—' }}
                                     </td>
 
                                     {{-- Running Balance --}}
@@ -384,6 +412,83 @@
     </div>
 
     {{-- ══════════════════════════════════════════════════════
+         MODAL D: CHEQUE WITHDRAWAL
+    ══════════════════════════════════════════════════════ --}}
+    <div id="addWithdrawalModal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div id="addWithdrawalCard"
+            class="bg-white rounded-2xl shadow-2xl max-w-sm w-full overflow-hidden border border-slate-100 transform transition-all duration-200 scale-95 opacity-0">
+
+            {{-- Modal Header --}}
+            <div class="flex items-center justify-between px-5 py-3.5 bg-blue-50 border-b border-blue-100">
+                <div>
+                    <h3 class="text-xs font-black text-blue-800 uppercase tracking-wider">Cheque Withdrawal</h3>
+                    <p class="text-[9px] text-blue-500 mt-0.5">Withdraw funds from SMC Bank to Cash for <span class="font-bold">{{ $grant->title }}</span></p>
+                </div>
+                <button type="button" onclick="closeModal('addWithdrawalModal')"
+                    class="w-6 h-6 flex items-center justify-center rounded-full hover:bg-blue-100 text-blue-400 hover:text-blue-700 transition">
+                    <i class="bi bi-x-lg text-xs"></i>
+                </button>
+            </div>
+
+            <form action="{{ route('accounts.transaction.store', $smcAccount->id) }}" method="POST" class="p-5 space-y-4">
+                @csrf
+                <input type="hidden" name="txn_type" value="credit">
+                <input type="hidden" name="grant_id" value="{{ $grant->id }}">
+                <input type="hidden" name="contra_account_id" value="{{ $cashAccount->id }}">
+                <input type="hidden" name="redirect_to" value="{{ request()->fullUrl() }}">
+
+                {{-- Amount --}}
+                <div>
+                    <label for="modal_with_amount" class="block text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-1">
+                        Amount to Withdraw (PKR) <span class="text-red-500">*</span>
+                    </label>
+                    <input type="number" name="amount" id="modal_with_amount" min="1" placeholder="e.g. 50000"
+                        class="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-transparent outline-none transition" required>
+                </div>
+
+                {{-- Date --}}
+                <div>
+                    <label for="modal_with_date" class="block text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-1">
+                        Withdrawal Date <span class="text-red-500">*</span>
+                    </label>
+                    <input type="date" name="date" id="modal_with_date" value="{{ date('Y-m-d') }}"
+                        class="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-transparent outline-none transition" required>
+                </div>
+
+                {{-- Cheque No --}}
+                <div>
+                    <label for="modal_with_cheque" class="block text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-1">
+                        Cheque Number <span class="text-red-500">*</span>
+                    </label>
+                    <input type="text" name="cheque_no" id="modal_with_cheque" placeholder="e.g. CHQ-SMC-9928"
+                        class="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-transparent outline-none transition" required>
+                </div>
+
+                {{-- Description --}}
+                <div>
+                    <label for="modal_with_desc" class="block text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-1">
+                        Description / Notes
+                    </label>
+                    <textarea name="description" id="modal_with_desc" rows="2"
+                        placeholder="e.g. Cheque withdrawal for SMC expenses..."
+                        class="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-transparent outline-none transition resize-none"></textarea>
+                </div>
+
+                <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
+                    <button type="button" onclick="closeModal('addWithdrawalModal')"
+                        class="px-4 py-2 border border-slate-200 hover:bg-slate-50 text-slate-500 text-[10px] font-bold rounded-lg transition">
+                        Cancel
+                    </button>
+                    <button type="submit"
+                        class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-[10px] font-bold rounded-lg shadow transition">
+                        Confirm Withdrawal
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {{-- ══════════════════════════════════════════════════════
          MODAL B: ADD EXPENSE
     ══════════════════════════════════════════════════════ --}}
     <div id="addExpenseModal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
@@ -463,25 +568,6 @@
                             </select>
                         </div>
 
-                        {{-- Payment Method --}}
-                        <div>
-                            <label for="modal_payment_account_id" class="block text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-1">
-                                Payment Method <span class="text-red-500">*</span>
-                            </label>
-                            <select name="payment_account_id" id="modal_payment_account_id"
-                                class="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-400 outline-none bg-white" required>
-                                <option value="">— Select Method —</option>
-                                @foreach ($paymentMethods as $method)
-                                    <option value="{{ $method->id }}"
-                                        {{ (old('payment_account_id') == $method->id || $method->code == '1001') ? 'selected' : '' }}>
-                                        {{ $method->name }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-
-
-
                         {{-- Description --}}
                         <div>
                             <label for="modal_description" class="block text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-1">
@@ -492,17 +578,7 @@
                                 class="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-400 outline-none transition">
                         </div>
 
-                        {{-- Net Amount --}}
-                        <div>
-                            <label for="modal_amount" class="block text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-1">
-                                Net Amount Paid (PKR) <span class="text-red-500">*</span>
-                            </label>
-                            <input type="number" id="modal_amount" name="amount" value="{{ old('amount', '') }}" min="1"
-                                placeholder="e.g. 7650"
-                                class="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-400 outline-none transition" required>
-                        </div>
-
-                        {{-- Receipt Number & Cheque Number --}}
+                        {{-- Receipt Number & Expense Date on same row --}}
                         <div class="grid grid-cols-2 gap-2.5">
                             <div>
                                 <label for="modal_receipt_no" class="block text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-1">
@@ -513,12 +589,46 @@
                                     class="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-400 outline-none transition" required>
                             </div>
                             <div>
-                                <label for="modal_cheque_no_exp" class="block text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-1">
-                                    Cheque Number
+                                <label for="modal_expense_date" class="block text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-1">
+                                    Expense Date <span class="text-red-500">*</span>
                                 </label>
-                                <input type="text" id="modal_cheque_no_exp" name="cheque_no" value="{{ old('cheque_no', '') }}"
-                                    placeholder="e.g. CHQ-44012"
-                                    class="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-400 outline-none transition">
+                                <input type="date" id="modal_expense_date" name="expense_date" value="{{ old('expense_date', date('Y-m-d')) }}"
+                                    class="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-400 outline-none transition" required>
+                            </div>
+                        </div>
+
+                        {{-- Net Amount & Resolution Number on same row --}}
+                        <div class="grid grid-cols-2 gap-2.5">
+                            <div>
+                                <label for="modal_amount" class="block text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-1">
+                                    Net Amount Paid (PKR) <span class="text-red-500">*</span>
+                                </label>
+                                <input type="number" id="modal_amount" name="amount" value="{{ old('amount', '') }}" min="1"
+                                    placeholder="e.g. 7650"
+                                    class="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-400 outline-none transition" required>
+                            </div>
+                            <div>
+                                <label for="modal_school_resolution_id" class="block text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-1">
+                                    Resolution Number
+                                </label>
+                                <div class="flex items-center gap-1.5">
+                                    <select id="modal_school_resolution_id" name="school_resolution_id"
+                                        class="w-full px-2.5 py-2 text-xs border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-400 outline-none bg-white">
+                                        <option value="" data-date="">Select Resolution</option>
+                                        @foreach ($resolutions as $res)
+                                            <option value="{{ $res->id }}" data-date="{{ $res->date->format('Y-m-d') }}" {{ old('school_resolution_id') == $res->id ? 'selected' : '' }}>
+                                                {{ $res->number }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    <button type="button" id="btn_add_resolution_modal"
+                                        class="px-2.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs flex items-center justify-center transition border border-slate-200" title="Add New Resolution">
+                                        <i class="bi bi-plus-lg font-bold"></i>
+                                    </button>
+                                </div>
+                                <div class="text-[9px] text-slate-400 mt-1">
+                                    Resolution Date: <span id="modal_resolution_date_text" class="font-medium">—</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -628,6 +738,59 @@
             </form>
         </div>
     </div>
+
+    {{-- ══════════════════════════════════════════════════════
+         MODAL C: ADD RESOLUTION
+    ══════════════════════════════════════════════════════ --}}
+    <div id="addResolutionModal" class="fixed inset-0 z-[60] hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div id="addResolutionCard"
+            class="bg-white rounded-2xl shadow-2xl max-w-sm w-full overflow-hidden border border-slate-100 transform transition-all duration-200 scale-95 opacity-0">
+
+            {{-- Modal Header --}}
+            <div class="flex items-center justify-between px-5 py-3.5 bg-slate-50 border-b border-slate-200">
+                <div>
+                    <h3 class="text-xs font-black text-slate-700 uppercase tracking-wider">Add School Resolution</h3>
+                    <p class="text-[9px] text-slate-400 mt-0.5">Create a new resolution to link expenses</p>
+                </div>
+                <button type="button" onclick="closeModal('addResolutionModal')"
+                    class="w-6 h-6 flex items-center justify-center rounded-full hover:bg-slate-100 text-slate-400 hover:text-slate-700 transition">
+                    <i class="bi bi-x-lg text-xs"></i>
+                </button>
+            </div>
+
+            <form id="addResolutionForm" class="p-5 space-y-4">
+                @csrf
+                {{-- Resolution Number --}}
+                <div>
+                    <label for="new_resolution_no" class="block text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-1">
+                        Resolution Number <span class="text-red-500">*</span>
+                    </label>
+                    <input type="text" id="new_resolution_no" name="number" placeholder="e.g. RES-15"
+                        class="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-400 outline-none transition" required>
+                </div>
+
+                {{-- Resolution Date --}}
+                <div>
+                    <label for="new_resolution_date" class="block text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-1">
+                        Resolution Date <span class="text-red-500">*</span>
+                    </label>
+                    <input type="date" id="new_resolution_date" name="date" value="{{ date('Y-m-d') }}"
+                        class="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-400 outline-none transition" required>
+                </div>
+
+                <div class="flex gap-2.5 pt-2">
+                    <button type="button" onclick="closeModal('addResolutionModal')"
+                        class="flex-1 py-2 border border-slate-200 hover:bg-slate-50 text-slate-600 text-xs font-bold rounded-lg transition">
+                        Cancel
+                    </button>
+                    <button type="submit" id="btn_submit_resolution"
+                        class="flex-1 py-2 bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold rounded-lg transition shadow-md">
+                        Save Resolution
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 @endsection
 
 @section('script')
@@ -635,7 +798,11 @@
     /* ─────────── Modal helpers ─────────── */
     function openModal(id) {
         const modal = document.getElementById(id);
-        const card  = document.getElementById(id === 'addExpenseModal' ? 'addExpenseCard' : 'addInstallmentCard');
+        let cardId = 'addInstallmentCard';
+        if (id === 'addExpenseModal') cardId = 'addExpenseCard';
+        else if (id === 'addResolutionModal') cardId = 'addResolutionCard';
+        else if (id === 'addWithdrawalModal') cardId = 'addWithdrawalCard';
+        const card  = document.getElementById(cardId);
         modal.classList.remove('hidden');
         requestAnimationFrame(() => {
             card.classList.remove('scale-95', 'opacity-0');
@@ -645,17 +812,24 @@
 
     function closeModal(id) {
         const modal = document.getElementById(id);
-        const card  = document.getElementById(id === 'addExpenseModal' ? 'addExpenseCard' : 'addInstallmentCard');
+        let cardId = 'addInstallmentCard';
+        if (id === 'addExpenseModal') cardId = 'addExpenseCard';
+        else if (id === 'addResolutionModal') cardId = 'addResolutionCard';
+        else if (id === 'addWithdrawalModal') cardId = 'addWithdrawalCard';
+        const card  = document.getElementById(cardId);
         card.classList.remove('scale-100', 'opacity-100');
         card.classList.add('scale-95', 'opacity-0');
         setTimeout(() => modal.classList.add('hidden'), 200);
     }
 
     /* Close modal on backdrop click */
-    ['addInstallmentModal', 'addExpenseModal'].forEach(id => {
-        document.getElementById(id).addEventListener('click', function (e) {
-            if (e.target === this) closeModal(id);
-        });
+    ['addInstallmentModal', 'addExpenseModal', 'addResolutionModal', 'addWithdrawalModal'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.addEventListener('click', function (e) {
+                if (e.target === this) closeModal(id);
+            });
+        }
     });
 
     /* ─────────── Delete confirmation ─────────── */
@@ -776,6 +950,145 @@
         [amountInput, gstRateInput, pstRateInput, itRateInput].forEach(el => {
             if (el) { el.addEventListener('input', recalculate); el.addEventListener('change', recalculate); }
         });
+
+        // Resolution dropdown date update
+        const resolutionDropdowns = [
+            document.getElementById('modal_school_resolution_id'),
+            document.getElementById('school_resolution_id')
+        ];
+        resolutionDropdowns.forEach((dd, idx) => {
+            if (dd) {
+                dd.addEventListener('change', function() {
+                    const selectedOpt = this.options[this.selectedIndex];
+                    const dateVal = selectedOpt ? (selectedOpt.getAttribute('data-date') || '') : '';
+                    if (idx === 0) {
+                        const targetText = document.getElementById('modal_resolution_date_text');
+                        if (targetText) {
+                            if (dateVal) {
+                                const rawDate = new Date(dateVal);
+                                const formattedDate = rawDate.toLocaleDateString('en-GB', {
+                                    day: '2-digit',
+                                    month: 'short',
+                                    year: 'numeric'
+                                });
+                                targetText.textContent = formattedDate;
+                            } else {
+                                targetText.textContent = '—';
+                            }
+                        }
+                    } else {
+                        const targetInput = document.getElementById('resolution_date');
+                        if (targetInput) targetInput.value = dateVal;
+                    }
+                });
+            }
+        });
+
+        // Add Resolution button click handler
+        const btnAddResolution = document.getElementById('btn_add_resolution_modal');
+        if (btnAddResolution) {
+            btnAddResolution.addEventListener('click', function() {
+                openModal('addResolutionModal');
+            });
+        }
+
+        // Add Resolution Form submit handler (Ajax)
+        const addResolutionForm = document.getElementById('addResolutionForm');
+        if (addResolutionForm) {
+            addResolutionForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const numberInput = document.getElementById('new_resolution_no');
+                const dateInput = document.getElementById('new_resolution_date');
+                const submitBtn = document.getElementById('btn_submit_resolution');
+                
+                const number = numberInput.value;
+                const date = dateInput.value;
+                
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Saving...';
+                
+                fetch("{{ route('school-resolutions.store') }}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': "{{ csrf_token() }}",
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({ number: number, date: date })
+                })
+                .then(response => response.json().then(data => ({ status: response.status, body: data })))
+                .then(res => {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Save Resolution';
+                    
+                    if (res.status === 200 && res.body.success) {
+                        const resolution = res.body.resolution;
+                        
+                        // Format date: YYYY-MM-DD to DD Mmm YYYY
+                        const rawDate = new Date(resolution.date);
+                        const formattedDate = rawDate.toLocaleDateString('en-GB', {
+                            day: '2-digit',
+                            month: 'short',
+                            year: 'numeric'
+                        });
+                        
+                        // Add to dropdown
+                        const optVal = resolution.id;
+                        const optText = resolution.number;
+                        const optDate = resolution.date.split('T')[0];
+                        
+                        resolutionDropdowns.forEach(dd => {
+                            if (dd) {
+                                const option = document.createElement('option');
+                                option.value = optVal;
+                                option.text = optText;
+                                option.setAttribute('data-date', optDate);
+                                option.selected = true;
+                                dd.appendChild(option);
+                            }
+                        });
+                        
+                        // Update date display input
+                        const modalDateText = document.getElementById('modal_resolution_date_text');
+                        if (modalDateText) modalDateText.textContent = formattedDate;
+                        const dateInputVal = document.getElementById('resolution_date');
+                        if (dateInputVal) dateInputVal.value = optDate;
+                        
+                        // Clear input and close modal
+                        numberInput.value = '';
+                        closeModal('addResolutionModal');
+                        
+                        Swal.fire({
+                            title: 'Success!',
+                            text: 'Resolution added successfully',
+                            icon: 'success',
+                            timer: 1500,
+                            showConfirmButton: false
+                        });
+                    } else {
+                        let msg = 'Something went wrong.';
+                        if (res.body.errors && res.body.errors.number) {
+                            msg = res.body.errors.number[0];
+                        }
+                        Swal.fire({
+                            title: 'Error!',
+                            text: msg,
+                            icon: 'error'
+                        });
+                    }
+                })
+                .catch(err => {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Save Resolution';
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'Network error or connection failed.',
+                        icon: 'error'
+                    });
+                });
+            });
+        }
 
         window.modalRecalculate = recalculate;
         recalculate();

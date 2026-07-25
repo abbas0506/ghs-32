@@ -20,7 +20,7 @@
         <div class="bg-slate-50/80 rounded-xl p-3 border border-slate-100 shadow-xs">
             @php
                 $fullName = Auth::user()->profile->name ?? (Auth::user()->name ?? 'User');
-                $currentRole = session('role') ?? Auth::user()->roles->first()->name;
+                $currentRole = session('role') ?? (Auth::user()->roles->first()->name ?? 'User');
                 $userRoles = Auth::user()->roles;
             @endphp
             

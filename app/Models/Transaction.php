@@ -12,6 +12,7 @@ class Transaction extends Model
         'date',
         'cheque_no',
         'description',
+        'grant_id',
     ];
 
     public function lines()
@@ -21,5 +22,9 @@ class Transaction extends Model
     public function feeInvoices()
     {
         return $this->hasMany(FeeInvoice::class);
+    }
+    public function grant()
+    {
+        return $this->belongsTo(Grant::class);
     }
 }

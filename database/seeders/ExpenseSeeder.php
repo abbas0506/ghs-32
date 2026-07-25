@@ -17,153 +17,310 @@ class ExpenseSeeder extends Seeder
     {
         // Get Accounts
         $cashAcc = Account::where('code', '1001')->first();
-        $ftfBankAcc = Account::where('code', '1002')->orWhere('name', 'like', '%FTF%')->first();
-        $smcBankAcc = Account::where('code', '1007')->orWhere('name', 'like', '%SMC%')->first();
+        $smcBankAcc = Account::where('code', '1007')->first();
+        $ftfBankAcc = Account::where('code', '1002')->first();
         $taxWithheldAcc = Account::where('code', '2003')->first();
 
         // Expense Accounts
-        $elecAcc  = Account::where('name', 'Electricity')->first();
-        $netAcc   = Account::where('name', 'Internet')->first();
         $examAcc  = Account::where('name', 'Exams')->first();
         $labAcc   = Account::where('name', 'Computer Lab')->first();
         $maintAcc = Account::where('name', 'Maintenance')->first();
-        $wagesAcc = Account::where('name', 'Wages')->first();
 
         // Grants
-        $nsbGrant = Grant::where('title', 'like', '%NSB%')->orWhere('title', 'like', '%Non-Salary%')->first();
-        $labGrant = Grant::where('title', 'like', '%Computer%')->first();
-        $sportsGrant = Grant::where('title', 'like', '%Sports%')->first();
+        $smcGrant = Grant::where('title', 'SMC')->first();
+        $adpGrant = Grant::where('title', 'ADP')->first();
 
-        $session = AcademicSession::where('name', '2026-2027')->first();
-        $baseDate = $session ? $session->start_date : Carbon::parse('2026-04-01');
-
-        // Categories configuration: 5 expenses for each: FTF, NSB, Special Grant
-        $config = [
-            // FTF Category - Paid via Cash or FTF Bank Account
-            // FTF Category - Paid via Cash or FTF Bank Account
+        // 1. Seed Cheque Withdrawals (Bank Accounts -> Cash Account)
+        $withdrawals = [
+            // SMC
             [
-                'fund_type' => 'ftf',
-                'items' => [
-                    ['account' => $wagesAcc, 'amount' => 12000, 'date' => $baseDate->copy()->addDays(5), 'description' => 'Security Guard Salary (FTF)', 'description_detail' => 'Security Guard Salary for active month', 'expense_type' => 'service', 'payment' => $cashAcc, 'chq' => null],
-                    ['account' => $maintAcc, 'amount' => 8000, 'date' => $baseDate->copy()->addDays(15), 'description' => 'Office Maintenance (FTF)', 'description_detail' => 'Office Maintenance for current academic session', 'expense_type' => 'other', 'payment' => $ftfBankAcc, 'chq' => 'CHQ-FTF-001'],
-                    ['account' => $examAcc, 'amount' => 5000, 'date' => $baseDate->copy()->addDays(25), 'description' => 'Printing of Exam Sheets (FTF)', 'description_detail' => 'Printing of midterm Exam Answer Sheets', 'expense_type' => 'purchase', 'payment' => $cashAcc, 'chq' => null],
-                    ['account' => $elecAcc, 'amount' => 6000, 'date' => $baseDate->copy()->addDays(35), 'description' => 'Generator fuel (FTF)', 'description_detail' => 'Generator fuel purchase for backing power', 'expense_type' => 'purchase', 'payment' => $cashAcc, 'chq' => null],
-                    ['account' => $netAcc, 'amount' => 3000, 'date' => $baseDate->copy()->addDays(45), 'description' => 'Broadband Internet fee (FTF)', 'description_detail' => 'Broadband Internet fee for fiber connection', 'expense_type' => 'utility', 'payment' => $ftfBankAcc, 'chq' => 'CHQ-FTF-002'],
-                ]
+                'bank' => $smcBankAcc,
+                'grant' => $smcGrant,
+                'amount' => 80000,
+                'date' => Carbon::parse('2026-04-20'),
+                'chq' => 'CHQ-SMC-901',
+                'desc' => 'Cheque withdrawal for SMC operational expenses'
             ],
-            // NSB Category - Paid via Cash or SMC Bank Account (Taxable)
             [
-                'fund_type' => 'grant',
-                'items' => [
-                    // Purchases: GST 19%, IT 11%
-                    ['account' => $examAcc, 'amount' => 25000, 'date' => $baseDate->copy()->addDays(10), 'description' => 'Purchase of Answer Sheets (NSB)', 'description_detail' => 'Purchase of Answer Sheets for final term exams', 'expense_type' => 'purchase', 'payment' => $smcBankAcc, 'chq' => 'CHQ-SMC-101', 'tax_type' => 'purchase', 'gst' => 19.00, 'pst' => 0.00, 'it' => 11.00, 'grant' => $nsbGrant],
-                    ['account' => $elecAcc, 'amount' => 15000, 'date' => $baseDate->copy()->addDays(20), 'description' => 'Purchase of Electrical Wiring (NSB)', 'description_detail' => 'Purchase of Electrical Wiring for computer lab repair', 'expense_type' => 'purchase', 'payment' => $cashAcc, 'chq' => null, 'tax_type' => 'purchase', 'gst' => 19.00, 'pst' => 0.00, 'it' => 11.00, 'grant' => $nsbGrant],
-                    ['account' => $netAcc, 'amount' => 8000, 'date' => $baseDate->copy()->addDays(30), 'description' => 'Purchase of Router Hardware (NSB)', 'description_detail' => 'Purchase of Router Hardware for secondary building network extension', 'expense_type' => 'purchase', 'payment' => $smcBankAcc, 'chq' => 'CHQ-SMC-102', 'tax_type' => 'purchase', 'gst' => 19.00, 'pst' => 0.00, 'it' => 11.00, 'grant' => $nsbGrant],
-                    // Services: PST 20%, IT 11%
-                    ['account' => $wagesAcc, 'amount' => 10000, 'date' => $baseDate->copy()->addDays(40), 'description' => 'Generator Repair Services (NSB)', 'description_detail' => 'Generator Repair Services and tuning', 'expense_type' => 'service', 'payment' => $cashAcc, 'chq' => null, 'tax_type' => 'service', 'gst' => 0.00, 'pst' => 20.00, 'it' => 11.00, 'grant' => $nsbGrant],
-                    ['account' => $maintAcc, 'amount' => 18000, 'date' => $baseDate->copy()->addDays(50), 'description' => 'Building Painting Labor (NSB)', 'description_detail' => 'Building Painting Labor for main building', 'expense_type' => 'service', 'payment' => $smcBankAcc, 'chq' => 'CHQ-SMC-103', 'tax_type' => 'service', 'gst' => 0.00, 'pst' => 20.00, 'it' => 11.00, 'grant' => $nsbGrant],
-                ]
+                'bank' => $smcBankAcc,
+                'grant' => $smcGrant,
+                'amount' => 70000,
+                'date' => Carbon::parse('2026-07-20'),
+                'chq' => 'CHQ-SMC-902',
+                'desc' => 'Cheque withdrawal for SMC operational expenses (Q2)'
             ],
-            // Special Grant Category - Paid via Cash or SMC Bank Account (Taxable)
+            // ADP
             [
-                'fund_type' => 'grant',
-                'items' => [
-                    // Purchases: GST 19%, IT 11% - Linked to Lab Grant
-                    ['account' => $elecAcc, 'amount' => 30000, 'date' => $baseDate->copy()->addDays(12), 'description' => 'Purchase of LED lights (Special Grant)', 'description_detail' => 'Purchase of LED lights for classes', 'expense_type' => 'purchase', 'payment' => $smcBankAcc, 'chq' => 'CHQ-SMC-201', 'tax_type' => 'purchase', 'gst' => 19.00, 'pst' => 0.00, 'it' => 11.00, 'grant' => $labGrant],
-                    ['account' => $examAcc, 'amount' => 12000, 'date' => $baseDate->copy()->addDays(22), 'description' => 'Purchase of Science kits (Special Grant)', 'description_detail' => 'Purchase of Science kits for lab', 'expense_type' => 'purchase', 'payment' => $cashAcc, 'chq' => null, 'tax_type' => 'purchase', 'gst' => 19.00, 'pst' => 0.00, 'it' => 11.00, 'grant' => $labGrant],
-                    ['account' => $netAcc, 'amount' => 20000, 'date' => $baseDate->copy()->addDays(32), 'description' => 'Purchase of Networking cables (Special Grant)', 'description_detail' => 'Purchase of Networking cables', 'expense_type' => 'purchase', 'payment' => $smcBankAcc, 'chq' => 'CHQ-SMC-202', 'tax_type' => 'purchase', 'gst' => 19.00, 'pst' => 0.00, 'it' => 11.00, 'grant' => $labGrant],
-                    // Services: PST 20%, IT 11% - Linked to Sports Grant
-                    ['account' => $wagesAcc, 'amount' => 15000, 'date' => $baseDate->copy()->addDays(42), 'description' => 'Lab Installation labor (Special Grant)', 'description_detail' => 'Lab Installation labor', 'expense_type' => 'service', 'payment' => $cashAcc, 'chq' => null, 'tax_type' => 'service', 'gst' => 0.00, 'pst' => 20.00, 'it' => 11.00, 'grant' => $sportsGrant],
-                    ['account' => $maintAcc, 'amount' => 22000, 'date' => $baseDate->copy()->addDays(52), 'description' => 'Air conditioner maintenance (Special Grant)', 'description_detail' => 'Air conditioner maintenance and cleaning', 'expense_type' => 'service', 'payment' => $smcBankAcc, 'chq' => 'CHQ-SMC-203', 'tax_type' => 'service', 'gst' => 0.00, 'pst' => 20.00, 'it' => 11.00, 'grant' => $sportsGrant],
-                ]
-            ]
+                'bank' => $smcBankAcc,
+                'grant' => $adpGrant,
+                'amount' => 150000,
+                'date' => Carbon::parse('2026-05-15'),
+                'chq' => 'CHQ-ADP-911',
+                'desc' => 'Cheque withdrawal for ADP laboratory extension'
+            ],
+            [
+                'bank' => $smcBankAcc,
+                'grant' => $adpGrant,
+                'amount' => 100000,
+                'date' => Carbon::parse('2026-08-15'),
+                'chq' => 'CHQ-ADP-912',
+                'desc' => 'Cheque withdrawal for ADP hardware setup'
+            ],
+            // FTF
+            [
+                'bank' => $ftfBankAcc,
+                'grant' => null,
+                'amount' => 40000,
+                'date' => Carbon::parse('2026-04-12'),
+                'chq' => 'CHQ-FTF-701',
+                'desc' => 'Cheque withdrawal for FTF student-related operations'
+            ],
+            [
+                'bank' => $ftfBankAcc,
+                'grant' => null,
+                'amount' => 30000,
+                'date' => Carbon::parse('2026-07-12'),
+                'chq' => 'CHQ-FTF-702',
+                'desc' => 'Cheque withdrawal for FTF general repairs'
+            ],
         ];
 
-        foreach ($config as $cat) {
-            $fundType = $cat['fund_type'];
-            foreach ($cat['items'] as $item) {
-                DB::transaction(function () use ($fundType, $item, $taxWithheldAcc) {
-                    $grossAmount = $item['amount'];
-                    $taxType = $item['tax_type'] ?? 'none';
-                    
-                    $gstRate = $item['gst'] ?? 0.00;
-                    $pstRate = $item['pst'] ?? 0.00;
-                    $itRate = $item['it'] ?? 0.00;
-
-                    $gstAmount = round(($grossAmount * $gstRate) / 100);
-                    $pstAmount = round(($grossAmount * $pstRate) / 100);
-                    $itAmount = round(($grossAmount * $itRate) / 100);
-                    
-                    $totalTax = $gstAmount + $pstAmount + $itAmount;
-                    $netAmount = $grossAmount - $totalTax;
-
-                    $grantId = isset($item['grant']) ? $item['grant']->id : null;
-                    $chqNo = $item['chq'] ?? null;
-
-                    // 1. Create Transaction
-                    $transaction = Transaction::create([
-                        'date' => $item['date'],
-                        'cheque_no' => $chqNo,
-                        'description' => $item['description'],
-                        'created_at' => $item['date'],
-                        'updated_at' => $item['date'],
+        foreach ($withdrawals as $w) {
+            DB::transaction(function () use ($w, $cashAcc) {
+                $bankAcc = $w['bank'];
+                if ($cashAcc && $bankAcc) {
+                    $txn = Transaction::create([
+                        'date'        => $w['date'],
+                        'cheque_no'   => $w['chq'],
+                        'description' => $w['desc'],
+                        'grant_id'    => $w['grant'] ? $w['grant']->id : null,
+                        'created_at'  => $w['date'],
+                        'updated_at'  => $w['date'],
                     ]);
 
-                    // Dr Expense (Gross Amount)
+                    // Dr Cash Account (Inflow)
+                    $txn->lines()->create([
+                        'account_id' => $cashAcc->id,
+                        'debit'      => $w['amount'],
+                        'credit'     => 0,
+                        'created_at' => $w['date'],
+                        'updated_at' => $w['date'],
+                    ]);
+
+                    // Cr Bank Account (Outflow)
+                    $txn->lines()->create([
+                        'account_id' => $bankAcc->id,
+                        'debit'      => 0,
+                        'credit'     => $w['amount'],
+                        'created_at' => $w['date'],
+                        'updated_at' => $w['date'],
+                    ]);
+                }
+            });
+        }
+
+        // 2. Seed Expenses (Always paid via Cash Account)
+        $expensesData = [
+            // SMC Grant Expenses
+            [
+                'fund_type' => 'grant',
+                'grant' => $smcGrant,
+                'account' => $maintAcc,
+                'amount' => 20000,
+                'date' => Carbon::parse('2026-04-22'),
+                'description' => 'Repair school boundary wall',
+                'description_detail' => 'Repairing school boundary wall with concrete reinforcement',
+                'expense_type' => 'service',
+                'tax_type' => 'service',
+                'gst' => 0.00,
+                'pst' => 20.00,
+                'it' => 11.00
+            ],
+            [
+                'fund_type' => 'grant',
+                'grant' => $smcGrant,
+                'account' => $maintAcc,
+                'amount' => 15000,
+                'date' => Carbon::parse('2026-04-25'),
+                'description' => 'Classroom whiteboard installation',
+                'description_detail' => 'Installation of 5 whiteboards in secondary section',
+                'expense_type' => 'purchase',
+                'tax_type' => 'purchase',
+                'gst' => 19.00,
+                'pst' => 0.00,
+                'it' => 11.00
+            ],
+            [
+                'fund_type' => 'grant',
+                'grant' => $smcGrant,
+                'account' => $examAcc,
+                'amount' => 30000,
+                'date' => Carbon::parse('2026-07-22'),
+                'description' => 'Purchase of textbooks & stationary',
+                'description_detail' => 'Purchase of textbooks & stationary for session 2026-2027',
+                'expense_type' => 'purchase',
+                'tax_type' => 'purchase',
+                'gst' => 19.00,
+                'pst' => 0.00,
+                'it' => 11.00
+            ],
+            // ADP Grant Expenses
+            [
+                'fund_type' => 'grant',
+                'grant' => $adpGrant,
+                'account' => $labAcc,
+                'amount' => 90000,
+                'date' => Carbon::parse('2026-05-20'),
+                'description' => 'Lab workstation furniture repair',
+                'description_detail' => 'Repair and polishing of lab workstation furniture',
+                'expense_type' => 'service',
+                'tax_type' => 'service',
+                'gst' => 0.00,
+                'pst' => 20.00,
+                'it' => 11.00
+            ],
+            [
+                'fund_type' => 'grant',
+                'grant' => $adpGrant,
+                'account' => $maintAcc,
+                'amount' => 45000,
+                'date' => Carbon::parse('2026-05-28'),
+                'description' => 'Installation of laboratory sinks',
+                'description_detail' => 'Plumbing work and installation of laboratory sinks',
+                'expense_type' => 'service',
+                'tax_type' => 'service',
+                'gst' => 0.00,
+                'pst' => 20.00,
+                'it' => 11.00
+            ],
+            [
+                'fund_type' => 'grant',
+                'grant' => $adpGrant,
+                'account' => $labAcc,
+                'amount' => 80000,
+                'date' => Carbon::parse('2026-08-20'),
+                'description' => 'Networking cables for computers',
+                'description_detail' => 'Ethernet Cat6 cabling and switches for computer lab',
+                'expense_type' => 'purchase',
+                'tax_type' => 'purchase',
+                'gst' => 19.00,
+                'pst' => 0.00,
+                'it' => 11.00
+            ],
+            // FTF Expenses (fund_type = ftf, tax = none)
+            [
+                'fund_type' => 'ftf',
+                'grant' => null,
+                'account' => $examAcc,
+                'amount' => 15000,
+                'date' => Carbon::parse('2026-04-18'),
+                'description' => 'Student sports day supplies',
+                'description_detail' => 'Purchase of sports materials and printout of rules sheets',
+                'expense_type' => 'purchase',
+                'tax_type' => 'none',
+            ],
+            [
+                'fund_type' => 'ftf',
+                'grant' => null,
+                'account' => $maintAcc,
+                'amount' => 10000,
+                'date' => Carbon::parse('2026-04-26'),
+                'description' => 'Computer lab fan replacement',
+                'description_detail' => 'Replacement of 2 burnt ceiling fans in computer laboratory',
+                'expense_type' => 'service',
+                'tax_type' => 'none',
+            ],
+            [
+                'fund_type' => 'ftf',
+                'grant' => null,
+                'account' => $examAcc,
+                'amount' => 20000,
+                'date' => Carbon::parse('2026-07-18'),
+                'description' => 'Annual prize distribution trophies',
+                'description_detail' => 'Purchase of 30 dynamic brass trophies for top students',
+                'expense_type' => 'purchase',
+                'tax_type' => 'none',
+            ],
+        ];
+
+        foreach ($expensesData as $item) {
+            DB::transaction(function () use ($item, $cashAcc, $taxWithheldAcc) {
+                $grossAmount = $item['amount'];
+                $taxType = $item['tax_type'] ?? 'none';
+                
+                $gstRate = $item['gst'] ?? 0.00;
+                $pstRate = $item['pst'] ?? 0.00;
+                $itRate = $item['it'] ?? 0.00;
+
+                $gstAmount = round(($grossAmount * $gstRate) / 100);
+                $pstAmount = round(($grossAmount * $pstRate) / 100);
+                $itAmount = round(($grossAmount * $itRate) / 100);
+                
+                $totalTax = $gstAmount + $pstAmount + $itAmount;
+                $netAmount = $grossAmount - $totalTax;
+
+                $grantId = $item['grant'] ? $item['grant']->id : null;
+                $fundType = $item['fund_type'] ?? 'grant';
+
+                // 1. Create Transaction
+                $transaction = Transaction::create([
+                    'date'        => $item['date'],
+                    'cheque_no'   => null,
+                    'description' => $item['description'] . ' (Paid via Cash)',
+                    'created_at'  => $item['date'],
+                    'updated_at'  => $item['date'],
+                ]);
+
+                // Dr Expense Account (Gross Amount)
+                $transaction->lines()->create([
+                    'account_id' => $item['account']->id,
+                    'debit'      => $grossAmount,
+                    'credit'     => 0,
+                    'created_at' => $item['date'],
+                    'updated_at' => $item['date'],
+                ]);
+
+                // Cr Cash Account (Net Amount Paid)
+                $transaction->lines()->create([
+                    'account_id' => $cashAcc->id,
+                    'debit'      => 0,
+                    'credit'     => $netAmount,
+                    'created_at' => $item['date'],
+                    'updated_at' => $item['date'],
+                ]);
+
+                // Cr Tax Withheld Liability (Taxes)
+                if ($totalTax > 0 && $taxWithheldAcc) {
                     $transaction->lines()->create([
-                        'account_id' => $item['account']->id,
-                        'debit' => $grossAmount,
-                        'credit' => 0,
+                        'account_id' => $taxWithheldAcc->id,
+                        'debit'      => 0,
+                        'credit'     => $totalTax,
                         'created_at' => $item['date'],
                         'updated_at' => $item['date'],
                     ]);
+                }
 
-                    // Cr Payment Account (Net Amount Paid)
-                    $transaction->lines()->create([
-                        'account_id' => $item['payment']->id,
-                        'debit' => 0,
-                        'credit' => $netAmount,
-                        'created_at' => $item['date'],
-                        'updated_at' => $item['date'],
-                    ]);
-
-                    // Cr Tax Withheld liability account (if any taxes withheld)
-                    if ($totalTax > 0 && $taxWithheldAcc) {
-                        $transaction->lines()->create([
-                            'account_id' => $taxWithheldAcc->id,
-                            'debit' => 0,
-                            'credit' => $totalTax,
-                            'created_at' => $item['date'],
-                            'updated_at' => $item['date'],
-                        ]);
-                    }
-
-                    // 2. Create Expense
-                    Expense::create([
-                        'amount' => $grossAmount,
-                        'expense_account_id' => $item['account']->id,
-                        'payment_account_id' => $item['payment']->id,
-                        'status' => true,
-                        'transaction_id' => $transaction->id,
-                        'fund_type' => $fundType,
-                        'grant_id' => $grantId,
-                        'receipt_no' => 'REC-' . rand(1000, 9999),
-                        'cheque_no' => $chqNo,
-                        'tax_type' => $taxType,
-                        'gst_rate' => $gstRate,
-                        'pst_rate' => $pstRate,
-                        'it_rate' => $itRate,
-                        'gst_amount' => $gstAmount,
-                        'pst_amount' => $pstAmount,
-                        'it_amount' => $itAmount,
-                        'net_amount' => $netAmount,
-                        'expense_type' => $item['expense_type'],
-                        'description' => $item['description_detail'],
-                        'created_at' => $item['date'],
-                        'updated_at' => $item['date'],
-                    ]);
-                });
-            }
+                // 2. Create Expense
+                Expense::create([
+                    'amount'               => $grossAmount,
+                    'expense_account_id'   => $item['account']->id,
+                    'payment_account_id'   => $cashAcc->id,
+                    'status'               => true,
+                    'transaction_id'       => $transaction->id,
+                    'fund_type'            => $fundType,
+                    'grant_id'             => $grantId,
+                    'receipt_no'           => 'REC-' . rand(1000, 9999),
+                    'tax_type'             => $taxType,
+                    'gst_rate'             => $gstRate,
+                    'pst_rate'             => $pstRate,
+                    'it_rate'              => $itRate,
+                    'net_amount'           => $netAmount,
+                    'expense_type'         => $item['expense_type'],
+                    'description'          => $item['description_detail'],
+                    'created_at'           => $item['date'],
+                    'updated_at'           => $item['date'],
+                ]);
+            });
         }
     }
 }

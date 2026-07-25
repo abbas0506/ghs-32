@@ -18,7 +18,7 @@ class DashboardController extends Controller
     public function index()
     {
         $students = Student::all();
-        $tests = Test::mine();
+        $tests = Test::mine()->get();
         $attendances = Attendance::where('date', today())->where('status', 1)->get();
         $newAdmissions = Student::where('created_at', '>=', now()->subDays(7))->get();
         
@@ -27,13 +27,14 @@ class DashboardController extends Controller
         $highestAttenancePercentage = $students->count() > 0 ? round(($maxAttendance / ($students->count() * 7)) * 100, 1) : 0;
 
         $tasksDue = collect();
-        $pendingTasks = Auth::user()->taskLines()->where('status', 0)->with('task')->get();
+        $user = Auth::user();
+        $pendingTasks = $user ? $user->taskLines()->where('status', 0)->with('task')->get() : collect();
         foreach ($pendingTasks as $taskLine) {
-            if ($taskLine->task->due_date >= now() && $taskLine->task->due_date <= now()->addDays(7) && !$tasksDue->contains($taskLine->task)) {
+            if ($taskLine->task && $taskLine->task->due_date && $taskLine->task->due_date >= now() && $taskLine->task->due_date <= now()->addDays(7) && !$tasksDue->contains($taskLine->task)) {
                 $tasksDue->push($taskLine->task);
             }
         }
-        $myAllocationsCount = Auth::user()->schedules()->count();
+        $myAllocationsCount = $user ? $user->schedules()->count() : 0;
 
         // Attendance trends for the last 7 days
         $attendanceTrends = [];

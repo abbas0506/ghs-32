@@ -89,7 +89,7 @@ class AcademicSession extends Model
      */
     public function specialGrantInstallments()
     {
-        return SpecialGrantInstallment::whereBetween('received_date', [
+        return GrantInstallment::whereBetween('received_date', [
             $this->start_date->toDateString(),
             $this->end_date->toDateString(),
         ]);
@@ -107,17 +107,20 @@ class AcademicSession extends Model
     // ── Computed Attributes ──
 
     /**
-     * FTF collection = sum of paid voucher amounts in this session.
+     * FTF collection = sum of manual deposits to FTF Bank Account in this session.
      */
     public function getFtfCollectionAttribute(): int
     {
-        return (int) FtfVoucher::whereBetween('due_date', [
-                $this->start_date->toDateString(),
-                $this->end_date->toDateString(),
-            ])
-            ->join('ftf_payments', 'ftf_vouchers.id', '=', 'ftf_payments.ftf_voucher_id')
-            ->whereNotNull('ftf_payments.payment_date')
-            ->sum('ftf_vouchers.amount');
+        $ftfAccount = Account::where('code', '1002')->first();
+        if (!$ftfAccount) return 0;
+        return (int) \App\Models\TransactionLine::where('account_id', $ftfAccount->id)
+            ->whereHas('transaction', function($q) {
+                $q->whereBetween('date', [
+                    $this->start_date->toDateString(),
+                    $this->end_date->toDateString(),
+                ]);
+            })
+            ->sum('debit');
     }
 
     /**
@@ -184,11 +187,23 @@ class AcademicSession extends Model
     }
 
     /**
-     * Live FTF Balance = ftf_start + ftf_collection - ftf_expenses
+     * Live FTF Balance = ftf_start + ftf_collection (deposits) - ftf_withdrawals - ftf_expenses
      */
     public function getFtfBalanceAttribute(): int
     {
-        return $this->ftf_start + $this->ftf_collection - $this->ftf_expenses;
+        $ftfAccount = Account::where('code', '1002')->first();
+        if (!$ftfAccount) return $this->ftf_start - $this->getFtfExpensesAttribute();
+        
+        $withdrawals = (int) \App\Models\TransactionLine::where('account_id', $ftfAccount->id)
+            ->whereHas('transaction', function($q) {
+                $q->whereBetween('date', [
+                    $this->start_date->toDateString(),
+                    $this->end_date->toDateString(),
+                ]);
+            })
+            ->sum('credit');
+
+        return $this->ftf_start + $this->ftf_collection - $withdrawals - $this->getFtfExpensesAttribute();
     }
 
     /**

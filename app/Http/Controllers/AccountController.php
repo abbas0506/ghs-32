@@ -102,8 +102,9 @@ class AccountController extends Controller
         });
 
         $otherAccounts = Account::where('id', '!=', $account->id)->orderBy('name')->get();
+        $grants = \App\Models\Grant::orderBy('title')->get();
 
-        return view('accounts.show', compact('account', 'lines', 'balance', 'otherAccounts'));
+        return view('accounts.show', compact('account', 'lines', 'balance', 'otherAccounts', 'grants'));
     }
 
     /**
@@ -160,17 +161,31 @@ class AccountController extends Controller
             'date'               => 'required|date',
             'txn_type'           => 'required|in:debit,credit',
             'amount'             => 'required|numeric|min:1',
-            'contra_account_id'  => 'required|exists:accounts,id',
+            'contra_account_id'  => 'nullable|exists:accounts,id',
             'cheque_no'          => 'nullable|string|max:50',
             'description'        => 'nullable|string|max:255',
+            'grant_id'           => $account->code === '1007' ? 'required|exists:grants,id' : 'nullable|exists:grants,id',
         ]);
 
         // Require cheque number for bank withdrawals
-        if ($request->txn_type === 'credit' && in_array($account->code, ['1002', '1007'])) {
+        $isBank = in_array($account->code, ['1002', '1007']);
+        if ($request->txn_type === 'credit' && $isBank) {
             $request->validate([
                 'cheque_no' => 'required|string|max:50',
             ], [
                 'cheque_no.required' => 'Cheque number is required for bank cheque withdrawals.',
+            ]);
+        }
+
+        $contraAccId = $request->contra_account_id;
+        if (empty($contraAccId) && $request->txn_type === 'credit' && $isBank) {
+            $cashAccount = Account::where('code', '1001')->first();
+            $contraAccId = $cashAccount ? $cashAccount->id : null;
+        }
+
+        if (empty($contraAccId)) {
+            $request->validate([
+                'contra_account_id' => 'required|exists:accounts,id'
             ]);
         }
 
@@ -180,9 +195,10 @@ class AccountController extends Controller
                 'date'        => $request->date,
                 'cheque_no'   => $request->cheque_no ?? null,
                 'description' => $request->description ?? 'Manual Transaction (' . ucfirst($request->txn_type) . ')',
+                'grant_id'    => $request->grant_id ?? null,
             ]);
 
-            $contraAcc = Account::findOrFail($request->contra_account_id);
+            $contraAcc = Account::findOrFail($contraAccId);
 
             if ($request->txn_type === 'debit') {
                 // Dr Primary Account
@@ -214,6 +230,9 @@ class AccountController extends Controller
 
             DB::commit();
 
+            if ($request->has('redirect_to')) {
+                return redirect($request->redirect_to)->with('success', 'Manual transaction posted successfully.');
+            }
             return redirect()->route('accounts.show', $account->id)->with('success', 'Manual transaction posted successfully.');
         } catch (Exception $e) {
             DB::rollBack();
@@ -226,23 +245,37 @@ class AccountController extends Controller
      */
     public function updateTransaction(Request $request, Transaction $transaction)
     {
+        $account = Account::findOrFail($request->account_id);
+
         $request->validate([
             'date'              => 'required|date',
             'amount'            => 'required|numeric|min:1',
             'description'       => 'nullable|string|max:255',
             'cheque_no'         => 'nullable|string|max:50',
             'account_id'        => 'required|exists:accounts,id',
-            'contra_account_id' => 'required|exists:accounts,id',
+            'contra_account_id' => 'nullable|exists:accounts,id',
             'txn_type'          => 'required|in:debit,credit',
+            'grant_id'          => $account->code === '1007' ? 'required|exists:grants,id' : 'nullable|exists:grants,id',
         ]);
 
-        $account = Account::findOrFail($request->account_id);
-
-        if ($request->txn_type === 'credit' && in_array($account->code, ['1002', '1007'])) {
+        $isBank = in_array($account->code, ['1002', '1007']);
+        if ($request->txn_type === 'credit' && $isBank) {
             $request->validate([
                 'cheque_no' => 'required|string|max:50',
             ], [
                 'cheque_no.required' => 'Cheque number is required for bank cheque withdrawals.',
+            ]);
+        }
+
+        $contraAccId = $request->contra_account_id;
+        if (empty($contraAccId) && $request->txn_type === 'credit' && $isBank) {
+            $cashAccount = Account::where('code', '1001')->first();
+            $contraAccId = $cashAccount ? $cashAccount->id : null;
+        }
+
+        if (empty($contraAccId)) {
+            $request->validate([
+                'contra_account_id' => 'required|exists:accounts,id'
             ]);
         }
 
@@ -252,9 +285,10 @@ class AccountController extends Controller
                 'date'        => $request->date,
                 'cheque_no'   => $request->cheque_no ?? null,
                 'description' => $request->description ?? 'Manual Transaction (' . ucfirst($request->txn_type) . ')',
+                'grant_id'    => $request->grant_id ?? null,
             ]);
 
-            $contraAcc = Account::findOrFail($request->contra_account_id);
+            $contraAcc = Account::findOrFail($contraAccId);
 
             // Replace transaction lines
             $transaction->lines()->delete();
@@ -285,6 +319,9 @@ class AccountController extends Controller
 
             DB::commit();
 
+            if ($request->has('redirect_to')) {
+                return redirect($request->redirect_to)->with('success', 'Transaction updated successfully.');
+            }
             return redirect()->route('accounts.show', $account->id)->with('success', 'Transaction updated successfully.');
         } catch (Exception $e) {
             DB::rollBack();

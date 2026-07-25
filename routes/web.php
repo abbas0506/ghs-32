@@ -11,6 +11,7 @@ use App\Http\Controllers\AcademicSessionController;
 use App\Http\Controllers\GrantController;
 use App\Http\Controllers\GrantInstallmentController;
 use App\Http\Controllers\ExpenseController;
+use App\Http\Controllers\SchoolResolutionController;
 use App\Http\Controllers\FacultyController;
 use App\Http\Controllers\FeeController;
 use App\Http\Controllers\FtfVoucherController;
@@ -95,6 +96,9 @@ Route::get('signout', [AuthController::class, 'signout'])->name('signout');
 Route::group(['middleware' => ['auth']], function () {
     Route::get('/dashboard', [DashboardController::class, 'index']);
     Route::get('/finance', [FinanceController::class, 'index'])->name('finance.index');
+    Route::get('/finance/ftf', [FinanceController::class, 'ftfLedger'])->name('finance.ftf.ledger');
+    Route::put('/ftf-payments/{id}', [\App\Http\Controllers\FtfPaymentController::class, 'updateDirect'])->name('ftf-payments.update-direct');
+    Route::delete('/ftf-payments/{id}', [\App\Http\Controllers\FtfPaymentController::class, 'destroyDirect'])->name('ftf-payments.destroy-direct');
     Route::resource('academic-sessions', AcademicSessionController::class);
     Route::post('academic-sessions/{id}/switch', [AcademicSessionController::class, 'switchSession'])->name('academic-sessions.switch');
     Route::resource('grants', GrantController::class);
@@ -106,6 +110,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::put('accounts/transactions/{transaction}', [\App\Http\Controllers\AccountController::class, 'updateTransaction'])->name('accounts.transaction.update');
     Route::delete('accounts/transactions/{transaction}', [\App\Http\Controllers\AccountController::class, 'destroyTransaction'])->name('accounts.transaction.destroy');
     Route::view('config', 'config')->name('config');
+    Route::post('school-resolutions', [SchoolResolutionController::class, 'store'])->name('school-resolutions.store');
 
     // users
     Route::resource('users', UserController::class);

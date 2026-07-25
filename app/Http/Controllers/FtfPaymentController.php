@@ -130,4 +130,29 @@ class FtfPaymentController extends Controller
             return redirect()->back()->withErrors($e->getMessage());
         }
     }
+
+    public function updateDirect(Request $request, $id)
+    {
+        $request->validate([
+            'payment_date' => 'required|date',
+        ]);
+        
+        $payment = FtfPayment::findOrFail($id);
+        $payment->update([
+            'payment_date' => $request->payment_date,
+        ]);
+
+        return redirect()->back()->with('success', 'Payment date updated successfully.');
+    }
+
+    public function destroyDirect($id)
+    {
+        $payment = FtfPayment::findOrFail($id);
+        try {
+            $payment->delete();
+            return redirect()->back()->with('success', 'Fee payment deleted successfully.');
+        } catch (Exception $e) {
+            return redirect()->back()->withErrors($e->getMessage());
+        }
+    }
 }

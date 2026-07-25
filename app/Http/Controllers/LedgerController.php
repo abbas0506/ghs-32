@@ -12,18 +12,46 @@ class LedgerController extends Controller
      */
     public function index()
     {
-        //
-        // $accounts = Account::with(['lines.transaction'])
-        //     ->orderBy('code')
-        //     ->get();
-
         $accounts = Account::whereHas('lines')
             ->with(['lines.transaction'])
             ->orderBy('code')
             ->get();
 
-
         return view('accounts.ledger', compact('accounts'));
+    }
+
+    public function exportPdf()
+    {
+        $accounts = Account::whereHas('lines')
+            ->with(['lines.transaction'])
+            ->orderBy('code')
+            ->get();
+
+        $tempDir = storage_path('app/mpdf-tmp');
+        if (!file_exists($tempDir)) {
+            mkdir($tempDir, 0777, true);
+        }
+
+        $mpdf = new \Mpdf\Mpdf([
+            'mode'             => 'utf-8',
+            'format'           => 'A4-L',
+            'margin_left'      => 10,
+            'margin_right'     => 10,
+            'margin_top'       => 10,
+            'margin_bottom'    => 10,
+            'autoScriptToLang' => true,
+            'autoLangToFont'   => true,
+            'default_font'     => 'dejavusanscondensed',
+            'tempDir'          => $tempDir,
+        ]);
+
+        $html = view('accounts.pdf', compact('accounts'))->render();
+        $mpdf->WriteHTML($html);
+
+        $filename = 'general-ledger-report.pdf';
+        return response($mpdf->Output('', 'S'))
+            ->header('Content-Type', 'application/pdf')
+            ->header('Content-Disposition', 'inline; filename="' . $filename . '"');
     }
 
     /**

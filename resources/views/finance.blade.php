@@ -13,7 +13,44 @@
                 <h1 class="text-base font-bold text-slate-800 tracking-tight leading-none">Finance Dashboard</h1>
             </div>
             <!-- Quick Actions -->
-            <div class="flex items-center gap-1.5">
+            <div class="flex items-center gap-1.5 relative">
+                <div class="relative">
+                    <button type="button" id="print-reports-btn"
+                        class="px-2 py-1 text-[8px] font-extrabold uppercase tracking-wider text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200/60 rounded-lg transition-all flex items-center gap-1 cursor-pointer"
+                        title="Print PDF Reports">
+                        <i class="bi bi-printer text-[10px]"></i>
+                        <span>Print Reports</span>
+                        <i class="bi bi-chevron-down text-[8px]"></i>
+                    </button>
+                    <div id="print-reports-menu" style="display: none;"
+                        class="origin-top-right absolute right-0 mt-1.5 w-48 rounded-lg shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50 divide-y divide-slate-150 border border-slate-100 focus:outline-none">
+                        <div class="py-1">
+                            <a href="{{ route('ledger.pdf') }}" target="_blank" class="flex items-center gap-2 px-3 py-1.5 text-[9px] font-black text-slate-700 hover:bg-indigo-50 hover:text-indigo-900 transition-colors">
+                                <i class="bi bi-journal-text text-indigo-500 text-xs"></i> <span>Print General Ledger</span>
+                            </a>
+                        </div>
+                        <div class="py-1">
+                            <a href="{{ route('finance.ftf.pdf') }}" target="_blank" class="flex items-center gap-2 px-3 py-1.5 text-[9px] font-black text-slate-700 hover:bg-emerald-50 hover:text-emerald-900 transition-colors">
+                                <i class="bi bi-bank text-emerald-500 text-xs"></i> <span>Print FTF Cash Book</span>
+                            </a>
+                            @if($smcGrant)
+                            <a href="{{ route('grants.pdf', $smcGrant->id) }}" target="_blank" class="flex items-center gap-2 px-3 py-1.5 text-[9px] font-black text-slate-700 hover:bg-amber-50 hover:text-amber-900 transition-colors">
+                                <i class="bi bi-wallet2 text-amber-500 text-xs"></i> <span>Print SMC Cash Book</span>
+                            </a>
+                            @endif
+                        </div>
+                        <div class="py-1">
+                            <div class="px-3 py-1 text-[7px] font-extrabold text-slate-400 uppercase tracking-wider bg-slate-50/50">Other Grants</div>
+                            @foreach($specialGrants as $grant)
+                                @if(!$smcGrant || $grant->id !== $smcGrant->id)
+                                <a href="{{ route('grants.pdf', $grant->id) }}" target="_blank" class="flex items-center gap-2 px-3 py-1.5 text-[9px] font-black text-slate-700 hover:bg-teal-50 hover:text-teal-900 transition-colors">
+                                    <i class="bi bi-file-earmark-pdf text-teal-500 text-xs"></i> <span>{{ $grant->title }} Cash Book</span>
+                                </a>
+                                @endif
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
                 <a href="{{ route('grants.index') }}" 
                     class="px-2 py-1 text-[8px] font-extrabold uppercase tracking-wider text-slate-500 hover:text-slate-800 bg-slate-50 hover:bg-slate-100 border border-slate-200/50 rounded-lg transition-all flex items-center gap-1"
                     title="Manage Grants">
@@ -85,4 +122,28 @@
             @endforeach
         </div>
     </div>
+@endsection
+
+@section('script')
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const btn = document.getElementById('print-reports-btn');
+        const menu = document.getElementById('print-reports-menu');
+        if (btn && menu) {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                if (menu.style.display === 'none') {
+                    menu.style.display = 'block';
+                } else {
+                    menu.style.display = 'none';
+                }
+            });
+            document.addEventListener('click', function(e) {
+                if (!btn.contains(e.target) && !menu.contains(e.target)) {
+                    menu.style.display = 'none';
+                }
+            });
+        }
+    });
+</script>
 @endsection

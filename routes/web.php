@@ -97,6 +97,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/dashboard', [DashboardController::class, 'index']);
     Route::get('/finance', [FinanceController::class, 'index'])->name('finance.index');
     Route::get('/finance/ftf', [FinanceController::class, 'ftfLedger'])->name('finance.ftf.ledger');
+    Route::get('/finance/ftf/pdf', [FinanceController::class, 'exportFtfPdf'])->name('finance.ftf.pdf');
     Route::put('/ftf-payments/{id}', [\App\Http\Controllers\FtfPaymentController::class, 'updateDirect'])->name('ftf-payments.update-direct');
     Route::delete('/ftf-payments/{id}', [\App\Http\Controllers\FtfPaymentController::class, 'destroyDirect'])->name('ftf-payments.destroy-direct');
     Route::resource('academic-sessions', AcademicSessionController::class);
@@ -167,6 +168,7 @@ Route::group(['middleware' => ['auth']], function () {
     // Fee
     Route::resource('bulk-invoices', BulkInvoiceController::class);
     Route::get('/ledger', [LedgerController::class, 'index'])->name('ledger.index');
+    Route::get('/ledger/pdf', [LedgerController::class, 'exportPdf'])->name('ledger.pdf');
 
     Route::post('bulk-invoices/search/id', [BulkInvoiceController::class, 'searchById'])->name('bulk-invoices.search.id');
     Route::post('bulk-invoices/search/name', [BulkInvoiceController::class, 'searchByName'])->name('bulk-invoices.search.name');

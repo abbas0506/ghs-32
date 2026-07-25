@@ -67,6 +67,10 @@ class FinanceController extends Controller
             $grant->balance = $received - $spent;
         }
 
+        $smcGrant = $specialGrants->first(function($grant) {
+            return str_contains(strtolower($grant->title), 'smc') || str_contains(strtolower($grant->title), 'school management');
+        });
+
         return view('finance', compact(
             'ftfBalance', 
             'nsbBalance', 
@@ -77,7 +81,8 @@ class FinanceController extends Controller
             'currentSession',
             'specialGrants',
             'ftfAccount',
-            'smcAccount'
+            'smcAccount',
+            'smcGrant'
         ));
     }
 
@@ -209,5 +214,152 @@ class FinanceController extends Controller
             'expenseAccounts',
             'resolutions'
         ));
+    }
+
+    /**
+     * Export FTF Ledger as PDF Cash Book.
+     */
+    public function exportFtfPdf()
+    {
+        $session = AcademicSession::current();
+        $openingBalance = $session ? (int) $session->ftf_start : 0;
+
+        $ftfAccount = Account::where('code', '1002')->first();
+        $cashAccount = Account::where('code', '1001')->first();
+        $ftfIncomeAccount = Account::where('code', '4001')->first();
+
+        $ledger = collect();
+
+        // 1. Manual transactions on the FTF Bank Account
+        $manualTransactions = collect();
+        if ($ftfAccount) {
+            $manualTransactions = Transaction::whereHas('lines', function($q) use ($ftfAccount) {
+                $q->where('account_id', $ftfAccount->id);
+            })->with('lines.account')->get();
+        }
+
+        foreach ($manualTransactions as $mtxn) {
+            $ftfLine = $mtxn->lines->where('account_id', $ftfAccount->id)->first();
+            if ($ftfLine) {
+                $isDebit = $ftfLine->debit > 0;
+                $ledger->push((object)[
+                    'type'         => 'manual_transaction',
+                    'id'           => 'txn-' . $mtxn->id,
+                    'date'         => \Carbon\Carbon::parse($mtxn->date),
+                    'description'  => $mtxn->description . ($isDebit ? ' (FTF Bank Deposit)' : ' (FTF Bank Withdrawal)'),
+                    'expense_type' => 'transfer',
+                    'amount'       => $isDebit ? $ftfLine->debit : $ftfLine->credit,
+                    'net_amount'   => $isDebit ? $ftfLine->debit : $ftfLine->credit,
+                    'gst_amount'   => 0,
+                    'pst_amount'   => 0,
+                    'it_amount'    => 0,
+                    'gst_rate'     => 0,
+                    'pst_rate'     => 0,
+                    'it_rate'      => 0,
+                    'receipt_no'   => $mtxn->cheque_no ?? 'TRANSFER',
+                    'resolution_no'   => null,
+                    'resolution_date' => null,
+                    'raw_model'    => $mtxn,
+                    'txn_direction'=> $isDebit ? 'debit' : 'credit'
+                ]);
+            }
+        }
+
+        // 2. Expenses paid out of Cash associated with FTF fund type
+        $expenses = Expense::where('fund_type', 'ftf')
+            ->with('expenseAccount')
+            ->get();
+
+        foreach ($expenses as $expense) {
+            $ledger->push((object)[
+                'type'         => 'expense',
+                'id'           => 'exp-' . $expense->id,
+                'date'         => \Carbon\Carbon::parse($expense->created_at),
+                'description'  => $expense->expenseAccount->name . ($expense->description ? ' — ' . $expense->description : ''),
+                'expense_type' => $expense->expense_type,
+                'amount'       => $expense->amount, // gross
+                'net_amount'   => $expense->net_amount,
+                'gst_amount'   => $expense->gst_amount,
+                'pst_amount'   => $expense->pst_amount,
+                'it_amount'    => $expense->it_amount,
+                'gst_rate'     => $expense->gst_rate,
+                'pst_rate'     => $expense->pst_rate,
+                'it_rate'      => $expense->it_rate,
+                'receipt_no'   => $expense->receipt_no,
+                'resolution_no'   => $expense->schoolResolution ? $expense->schoolResolution->number : null,
+                'resolution_date' => $expense->schoolResolution ? $expense->schoolResolution->date : null,
+                'raw_model'    => $expense
+            ]);
+        }
+
+        // Sort by date ascending to calculate running balance starting from opening balance
+        $ledger = $ledger->sortBy(function ($item) {
+            return $item->date->timestamp;
+        })->values();
+
+        $runningBalance = $openingBalance;
+        foreach ($ledger as $item) {
+            if ($item->type === 'receipt') {
+                $runningBalance += $item->amount;
+            } elseif ($item->type === 'expense') {
+                $runningBalance -= $item->amount;
+            } elseif ($item->type === 'manual_transaction') {
+                if ($item->txn_direction === 'credit') {
+                    $runningBalance -= $item->amount;
+                } else {
+                    $runningBalance += $item->amount;
+                }
+            }
+            $item->running_balance = $runningBalance;
+        }
+
+        $balance = $runningBalance;
+
+        // Totals
+        $totalReceived = $manualTransactions->sum(function($txn) use ($ftfAccount) {
+            $line = $txn->lines->where('account_id', $ftfAccount->id)->first();
+            return ($line && $line->debit > 0) ? $line->debit : 0;
+        });
+        $totalWithdrawn = $manualTransactions->sum(function($txn) use ($ftfAccount) {
+            $line = $txn->lines->where('account_id', $ftfAccount->id)->first();
+            return ($line && $line->credit > 0) ? $line->credit : 0;
+        });
+            
+        $totalGross = $expenses->sum('amount') + $totalWithdrawn;
+
+        $tempDir = storage_path('app/mpdf-tmp');
+        if (!file_exists($tempDir)) {
+            mkdir($tempDir, 0777, true);
+        }
+
+        $mpdf = new \Mpdf\Mpdf([
+            'mode'             => 'utf-8',
+            'format'           => 'A4-L',
+            'margin_left'      => 10,
+            'margin_right'     => 10,
+            'margin_top'       => 10,
+            'margin_bottom'    => 10,
+            'autoScriptToLang' => true,
+            'autoLangToFont'   => true,
+            'default_font'     => 'dejavusanscondensed',
+            'tempDir'          => $tempDir,
+        ]);
+
+        $html = view('finance.ftf-pdf', compact(
+            'session',
+            'openingBalance',
+            'ledger',
+            'balance',
+            'totalReceived',
+            'totalGross',
+            'totalWithdrawn'
+        ))->render();
+
+        $mpdf->WriteHTML($html);
+
+        $filename = 'ftf-cashbook-report.pdf';
+        return response($mpdf->Output('', 'S'))
+            ->header('Content-Type', 'application/pdf')
+            ->header('Content-Disposition', 'inline; filename="' . $filename . '"');
     }
 }
